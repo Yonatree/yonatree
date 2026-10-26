@@ -2,9 +2,9 @@
 title: What Is New Jerusalem?
 subtitle: What Revelation 21–22 says explicitly, what it may mean, and where speculation begins
 excerpt: Twelve gates of pearl, twelve foundations of precious stone, a street of gold like glass, and a river flowing from the throne. A careful reading of John's vision of the holy city — with Scripture, interpretation and speculation kept apart.
-image: ../../assets/thumbnails/part-13-new-jerusalem.jpg
-imageAlt: Series artwork for The New Jerusalem — a radiant golden city with waterfalls and seven lamps above the clouds, and a bride in white, titled Seven Lamps Before the Throne, Part 13.
-imagePosition: center
+image: ../../assets/art/radiant-new-jerusalem.jpg
+imageAlt: "A shining city of gold and crystal beneath a rainbow, with pearl gates in its white walls, waterfalls pouring from the cliffs around it, and a golden street lined with glowing pearls leading to the central gate."
+imagePosition: center 35%
 adaptedFrom: "Seven Lamps Before the Throne, Chapter 6"
 publishDate: 2026-10-25
 categories: [new-jerusalem, book-of-revelation, heaven-resurrection]
