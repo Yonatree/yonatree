@@ -51,7 +51,6 @@ const year = new Date().getFullYear();
               </li>
             ))
           }
-          {settings.contactEmail && <li><a href={`mailto:${settings.contactEmail}`}><Icon name="mail" size={18} /> {settings.contactEmail}</a></li>}
         </ul>
         <h2 class="site-footer__heading site-footer__heading--spaced">Yona Tree</h2>
         <ul role="list">{FOOTER_SITE.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
