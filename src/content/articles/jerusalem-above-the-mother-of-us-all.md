@@ -2,9 +2,9 @@
 title: "Jerusalem Above: The Mother of Us All"
 subtitle: Sarah and Hagar — two covenants, two cities, two mountains and two mothers
 excerpt: '"Jerusalem which is above is free, which is the mother of us all." Paul''s allegory of Sarah and Hagar connects the free woman, the heavenly city, and the Spirit who gives believers new birth.'
-image: ../../assets/thumbnails/part-9-children-of-zion.jpg
-imageAlt: Series artwork for Children of Zion showing Sarah, the free woman, radiant beside a golden menorah, with the title Seven Lamps Before the Throne, Part 9.
-imagePosition: center
+image: ../../assets/art/heavenly-dove-over-paradise-city.jpg
+imageAlt: An elderly woman in a blue and gold mantle sits among lilies, hands on her heart, gazing up at a radiant dove above a golden city on the clouds, with waterfalls and a river below.
+imagePosition: center 35%
 adaptedFrom: "Seven Lamps Before the Throne, Chapters 4 and 6"
 publishDate: 2026-10-25
 categories: [new-jerusalem, holy-spirit, biblical-symbolism]

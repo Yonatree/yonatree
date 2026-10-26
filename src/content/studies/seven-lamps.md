@@ -3,8 +3,8 @@ title: Seven Lamps Before the Throne
 subtitle: Revelation 4:5, Isaiah 11, the menorah and the sevenfold Spirit of God
 eyebrow: Featured Study
 introduction: Seven lamps of fire burn before the throne of God. This study traces them from the tabernacle menorah to the seven churches and the Bride — the image that gave the book and video series their name.
-image: ../../assets/art/menorah-seven-lamps.jpg
-imageAlt: An ornate bronze seven-branched menorah with seven tall lit candles against a clear blue sky.
+image: ../../assets/art/radiant-golden-menorah.jpg
+imageAlt: A golden seven-branched menorah with lit flames and almond blossoms on its branches, standing in a marble temple court under a golden sky.
 imagePosition: center 30%
 feature: seven-lamps
 categories: [seven-spirits-of-god, temple-menorah, book-of-revelation]

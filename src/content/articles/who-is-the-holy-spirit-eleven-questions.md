@@ -2,9 +2,9 @@
 title: "Who Is the Holy Spirit? Eleven Questions from Scripture"
 subtitle: A guided journey through the passages at the heart of Seven Lamps Before the Throne
 excerpt: Why did the Spirit of God descend as a dove? Eleven simple questions, each answered from Scripture, lead toward one of the central conclusions of Yona Tree's study of the Holy Spirit.
-image: ../../assets/art/dove-over-the-cross.jpg
-imageAlt: A white dove in flight before a wooden cross, with a mountain lake glowing behind it.
-imagePosition: center 40%
+image: ../../assets/art/celestial-garden-of-divine-light.jpg
+imageAlt: A radiant woman in flowing white light stands between a golden menorah and a glowing tree, a dove in flight beside her, an open Bible below and a starry galaxy above.
+imagePosition: center 30%
 adaptedFrom: "Seven Lamps Before the Throne, Chapter 1"
 publishDate: 2026-10-25
 categories: [holy-spirit, holy-trinity, biblical-symbolism]
