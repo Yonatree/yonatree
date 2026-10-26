@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from './PageHero.astro';
+import { breadcrumbs } from '../lib/schema';
+
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  updated: string;
+}
+const { title, description, href, updated } = Astro.props;
+const crumbs = [{ name: 'Home', href: '/' }, { name: title, href }];
+---
+
+<BaseLayout title={title} description={description} jsonLd={[breadcrumbs(crumbs)]}>
+  <PageHero title={title} crumbs={crumbs} lede={`Last updated ${updated}`} />
+  <section class="section surface-parchment">
+    <div class="container"><div class="prose no-dropcap"><slot /></div></div>
+  </section>
+</BaseLayout>

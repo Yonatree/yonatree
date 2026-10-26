@@ -1,0 +1,46 @@
+---
+import BookCover from './BookCover.astro';
+import Icon from './Icon.astro';
+import type { Book } from '../lib/content';
+import { SERIES } from '../lib/site';
+
+interface Props {
+  book: Book;
+}
+const { book } = Astro.props;
+const { data } = book;
+---
+
+<article class="book-promo surface-dark">
+  <div class="book-promo__cover">
+    <BookCover src={data.cover} alt={data.coverAlt} size="sm" />
+  </div>
+  <div class="book-promo__body">
+    <p class="eyebrow">Read the book</p>
+    <h4 class="book-promo__title">{data.title}</h4>
+    {data.subtitle && <p class="book-promo__subtitle">{data.subtitle}</p>}
+    <p class="book-promo__by">by {data.authors.join(' & ')}</p>
+    <div class="btn-row">
+      <a class="btn btn--gold btn--sm" href={`/books/${book.id}/`}>Explore the Book <Icon name="arrow-right" size={14} /></a>
+      <a class="btn btn--outline btn--sm" href={SERIES.hub}><Icon name="play" size={14} /> Watch the Series</a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .book-promo {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+    padding: var(--s-6);
+    border-radius: var(--r-lg);
+    background: radial-gradient(30rem 18rem at 15% 50%, rgb(231 173 79 / 0.16), transparent 70%), var(--c-midnight);
+    overflow: hidden;
+  }
+  @media (min-width: 640px) { .book-promo { grid-template-columns: auto 1fr; padding: var(--s-6) var(--s-7); } }
+  .book-promo__cover { padding-inline: var(--s-4); }
+  .book-promo__body { display: grid; gap: var(--s-3); justify-items: start; }
+  .book-promo__title { font-size: var(--fs-xl); }
+  .book-promo__subtitle { font-family: var(--font-serif); font-style: italic; color: var(--c-on-dark-2); }
+  .book-promo__by { font-size: var(--fs-sm); color: var(--c-on-dark-3); margin-bottom: var(--s-2); }
+</style>

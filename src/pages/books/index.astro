@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import BookCover from '../../components/BookCover.astro';
+import BookTwoTeaser from '../../components/BookTwoTeaser.astro';
+import Icon from '../../components/Icon.astro';
+import { getBooks } from '../../lib/content';
+import { SERIES } from '../../lib/site';
+import { breadcrumbs } from '../../lib/schema';
+
+const books = (await getBooks()).filter((b) => b.data.status === 'available');
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Books', href: '/books/' }];
+---
+
+<BaseLayout title="Books" description="Books published by Yona Tree, including Seven Lamps Before the Throne by Jason Turner and Michael Ogden — available as an ebook, audiobook and free video series." searchType="Page" jsonLd={[breadcrumbs(crumbs)]}>
+  <PageHero eyebrow="The Collection" title="Books" lede="Each book is a study in itself — and a companion to the videos, articles and study hubs across Yona Tree." crumbs={crumbs} />
+
+  <section class="section surface-parchment" aria-label="Available books">
+    <div class="container">
+      {
+        books.map((book) => (
+          <article class="shelf">
+            <div class="shelf__cover"><BookCover src={book.data.cover} alt={book.data.coverAlt} size="md" eager /></div>
+            <div class="shelf__text stack" style="--stack: var(--s-4)">
+              <p class="tag tag--green">Biblical Theology</p>
+              <h2 class="shelf__title"><a href={`/books/${book.id}/`}>{book.data.title}</a></h2>
+              {book.data.subtitle && <p class="shelf__subtitle">{book.data.subtitle}</p>}
+              <p class="shelf__meta">
+                {book.data.authors.join(' & ')} · Published by {book.data.publisher}
+                {book.data.copyrightYear && <> · © {book.data.copyrightYear}</>}
+              </p>
+              <p class="lede">{book.data.description}</p>
+              <ul class="shelf__formats" role="list">
+                {book.data.purchaseLinks.map((l) => <li><Icon name={l.format === 'Audiobook' ? 'headphones' : 'book'} size={18} /> {l.format} · {l.retailer}</li>)}
+                <li><Icon name="play" size={18} /> 16-part video series · YouTube</li>
+              </ul>
+              <div class="btn-row">
+                <a class="btn btn--bronze" href={`/books/${book.id}/`}>Explore the Book <Icon name="arrow-right" size={18} /></a>
+                <a class="btn btn--outline" href={SERIES.hub}><Icon name="play" size={16} /> Watch the Series</a>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <BookTwoTeaser />
+</BaseLayout>
+
+<style>
+  .shelf { display: grid; gap: var(--s-7); align-items: center; }
+  @media (min-width: 900px) { .shelf { grid-template-columns: 0.8fr 1.2fr; } }
+  .shelf + .shelf { margin-top: var(--s-9); padding-top: var(--s-9); border-top: 1px solid var(--line); }
+  .shelf__cover { padding-block: var(--s-5); }
+  .shelf__title { font-size: var(--fs-2xl); }
+  .shelf__title a { color: inherit; text-decoration: none; }
+  .shelf__title a:hover { color: var(--c-bronze); }
+  .shelf__subtitle { font-family: var(--font-serif); font-style: italic; font-size: var(--fs-lg); color: var(--c-bronze); }
+  .shelf__meta { font-size: var(--fs-sm); color: var(--fg-2); }
+  .shelf__formats { display: grid; gap: var(--s-2); margin: 0; font-size: var(--fs-sm); }
+  .shelf__formats li { display: flex; align-items: center; gap: var(--s-2); }
+  .shelf__formats :global(svg) { color: var(--accent); }
+  .shelf .tag { justify-self: start; }
+</style>

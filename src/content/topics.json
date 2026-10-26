@@ -1,0 +1,138 @@
+{
+  "topics": [
+    {
+      "id": "holy-spirit",
+      "title": "Holy Spirit",
+      "icon": "dove",
+      "featured": true,
+      "order": 1,
+      "description": "The Breath of God, the Comforter, and the One through whom believers are born again — the least understood Person of the Holy Trinity."
+    },
+    {
+      "id": "seven-spirits-of-god",
+      "title": "Seven Spirits of God",
+      "icon": "menorah",
+      "featured": true,
+      "order": 2,
+      "description": "The seven lamps of fire burning before the throne in Revelation 4:5 and the sevenfold Spirit described in Isaiah 11:2."
+    },
+    {
+      "id": "lady-wisdom",
+      "title": "Lady Wisdom",
+      "icon": "scroll",
+      "featured": true,
+      "order": 3,
+      "description": "The Woman who calls herself Wisdom and Understanding in Proverbs — present with God before creation, the architect at His side."
+    },
+    {
+      "id": "tree-of-life",
+      "title": "Tree of Life",
+      "icon": "tree",
+      "featured": true,
+      "order": 4,
+      "description": "From the garden of Eden to the river of the water of life in Revelation 22: Scripture's oldest symbol of eternal life."
+    },
+    {
+      "id": "bride-of-christ",
+      "title": "Bride of Christ",
+      "icon": "crown",
+      "featured": true,
+      "order": 5,
+      "description": "The Church as the Bride made ready for the marriage supper of the Lamb, born of the Spirit and betrothed to the Son."
+    },
+    {
+      "id": "new-jerusalem",
+      "title": "New Jerusalem",
+      "icon": "city",
+      "featured": true,
+      "order": 6,
+      "description": "The holy city coming down from God out of heaven — its gates, foundations, river and throne, and the Jerusalem which is above."
+    },
+    {
+      "id": "holy-trinity",
+      "title": "Holy Trinity",
+      "icon": "trinity",
+      "featured": true,
+      "order": 7,
+      "description": "One God made manifest through three distinct Persons — the Father, the Son, and the Holy Spirit — equal in Godhood, distinct in office."
+    },
+    {
+      "id": "biblical-symbolism",
+      "title": "Biblical Symbolism",
+      "icon": "lamp",
+      "featured": true,
+      "order": 8,
+      "description": "The dove, the hen, the eagle, the menorah, the burning bush, the flaming sword — the images through which Scripture teaches."
+    },
+    {
+      "id": "book-of-revelation",
+      "title": "Book of Revelation",
+      "icon": "star",
+      "order": 9,
+      "description": "The throne, the seven lamps, the seven churches, the Bride, and the new heaven and new earth."
+    },
+    {
+      "id": "genesis",
+      "title": "Genesis",
+      "icon": "tree",
+      "order": 10,
+      "description": "Creation, the image of God, Eden, the first family, and the way of the Tree of Life guarded by a flaming sword."
+    },
+    {
+      "id": "proverbs",
+      "title": "Proverbs",
+      "icon": "scroll",
+      "order": 11,
+      "description": "Solomon's wisdom literature, and the voice of Wisdom crying in the streets and building her house of seven pillars."
+    },
+    {
+      "id": "apocrypha-historical-texts",
+      "title": "Apocrypha & Historical Texts",
+      "icon": "scroll",
+      "order": 12,
+      "description": "Texts such as the Wisdom of Solomon and 2 Esdras, printed in the 1611 King James Bible and read by Christians for centuries."
+    },
+    {
+      "id": "early-christianity",
+      "title": "Early Christianity",
+      "icon": "gate",
+      "order": 13,
+      "description": "The creeds, the Church Fathers, and early Christian witnesses on the Trinity and the Holy Spirit."
+    },
+    {
+      "id": "temple-menorah",
+      "title": "Temple & Menorah",
+      "icon": "menorah",
+      "order": 14,
+      "description": "The tabernacle lampstand shaped like an almond tree, kept burning continually before the Holy of Holies."
+    },
+    {
+      "id": "salvation",
+      "title": "Salvation",
+      "icon": "dove",
+      "order": 15,
+      "description": "Spiritual rebirth, the free gift of grace through faith in Jesus Christ, and the way back to the Father."
+    },
+    {
+      "id": "heaven-resurrection",
+      "title": "Heaven & Resurrection",
+      "icon": "gate",
+      "order": 16,
+      "description": "Where the righteous dwell — Abraham's bosom, the present heavenly paradise, the resurrection, and the new creation."
+    },
+    {
+      "id": "biblical-language-studies",
+      "title": "Biblical Language Studies",
+      "icon": "book",
+      "order": 17,
+      "description": "Hebrew, Greek, and Aramaic words behind our English Bibles: ruach, pneuma, paracletos, gennao, chokmah and more."
+    },
+    {
+      "id": "theology",
+      "title": "Theology",
+      "icon": "book",
+      "order": 18,
+      "description": "Doctrine examined carefully: ontology and economy, the creeds, and the relationship between Scripture and tradition."
+    }
+  ]
+}

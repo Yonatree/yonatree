@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SevenLamps from '../components/SevenLamps.astro';
+import Icon from '../components/Icon.astro';
+import { SERIES } from '../lib/site';
+---
+
+<BaseLayout title="Page not found" description="The page you were looking for could not be found." noindex>
+  <section class="nf section surface-dark">
+    <div class="container nf__inner">
+      <SevenLamps class="nf__lamps" />
+      <p class="eyebrow eyebrow--center">404</p>
+      <h1>This path is not on the map</h1>
+      <p class="lede">“Thy word is a lamp unto my feet, and a light unto my path.” — Psalm 119:105</p>
+      <form class="nf__search" action="/search/" method="get" role="search">
+        <label class="visually-hidden" for="nf-q">Search Yona Tree</label>
+        <input class="input" id="nf-q" name="q" type="search" placeholder="Search articles, videos and studies" />
+        <button class="btn btn--gold" type="submit"><Icon name="search" size={16} /> Search</button>
+      </form>
+      <div class="btn-row nf__links">
+        <a class="btn btn--outline" href="/">Home</a>
+        <a class="btn btn--outline" href={SERIES.hub}>Seven Lamps</a>
+        <a class="btn btn--outline" href="/articles/">Articles</a>
+        <a class="btn btn--outline" href="/studies/">Studies</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf { min-height: 70vh; display: grid; align-items: center; text-align: center; }
+  .nf__inner { display: grid; justify-items: center; gap: var(--s-4); max-width: 42rem; }
+  .nf :global(.nf__lamps) { width: min(16rem, 70%); }
+  .nf .lede { color: var(--c-on-dark-2); font-style: italic; }
+  .nf__search { display: flex; flex-wrap: wrap; gap: var(--s-2); width: min(100%, 32rem); margin-top: var(--s-3); }
+  .nf__search .input { flex: 1 1 14rem; }
+  .nf__links { justify-content: center; }
+</style>

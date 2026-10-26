@@ -1,0 +1,64 @@
+---
+import Image from './Img.astro';
+import { getEntries } from 'astro:content';
+import Icon from './Icon.astro';
+import type { Article } from '../lib/content';
+import { formatDate, readingTime } from '../lib/site';
+
+interface Props {
+  article: Article;
+  variant?: 'default' | 'feature' | 'compact';
+  headingLevel?: 'h2' | 'h3' | 'h4';
+  eager?: boolean;
+}
+const { article, variant = 'default', headingLevel = 'h3', eager = false } = Astro.props;
+const { data } = article;
+const topics = await getEntries(data.categories.slice(0, variant === 'compact' ? 1 : 2));
+const minutes = readingTime(article.body);
+const href = `/articles/${article.id}/`;
+const Heading = headingLevel;
+---
+
+<article class:list={['card', 'article-card', `article-card--${variant}`]}>
+  {
+    variant !== 'compact' && (
+      <div class="card__media">
+        <Image
+          src={data.image}
+          alt=""
+          widths={variant === 'feature' ? [480, 800, 1200] : [400, 640, 900]}
+          sizes={variant === 'feature' ? '(min-width: 900px) 60vw, 100vw' : '(min-width: 1100px) 360px, (min-width: 700px) 45vw, 100vw'}
+          loading={eager ? 'eager' : 'lazy'}
+          style={`object-position: ${data.imagePosition}`}
+        />
+      </div>
+    )
+  }
+  <div class="card__body">
+    <ul class="tag-list" role="list" aria-label="Topics">
+      {topics.map((t) => <li><span class="tag tag--green">{t.data.title}</span></li>)}
+    </ul>
+    <Heading class="card__title">
+      <a class="card__link" href={href}>{data.title}</a>
+    </Heading>
+    {variant !== 'compact' && <p class="card__text">{data.excerpt}</p>}
+    <p class="card__meta">
+      <span><Icon name="clock" size={14} /> {minutes} min read</span>
+      <time datetime={data.publishDate.toISOString()}>{formatDate(data.publishDate)}</time>
+    </p>
+  </div>
+</article>
+
+<style>
+  .card__meta span, .card__meta time { display: inline-flex; align-items: center; gap: 0.35em; }
+  .article-card--feature { display: grid; }
+  @media (min-width: 900px) {
+    .article-card--feature { grid-template-columns: 1.35fr 1fr; }
+    .article-card--feature .card__media { aspect-ratio: auto; min-height: 100%; }
+    .article-card--feature .card__body { padding: var(--s-7) var(--s-6); align-content: center; }
+    .article-card--feature .card__title { font-size: var(--fs-xl); }
+    .article-card--feature .card__text { font-size: var(--fs-base); }
+  }
+  .article-card--compact .card__body { padding: var(--s-4) var(--s-5); }
+  .article-card--compact .card__title { font-size: 1.05rem; }
+</style>

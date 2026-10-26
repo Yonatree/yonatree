@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Icon from '../components/Icon.astro';
+import { settings, YOUTUBE_SUBSCRIBE, SERIES } from '../lib/site';
+import { breadcrumbs } from '../lib/schema';
+
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Partner With Yona Tree', href: '/partner/' }];
+const areas = [
+  { icon: 'scroll', title: 'Research', text: 'Time with Scripture, the original languages and historical sources behind every study.' },
+  { icon: 'book', title: 'Writing & publishing', text: 'Editing, design and publication of future books, beginning with Book Two.' },
+  { icon: 'play', title: 'Video production', text: 'Narration, artwork and editing for audiobook episodes and new series.' },
+  { icon: 'tree', title: 'This website', text: 'Hosting, development and new study hubs, articles and tools.' },
+];
+const ways = [
+  { icon: 'heart', title: 'Pray', text: 'Pray for wisdom, accuracy and fruitfulness in this work.' },
+  { icon: 'share', title: 'Share a study', text: 'Send an article or episode to someone who would value it.' },
+  { icon: 'youtube', title: 'Subscribe', text: 'Subscribing on YouTube helps the series reach new viewers.', href: YOUTUBE_SUBSCRIBE },
+  { icon: 'book', title: 'Read & review', text: 'Read the book and leave an honest review with the retailer.', href: '/books/seven-lamps-before-the-throne/' },
+];
+---
+
+<BaseLayout title="Partner With Yona Tree" description="How you can support Yona Tree's research, writing, video production and publishing — through prayer, sharing, and partnership." searchType="Page" jsonLd={[breadcrumbs(crumbs)]}>
+  <PageHero eyebrow="Support the ministry" title="Partner With Yona Tree" lede="Yona Tree's books, studies and videos take research, writing and production. If this work has helped you, here is how you can help it continue." crumbs={crumbs} />
+
+  <section class="section surface-parchment" aria-labelledby="enables-title">
+    <div class="container">
+      <SectionHeading eyebrow="Transparency" title="What support enables" id="enables-title" />
+      <ul class="grid grid--4" role="list">
+        {areas.map((a) => (
+          <li class="pcard">
+            <span class="pcard__icon"><Icon name={a.icon} size={24} /></span>
+            <h3>{a.title}</h3>
+            <p>{a.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section surface-white" aria-labelledby="ways-title">
+    <div class="container">
+      <SectionHeading eyebrow="Today" title="Ways to help right now" id="ways-title" />
+      <ul class="grid grid--4" role="list">
+        {ways.map((w) => (
+          <li class="pcard pcard--light">
+            <span class="pcard__icon"><Icon name={w.icon} size={24} /></span>
+            <h3>{w.href ? <a href={w.href} rel={w.href.startsWith('http') ? 'noopener' : undefined} target={w.href.startsWith('http') ? '_blank' : undefined}>{w.title}</a> : w.title}</h3>
+            <p>{w.text}</p>
+          </li>
+        ))}
+      </ul>
+      <div class="partner-note">
+        {
+          settings.acceptsSupport ? (
+            <p>Financial gifts can be arranged through our <a href="/contact/">contact page</a>.</p>
+          ) : (
+            <p>
+              Yona Tree does not currently accept online gifts through this website. If you would like to discuss partnering with the
+              ministry, please <a href="/contact/">get in touch</a>.
+            </p>
+          )
+        }
+        <div class="btn-row">
+          <a class="btn btn--bronze" href="/contact/"><Icon name="mail" size={16} /> Contact Yona Tree</a>
+          <a class="btn btn--outline" href={SERIES.hub}><Icon name="play" size={16} /> Watch the Series</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pcard { display: grid; gap: var(--s-3); align-content: start; padding: var(--s-6) var(--s-5); border-radius: var(--r-md); border: 1px solid var(--line); background: var(--c-white); }
+  .pcard--light { background: var(--c-parchment); }
+  .pcard__icon { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 50%; color: var(--c-olive); border: 1px solid rgb(146 102 37 / 0.3); }
+  .pcard h3 { font-size: 1.2rem; }
+  .pcard h3 a { color: inherit; }
+  .pcard p { font-family: var(--font-serif); font-size: var(--fs-sm); color: var(--fg-2); }
+  .partner-note { display: grid; gap: var(--s-4); justify-items: start; margin-top: var(--s-7); padding: var(--s-5) var(--s-6); border-radius: var(--r-md); border-left: 3px solid var(--c-olive); background: rgb(68 80 37 / 0.06); font-family: var(--font-serif); }
+</style>

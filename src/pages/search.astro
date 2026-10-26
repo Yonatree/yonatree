@@ -1,0 +1,157 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+
+const suggestions = ['Tree of Life', 'Wisdom', 'Holy Spirit', 'Revelation 22', 'New Jerusalem', 'Seven Lamps'];
+const types = [
+  { value: '', label: 'Everything' },
+  { value: 'Article', label: 'Articles' },
+  { value: 'Video', label: 'Videos' },
+  { value: 'Study', label: 'Studies' },
+  { value: 'Book', label: 'Books' },
+  { value: 'Page', label: 'Pages' },
+];
+---
+
+<BaseLayout title="Search" description="Search Yona Tree articles, videos, studies and books." noindex>
+  <PageHero eyebrow="Search" title="Search Yona Tree" lede="Search every article, episode, study and book — by subject, symbol or Scripture reference.">
+    <form class="sform" role="search" data-search-form>
+      <label class="visually-hidden" for="q">Search terms</label>
+      <div class="sform__box">
+        <Icon name="search" size={20} />
+        <input class="input" id="q" name="q" type="search" autocomplete="off" placeholder="Search for “Tree of Life” or “Revelation 22”" data-search-input />
+        <button class="btn btn--gold" type="submit">Search</button>
+      </div>
+      <fieldset class="sform__types">
+        <legend class="visually-hidden">Show results from</legend>
+        {
+          types.map((t, i) => (
+            <label class="sform__type">
+              <input type="radio" name="type" value={t.value} checked={i === 0} data-search-type />
+              <span>{t.label}</span>
+            </label>
+          ))
+        }
+      </fieldset>
+    </form>
+  </PageHero>
+
+  <section class="section surface-parchment">
+    <div class="container sres" data-search-root>
+      <div class="sres__suggest" data-search-suggest>
+        <p class="sres__label">Try searching for</p>
+        <ul class="tag-list" role="list">
+          {suggestions.map((s) => <li><a class="tag" href={`/search/?q=${encodeURIComponent(s)}`}>{s}</a></li>)}
+        </ul>
+      </div>
+      <p class="sres__status" role="status" aria-live="polite" data-search-status></p>
+      <div data-search-results></div>
+      <noscript><p>Search requires JavaScript. You can also browse <a href="/articles/">articles</a>, <a href="/videos/">videos</a> and <a href="/studies/">studies</a>, or use the <a href="/articles/scripture-index/">Scripture index</a>.</p></noscript>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .sform { display: grid; gap: var(--s-4); width: min(100%, 44rem); margin-top: var(--s-3); }
+  .sform__box { position: relative; display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .sform__box > :global(svg) { position: absolute; left: 1rem; top: 24px; transform: translateY(-50%); color: var(--c-on-dark-3); pointer-events: none; }
+  .sform__box .input { flex: 1 1 18rem; padding-left: 2.9rem; font-size: 1.05rem; }
+  .sform__types { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: 0; padding: 0; border: 0; }
+  .sform__type { position: relative; }
+  .sform__type input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .sform__type span { display: inline-flex; align-items: center; min-height: 36px; padding: 0.3rem 0.9rem; border-radius: var(--r-pill); border: 1px solid rgb(231 173 79 / 0.3); font-size: var(--fs-sm); color: var(--c-on-dark-2); }
+  .sform__type input:checked + span { background: var(--c-gold); border-color: var(--c-gold); color: var(--c-midnight); font-weight: 600; }
+  .sform__type input:focus-visible + span { outline: 3px solid var(--c-gold-300); outline-offset: 2px; }
+  .sres__label { margin-bottom: var(--s-3); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+  .sres__suggest { margin-bottom: var(--s-6); }
+  .sres__status { margin-bottom: var(--s-5); color: var(--fg-2); }
+  .sres :global(.sgroup + .sgroup) { margin-top: var(--s-8); }
+  .sres :global(.sgroup__title) { margin-bottom: var(--s-4); font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+  .sres :global(.sgroup ol) { display: grid; gap: var(--s-3); margin: 0; padding: 0; list-style: none; }
+  .sres :global(.sitem a) { display: grid; gap: var(--s-2); padding: var(--s-5); border-radius: var(--r-md); border: 1px solid var(--line); background: var(--c-white); color: var(--fg); text-decoration: none; transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out); }
+  .sres :global(.sitem a:hover) { border-color: var(--accent); box-shadow: var(--shadow-card); }
+  .sres :global(.sitem__title) { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
+  .sres :global(.sitem__excerpt) { font-family: var(--font-serif); font-size: var(--fs-sm); line-height: 1.6; color: var(--fg-2); }
+  .sres :global(.sitem__excerpt mark) { background: rgb(241 199 91 / 0.45); color: var(--fg); padding: 0 2px; border-radius: 2px; }
+  .sres :global(.sitem__url) { font-size: var(--fs-xs); color: var(--c-water-deep); }
+</style>
+
+<script>
+  type Result = { url: string; meta: { title?: string; type?: string }; excerpt: string; filters?: { type?: string[] } };
+  const form = document.querySelector<HTMLFormElement>('[data-search-form]')!;
+  const input = form.querySelector<HTMLInputElement>('[data-search-input]')!;
+  const status = document.querySelector<HTMLElement>('[data-search-status]')!;
+  const out = document.querySelector<HTMLElement>('[data-search-results]')!;
+  const suggest = document.querySelector<HTMLElement>('[data-search-suggest]')!;
+  const groupsOrder = ['Article', 'Video', 'Study', 'Book', 'Page'];
+  const groupLabel: Record<string, string> = { Article: 'Articles', Video: 'Videos', Study: 'Study pages', Book: 'Books', Page: 'Pages' };
+  let pagefind: any;
+
+  const params = new URLSearchParams(location.search);
+  input.value = params.get('q') ?? '';
+  const initialType = params.get('type') ?? '';
+  form.querySelectorAll<HTMLInputElement>('[data-search-type]').forEach((r) => (r.checked = r.value === initialType));
+
+  async function load() {
+    if (pagefind) return pagefind;
+    try {
+      pagefind = await import(/* @vite-ignore */ `${location.origin}/pagefind/pagefind.js`);
+      await pagefind.options({ excerptLength: 28 });
+      return pagefind;
+    } catch {
+      return null;
+    }
+  }
+
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+  async function run() {
+    const q = input.value.trim();
+    const type = form.querySelector<HTMLInputElement>('[data-search-type]:checked')?.value ?? '';
+    const url = new URL(location.href);
+    q ? url.searchParams.set('q', q) : url.searchParams.delete('q');
+    type ? url.searchParams.set('type', type) : url.searchParams.delete('type');
+    history.replaceState(null, '', url);
+    suggest.hidden = Boolean(q);
+    if (!q) { out.innerHTML = ''; status.textContent = ''; return; }
+
+    status.textContent = 'Searching…';
+    const pf = await load();
+    if (!pf) {
+      status.textContent = 'The search index is created when the site is built. Run “npm run build” and “npm run preview” to try search locally.';
+      return;
+    }
+    const search = await pf.search(q, type ? { filters: { type } } : {});
+    const data: Result[] = await Promise.all(search.results.slice(0, 40).map((r: any) => r.data()));
+    if (!data.length) {
+      status.textContent = `No results for “${q}”. Try a broader word, or a Scripture reference such as “John 3”.`;
+      out.innerHTML = '';
+      return;
+    }
+    const groups = new Map<string, Result[]>();
+    for (const r of data) {
+      const t = r.meta.type ?? r.filters?.type?.[0] ?? 'Page';
+      groups.set(t, [...(groups.get(t) ?? []), r]);
+    }
+    status.textContent = `${search.results.length} ${search.results.length === 1 ? 'result' : 'results'} for “${q}”`;
+    out.innerHTML = groupsOrder
+      .filter((g) => groups.has(g))
+      .map(
+        (g) => `<section class="sgroup" aria-label="${groupLabel[g]}"><h2 class="sgroup__title">${groupLabel[g]} · ${groups.get(g)!.length}</h2><ol>${groups
+          .get(g)!
+          .map(
+            (r) => `<li class="sitem"><a href="${esc(r.url)}"><span class="sitem__title">${esc((r.meta.title ?? r.url).replace(/ \| Yona Tree$/, ''))}</span><span class="sitem__excerpt">${r.excerpt}</span><span class="sitem__url">${esc(r.url)}</span></a></li>`,
+          )
+          .join('')}</ol></section>`,
+      )
+      .join('');
+  }
+
+  let timer: number | undefined;
+  form.addEventListener('submit', (e) => { e.preventDefault(); run(); });
+  input.addEventListener('input', () => { clearTimeout(timer); timer = window.setTimeout(run, 250); });
+  form.querySelectorAll('[data-search-type]').forEach((r) => r.addEventListener('change', run));
+  if (input.value) run();
+  else input.focus();
+</script>

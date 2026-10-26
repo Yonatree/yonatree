@@ -1,0 +1,112 @@
+---
+// An illustration of Revelation 21–22, not an architectural claim.
+// Explicit details, borrowed details (Ezekiel 48) and speculation are labelled.
+const side = { n: ['Reuben', 'Judah', 'Levi'], e: ['Joseph', 'Benjamin', 'Dan'], s: ['Simeon', 'Issachar', 'Zebulun'], w: ['Gad', 'Asher', 'Naphtali'] };
+const at = [0.25, 0.5, 0.75];
+const L = 80, R = 440, T = 80, B = 440, W = R - L;
+const stones = [
+  ['Jasper', '#7fb7a0'], ['Sapphire', '#2e5eaa'], ['Chalcedony', '#9fb4c7'], ['Emerald', '#2e8b57'],
+  ['Sardonyx', '#b5523b'], ['Sardius', '#b22222'], ['Chrysolite', '#c8c24a'], ['Beryl', '#6fb7b0'],
+  ['Topaz', '#e0a93b'], ['Chrysoprasus', '#6fbf73'], ['Jacinth', '#c8572e'], ['Amethyst', '#8a5ac2'],
+];
+---
+
+<section class="nj surface-dark" aria-labelledby="nj-title">
+  <div class="container">
+    <p class="eyebrow">An illustration of Revelation 21–22</p>
+    <h2 id="nj-title" class="nj__title">The holy city, foursquare</h2>
+    <div class="nj__grid">
+      <figure class="nj__figure">
+        <svg viewBox="0 0 520 520" role="img" aria-labelledby="nj-svg-title nj-svg-desc">
+          <title id="nj-svg-title">Plan of New Jerusalem</title>
+          <desc id="nj-svg-desc">A square city with three pearl gates on each side, the throne of God and of the Lamb at the center, and the river of the water of life flowing from the throne with the Tree of Life on either bank.</desc>
+          <defs>
+            <radialGradient id="nj-glow"><stop offset="0" stop-color="#fff3cf" stop-opacity=".9" /><stop offset=".5" stop-color="#f1c75b" stop-opacity=".35" /><stop offset="1" stop-color="#f1c75b" stop-opacity="0" /></radialGradient>
+            <linearGradient id="nj-river" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe5fa" /><stop offset="1" stop-color="#63b9e8" /></linearGradient>
+            <pattern id="nj-gold" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#2a2210" /><path d="M0 8L8 0" stroke="#e7ad4f" stroke-opacity=".12" /></pattern>
+          </defs>
+          <rect x={L} y={T} width={W} height={W} fill="url(#nj-gold)" stroke="#e7ad4f" stroke-width="4" />
+          <rect x={L + 10} y={T + 10} width={W - 20} height={W - 20} fill="none" stroke="#e7ad4f" stroke-opacity=".35" />
+          <circle cx="260" cy="230" r="120" fill="url(#nj-glow)" />
+          <path d="M260 238 C 250 290, 272 330, 258 380 S 262 420, 260 440" fill="none" stroke="url(#nj-river)" stroke-width="10" stroke-linecap="round" />
+          {[300, 340, 380, 415].map((y) => (
+            <>
+              <circle cx="232" cy={y} r="8" fill="#5f8f3e" stroke="#c3d19a" stroke-width="1" />
+              <circle cx="288" cy={y} r="8" fill="#5f8f3e" stroke="#c3d19a" stroke-width="1" />
+            </>
+          ))}
+          <rect x="236" y="206" width="48" height="34" rx="6" fill="#f1c75b" stroke="#fff3cf" />
+          <text x="260" y="228" text-anchor="middle" font-size="11" font-weight="700" fill="#07182e" font-family="Inter, sans-serif">THRONE</text>
+          {side.n.map((name, i) => (<><circle cx={L + W * at[i]} cy={T} r="10" fill="#f4efe6" stroke="#e7ad4f" stroke-width="2" /><text x={L + W * at[i]} y={T - 18} text-anchor="middle" class="nj__gate">{name}</text></>))}
+          {side.s.map((name, i) => (<><circle cx={L + W * at[i]} cy={B} r="10" fill="#f4efe6" stroke="#e7ad4f" stroke-width="2" /><text x={L + W * at[i]} y={B + 30} text-anchor="middle" class="nj__gate">{name}</text></>))}
+          {side.e.map((name, i) => (<><circle cx={R} cy={T + W * at[i]} r="10" fill="#f4efe6" stroke="#e7ad4f" stroke-width="2" /><text x={R + 18} y={T + W * at[i] + 4} class="nj__gate">{name}</text></>))}
+          {side.w.map((name, i) => (<><circle cx={L} cy={T + W * at[i]} r="10" fill="#f4efe6" stroke="#e7ad4f" stroke-width="2" /><text x={L - 18} y={T + W * at[i] + 4} text-anchor="end" class="nj__gate">{name}</text></>))}
+          <text x="260" y="30" text-anchor="middle" class="nj__dir">NORTH</text>
+          <text x="260" y="506" text-anchor="middle" class="nj__dir">SOUTH</text>
+        </svg>
+        <figcaption>
+          Pearl gates with the names of the twelve tribes (Revelation 21:12–13, 21). Revelation does not give the order of the names;
+          the arrangement shown follows Ezekiel's city (Ezekiel 48:31–34). The river flows "out of the throne of God and of the
+          Lamb," with the Tree of Life on either side (Revelation 22:1–2).
+        </figcaption>
+      </figure>
+
+      <div class="nj__facts">
+        <section class="nj__card nj__card--scripture" aria-labelledby="nj-measures">
+          <p class="nj__label">Explicit Scripture</p>
+          <h3 id="nj-measures">Measurements</h3>
+          <dl>
+            <div><dt>Length, breadth, height</dt><dd>12,000 furlongs each — about 1,400 miles <span>(21:16)</span></dd></div>
+            <div><dt>Wall</dt><dd>144 cubits — about 216 feet <span>(21:17)</span></dd></div>
+            <div><dt>Gates</dt><dd>Twelve, each one pearl <span>(21:21)</span></dd></div>
+            <div><dt>Street</dt><dd>Pure gold, as transparent glass <span>(21:21)</span></dd></div>
+          </dl>
+        </section>
+        <section class="nj__card nj__card--scripture" aria-labelledby="nj-stones">
+          <p class="nj__label">Explicit Scripture · colors approximate</p>
+          <h3 id="nj-stones">Twelve foundations</h3>
+          <ol class="nj__stones" role="list">
+            {stones.map(([n, c], i) => <li><span class="nj__swatch" style={`background:${c}`} aria-hidden="true"></span><span class="nj__num">{i + 1}</span>{n}</li>)}
+          </ol>
+          <p class="nj__small">Each foundation bears the name of one of the twelve apostles of the Lamb (21:14, 19–20).</p>
+        </section>
+        <section class="nj__card nj__card--speculation" aria-labelledby="nj-shape">
+          <p class="nj__label">Speculation</p>
+          <h3 id="nj-shape">Cube or pyramid?</h3>
+          <div class="nj__shapes" aria-hidden="true">
+            <svg viewBox="0 0 80 70"><path d="M15 25 L40 12 L65 25 L65 55 L40 68 L15 55 Z M15 25 L40 38 L65 25 M40 38 V68" fill="none" stroke="#f0a7af" stroke-width="1.5" /></svg>
+            <svg viewBox="0 0 80 70"><path d="M40 6 L70 58 L40 66 L10 58 Z M40 6 L40 66" fill="none" stroke="#f0a7af" stroke-width="1.5" /></svg>
+          </div>
+          <p class="nj__small">Scripture gives equal length, breadth and height but no drawing. Some picture a cube, like the Holy of Holies (1 Kings 6:20); others a pyramid. Hold such questions loosely.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .nj { padding-block: var(--s-8); background: radial-gradient(40rem 26rem at 30% 40%, rgb(241 199 91 / 0.12), transparent 70%), var(--c-midnight); }
+  .nj__title { margin-top: var(--s-3); font-size: var(--fs-2xl); }
+  .nj__grid { display: grid; gap: var(--s-6); margin-top: var(--s-6); }
+  @media (min-width: 1000px) { .nj__grid { grid-template-columns: 1.15fr 1fr; align-items: start; } }
+  .nj__figure { margin: 0; }
+  .nj__figure svg { width: 100%; height: auto; }
+  .nj__gate { font-family: var(--font-serif); font-size: 13px; fill: #f7f1e3; }
+  .nj__dir { font-family: var(--font-sans); font-size: 10px; letter-spacing: 3px; fill: #a9b3c4; }
+  .nj__figure figcaption { margin-top: var(--s-3); font-size: var(--fs-xs); line-height: 1.6; color: var(--c-on-dark-3); }
+  .nj__facts { display: grid; gap: var(--s-4); }
+  .nj__card { --tier: var(--c-water); padding: var(--s-5); border-radius: var(--r-md); border: 1px solid color-mix(in srgb, var(--tier) 35%, transparent); background: color-mix(in srgb, var(--tier) 6%, transparent); }
+  .nj__card--speculation { --tier: #f0a7af; border-style: dashed; }
+  .nj__label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--tier); }
+  .nj__card h3 { margin: var(--s-2) 0 var(--s-3); font-size: 1.2rem; }
+  .nj__card dl { display: grid; gap: var(--s-2); margin: 0; font-size: var(--fs-sm); }
+  .nj__card dt { font-weight: 600; color: var(--c-gold-300); }
+  .nj__card dd { margin: 0; color: var(--c-on-dark-2); }
+  .nj__card dd span, .nj__small { color: var(--c-on-dark-3); font-size: var(--fs-xs); }
+  .nj__stones { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-2) var(--s-4); margin: 0 0 var(--s-3); font-size: var(--fs-sm); }
+  .nj__stones li { display: flex; align-items: center; gap: var(--s-2); }
+  .nj__swatch { width: 14px; height: 14px; border-radius: 3px; transform: rotate(45deg); box-shadow: 0 0 0 1px rgb(255 255 255 / 0.3); flex: none; }
+  .nj__num { width: 1.4rem; font-size: var(--fs-xs); color: var(--c-on-dark-3); font-variant-numeric: tabular-nums; }
+  .nj__shapes { display: flex; gap: var(--s-4); margin-bottom: var(--s-3); }
+  .nj__shapes svg { width: 72px; height: auto; }
+</style>

@@ -1,0 +1,75 @@
+---
+// The signature ornament: seven lamps burning on a gilded line (Revelation 4:5).
+// Flames breathe very slowly; motion is removed for prefers-reduced-motion.
+interface Props {
+  class?: string;
+  animated?: boolean;
+  label?: string;
+  [attr: string]: unknown;
+}
+const { class: className, animated = true, label, ...rest } = Astro.props;
+const xs = [40, 73, 106, 140, 174, 207, 240];
+const uid = `sl-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<svg
+  class:list={['seven-lamps', { 'seven-lamps--animated': animated }, className]}
+  viewBox="0 0 280 48"
+  xmlns="http://www.w3.org/2000/svg"
+  {...rest}
+  {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': 'true', focusable: 'false' })}
+>
+  <defs>
+    <linearGradient id={`${uid}-line`} x1="0" x2="1">
+      <stop offset="0" stop-color="#e7ad4f" stop-opacity="0" />
+      <stop offset=".2" stop-color="#e7ad4f" stop-opacity=".8" />
+      <stop offset=".8" stop-color="#e7ad4f" stop-opacity=".8" />
+      <stop offset="1" stop-color="#e7ad4f" stop-opacity="0" />
+    </linearGradient>
+    <radialGradient id={`${uid}-glow`}>
+      <stop offset="0" stop-color="#f9c96a" stop-opacity=".55" />
+      <stop offset="1" stop-color="#f9993e" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id={`${uid}-flame`} x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#f9993e" />
+      <stop offset=".55" stop-color="#f1c75b" />
+      <stop offset="1" stop-color="#fff3cf" />
+    </linearGradient>
+  </defs>
+  <path d="M0 40.5h280" stroke={`url(#${uid}-line)`} stroke-width="1" />
+  {
+    xs.map((x, i) => {
+      const tall = i === 3 ? 4 : 0;
+      return (
+        <g style={`--i:${i}`}>
+          <circle class="seven-lamps__glow" cx={x} cy={22 - tall} r={12 + tall} fill={`url(#${uid}-glow)`} />
+          <path
+            class="seven-lamps__flame"
+            d={`M${x} ${12 - tall}c3.2 4.2 4.6 7 4.6 9.6a4.6 4.6 0 0 1-9.2 0c0-2.6 1.4-5.4 4.6-9.6Z`}
+            fill={`url(#${uid}-flame)`}
+            style={`transform-origin:${x}px ${26 - tall}px`}
+          />
+          <path d={`M${x - 6} 31.5h12l-1.6 3.4a2 2 0 0 1-1.8 1.1h-5.2a2 2 0 0 1-1.8-1.1Z`} fill="#926625" />
+          <path d={`M${x} 36v4.5`} stroke="#926625" stroke-width="1.4" />
+        </g>
+      );
+    })
+  }
+</svg>
+
+<style>
+  .seven-lamps { display: block; width: 100%; height: auto; overflow: visible; }
+  @media (prefers-reduced-motion: no-preference) {
+    .seven-lamps--animated .seven-lamps__flame { animation: flame 4.8s ease-in-out infinite; animation-delay: calc(var(--i) * -0.7s); }
+    .seven-lamps--animated .seven-lamps__glow { animation: glow 4.8s ease-in-out infinite; animation-delay: calc(var(--i) * -0.7s); }
+  }
+  @keyframes flame {
+    0%, 100% { transform: scale(1, 1); }
+    45% { transform: scale(0.94, 1.06); }
+    70% { transform: scale(1.03, 0.97); }
+  }
+  @keyframes glow {
+    0%, 100% { opacity: 0.85; }
+    50% { opacity: 1; }
+  }
+</style>

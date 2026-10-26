@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import { getTopics, getByTopic } from '../../lib/content';
+import { breadcrumbs } from '../../lib/schema';
+
+const topics = await getTopics();
+const rows = await Promise.all(topics.map(async (t) => ({ t, c: await getByTopic(t.id) })));
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Topics', href: '/topics/' }];
+---
+
+<BaseLayout title="Explore by Topic" description="Browse Yona Tree articles, studies and videos by topic — from the Holy Spirit and Lady Wisdom to the Tree of Life, New Jerusalem and biblical language studies." jsonLd={[breadcrumbs(crumbs)]}>
+  <PageHero eyebrow="Explore by Topic" title="Topics" lede="Every article, study and episode is tagged by topic. Choose a theme to see everything Yona Tree has published on it." crumbs={crumbs} />
+  <section class="section surface-parchment">
+    <div class="container">
+      <ul class="topics" role="list">
+        {
+          rows.map(({ t, c }) => (
+            <li>
+              <a class="topic" href={`/topics/${t.id}/`}>
+                <span class="topic__icon"><Icon name={t.data.icon} size={24} /></span>
+                <span class="topic__body">
+                  <span class="topic__title">{t.data.title}</span>
+                  <span class="topic__desc">{t.data.description}</span>
+                  <span class="topic__counts">{c.studies.length} studies · {c.articles.length} articles · {c.videos.length} videos</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .topics { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); gap: var(--s-4); margin: 0; }
+  .topic { display: flex; gap: var(--s-4); height: 100%; padding: var(--s-5); border-radius: var(--r-md); border: 1px solid var(--line); background: var(--c-white); color: var(--fg); text-decoration: none; transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out); }
+  .topic:hover { border-color: var(--accent); box-shadow: var(--shadow-card); }
+  .topic__icon { display: grid; place-items: center; flex: none; width: 48px; height: 48px; border-radius: 50%; color: var(--c-olive); border: 1px solid rgb(146 102 37 / 0.3); }
+  .topic__body { display: grid; gap: var(--s-1); }
+  .topic__title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
+  .topic__desc { font-family: var(--font-serif); font-size: var(--fs-sm); color: var(--fg-2); line-height: 1.55; }
+  .topic__counts { margin-top: var(--s-2); font-size: var(--fs-xs); color: var(--accent); font-weight: 600; }
+</style>

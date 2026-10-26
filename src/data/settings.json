@@ -1,0 +1,28 @@
+{
+  "siteName": "Yona Tree",
+  "siteUrl": "https://yonatree.com",
+  "tagline": "Exploring the Mysteries of God Through His Inspired Word",
+  "secondaryTagline": "Biblical Studies • Books • Articles • Audiobooks • Video",
+  "description": "Explore Yona Tree biblical studies, articles, videos, books, and the Seven Lamps Before the Throne audiobook series examining Scripture from Genesis to Revelation.",
+  "mission": "Yona Tree exists to explore the depth, symbolism, history, and interconnected themes of Scripture while encouraging believers and seekers alike to examine the Word of God with curiosity, reverence, and faith.",
+  "location": "Pensacola, Florida",
+  "contactEmail": "",
+  "youtube": {
+    "channelUrl": "https://www.youtube.com/channel/UCdSk_9FNDvWgD2-LG8cGKOQ",
+    "handle": "@YonaTree",
+    "seriesPlaylistId": "PLOB42_dqbLOU",
+    "worshipPlaylistId": "PLKN1uDvSdlTU"
+  },
+  "social": [
+    { "name": "YouTube", "icon": "youtube", "url": "https://www.youtube.com/channel/UCdSk_9FNDvWgD2-LG8cGKOQ" },
+    { "name": "Facebook", "icon": "facebook", "url": "https://www.facebook.com/61581719172731/" },
+    { "name": "Instagram", "icon": "instagram", "url": "https://www.instagram.com/theyonatree/" },
+    { "name": "TikTok", "icon": "tiktok", "url": "https://www.tiktok.com/@yonatree7" }
+  ],
+  "forms": {
+    "provider": "netlify",
+    "newsletterAction": "/thank-you/?form=newsletter",
+    "contactAction": "/thank-you/?form=contact"
+  },
+  "acceptsSupport": false
+}

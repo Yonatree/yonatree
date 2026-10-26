@@ -1,0 +1,94 @@
+---
+// Book Two: mystery, not marketing. No title, date or details until supplied.
+import NewsletterForm from './NewsletterForm.astro';
+
+interface Props {
+  id?: string;
+  /** Link to an existing newsletter form on the page instead of rendering a second one. */
+  notifyHref?: string;
+}
+const { id = 'book-two', notifyHref } = Astro.props;
+---
+
+<section class="book-two section surface-dark" aria-labelledby={`${id}-title`} id={id}>
+  <div class="container book-two__inner">
+    <div class="book-two__veil" aria-hidden="true">
+      <div class="book-two__book">
+        <span class="book-two__mark">II</span>
+      </div>
+    </div>
+    <div class="book-two__text">
+      <p class="eyebrow">Book Two</p>
+      <h2 id={`${id}-title`}>Coming Soon</h2>
+      <p class="lede">
+        <em>Seven Lamps Before the Throne</em> may have reached its conclusion, but the exploration has only begun. A second
+        book is being written. Be the first to hear when it is ready.
+      </p>
+      {
+        notifyHref ? (
+          <a class="btn btn--gold" href={notifyHref}>Notify Me</a>
+        ) : (
+          <NewsletterForm id={`${id}-notify`} buttonLabel="Notify Me" source="book-two" />
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .book-two {
+    overflow: hidden;
+    background:
+      radial-gradient(36rem 22rem at 25% 50%, rgb(120 28 39 / 0.35), transparent 70%),
+      radial-gradient(30rem 20rem at 80% 20%, rgb(18 58 109 / 0.6), transparent 70%),
+      var(--c-midnight);
+  }
+  .book-two__inner { display: grid; gap: var(--s-8); align-items: center; }
+  @media (min-width: 860px) { .book-two__inner { grid-template-columns: 0.8fr 1.2fr; } }
+  .book-two__text { display: grid; gap: var(--s-4); justify-items: start; }
+  .book-two__veil { display: grid; place-items: center; perspective: 1400px; }
+  .book-two__book {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: min(230px, 60vw);
+    aspect-ratio: 2 / 3.2;
+    border-radius: 4px 10px 10px 4px;
+    background:
+      radial-gradient(circle at 50% 38%, rgb(241 199 91 / 0.3), transparent 45%),
+      linear-gradient(160deg, #1b0f14, #3a1219 55%, #12080b);
+    box-shadow: 0 0 0 1px rgb(231 173 79 / 0.35), 10px 16px 40px -10px rgb(0 0 0 / 0.8), 0 0 80px -20px rgb(120 28 39 / 0.8);
+    transform: rotateY(-16deg);
+  }
+  .book-two__book::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgb(231 173 79 / 0.45);
+    border-radius: 2px 6px 6px 2px;
+  }
+  .book-two__book::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.08) 45%, transparent 60%);
+    border-radius: inherit;
+  }
+  .book-two__mark {
+    font-family: var(--font-display);
+    font-size: 4.5rem;
+    font-weight: 500;
+    color: transparent;
+    background: linear-gradient(180deg, #f7dfa4, #b07a2c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    opacity: 0.9;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .book-two__book { animation: veil 9s ease-in-out infinite; }
+    @keyframes veil {
+      0%, 100% { box-shadow: 0 0 0 1px rgb(231 173 79 / 0.35), 10px 16px 40px -10px rgb(0 0 0 / 0.8), 0 0 70px -24px rgb(120 28 39 / 0.7); }
+      50% { box-shadow: 0 0 0 1px rgb(231 173 79 / 0.5), 10px 16px 40px -10px rgb(0 0 0 / 0.8), 0 0 100px -16px rgb(241 199 91 / 0.35); }
+    }
+  }
+</style>

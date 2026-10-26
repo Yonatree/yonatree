@@ -1,0 +1,127 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getArticles, getStudies, getEpisodes } from '../../lib/content';
+import { BOOKS, parseRef, formatRef, refUrl, compareRefs, slugifyBook } from '../../lib/scripture.mjs';
+import { episodeUrl } from '../../lib/site';
+import { breadcrumbs } from '../../lib/schema';
+
+const [articles, studies, episodes] = await Promise.all([getArticles(), getStudies(), getEpisodes()]);
+
+type Source = { title: string; href: string; kind: 'Article' | 'Study' | 'Episode' };
+const index = new Map<string, Map<string, Source[]>>();
+const add = (ref: string, source: Source) => {
+  const p = parseRef(ref);
+  if (!p) return;
+  const label = formatRef(p);
+  const book = index.get(p.book) ?? new Map<string, Source[]>();
+  const list = book.get(label) ?? [];
+  if (!list.some((s) => s.href === source.href)) list.push(source);
+  book.set(label, list);
+  index.set(p.book, book);
+};
+for (const a of articles) for (const r of a.data.scripture) add(r, { title: a.data.title, href: `/articles/${a.id}/`, kind: 'Article' });
+for (const s of studies) for (const r of s.data.scripture) add(r, { title: s.data.title, href: `/studies/${s.id}/`, kind: 'Study' });
+for (const e of episodes) for (const r of e.data.scripture) add(r, { title: `Part ${e.data.episode}: ${e.data.title}`, href: episodeUrl(e.id), kind: 'Episode' });
+
+const groups = BOOKS.filter((b) => index.has(b.name)).map((b) => ({
+  book: b,
+  refs: [...index.get(b.name)!.entries()].sort((x, y) => compareRefs(x[0], y[0])),
+}));
+const sections = [
+  { key: 'ot', title: 'Old Testament' },
+  { key: 'nt', title: 'New Testament' },
+  { key: 'ap', title: 'Apocrypha & Historical Texts' },
+];
+const total = groups.reduce((n, g) => n + g.refs.length, 0);
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Articles', href: '/articles/' },
+  { name: 'Scripture Index', href: '/articles/scripture-index/' },
+];
+---
+
+<BaseLayout
+  title="Scripture Index"
+  description="Every Bible passage cited in Yona Tree articles, studies and episodes, from Genesis to Revelation, with links to each passage and to the content that discusses it."
+  searchType="Page"
+  jsonLd={[breadcrumbs(crumbs)]}
+>
+  <PageHero
+    eyebrow="Search the Scriptures"
+    title="Scripture Index"
+    lede={`${total} passages from ${groups.length} books, cited across Yona Tree articles, studies and episodes. Select a passage to read it in context; the links beneath it lead to where it is discussed.`}
+    crumbs={crumbs}
+  />
+
+  <section class="section surface-parchment">
+    <div class="container sx">
+      <nav class="sx-nav" aria-label="Books of the Bible">
+        {
+          sections.map((sec) => {
+            const books = groups.filter((g) => g.book.testament === sec.key);
+            return books.length ? (
+              <div>
+                <p class="sx-nav__title">{sec.title}</p>
+                <ul role="list">{books.map((g) => <li><a href={`#${slugifyBook(g.book.name)}`}>{g.book.name}</a></li>)}</ul>
+              </div>
+            ) : null;
+          })
+        }
+      </nav>
+
+      <div class="sx-list">
+        {
+          sections.map((sec) => {
+            const books = groups.filter((g) => g.book.testament === sec.key);
+            return books.length ? (
+              <section aria-labelledby={`sx-${sec.key}`}>
+                <h2 id={`sx-${sec.key}`} class="sx-testament">{sec.title}</h2>
+                {books.map((g) => (
+                  <section class="sx-book" id={slugifyBook(g.book.name)} aria-labelledby={`sx-${slugifyBook(g.book.name)}`}>
+                    <h3 id={`sx-${slugifyBook(g.book.name)}`}>{g.book.name}</h3>
+                    <dl>
+                      {g.refs.map(([ref, sources]) => (
+                        <div class="sx-ref">
+                          <dt><a class="scripture-ref" href={refUrl(ref)} rel="noopener" target="_blank">{ref}</a></dt>
+                          <dd>
+                            <ul role="list">
+                              {sources.map((s) => (
+                                <li><span class="sx-kind">{s.kind}</span> <a href={s.href}>{s.title}</a></li>
+                              ))}
+                            </ul>
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </section>
+                ))}
+              </section>
+            ) : null;
+          })
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .sx { display: grid; gap: var(--s-7); }
+  @media (min-width: 1000px) { .sx { grid-template-columns: 15rem 1fr; gap: var(--s-8); } .sx-nav { position: sticky; top: calc(var(--header-h) + var(--s-5)); align-self: start; max-height: calc(100vh - var(--header-h) - 2rem); overflow-y: auto; } }
+  .sx-nav { display: grid; gap: var(--s-5); align-content: start; }
+  .sx-nav__title { margin-bottom: var(--s-2); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+  .sx-nav ul { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-3); margin: 0; }
+  .sx-nav a { display: inline-block; padding-block: 4px; color: var(--fg); font-family: var(--font-serif); font-size: var(--fs-sm); }
+  .sx-testament { margin: var(--s-7) 0 var(--s-4); font-size: var(--fs-xl); }
+  .sx-list > section:first-child .sx-testament { margin-top: 0; }
+  .sx-book { padding: var(--s-5) 0; border-top: 1px solid var(--line); scroll-margin-top: calc(var(--header-h) + 1rem); }
+  .sx-book h3 { margin-bottom: var(--s-3); font-size: 1.3rem; color: var(--c-bronze); }
+  .sx-book dl { display: grid; gap: var(--s-3); margin: 0; }
+  .sx-ref { display: grid; gap: var(--s-1) var(--s-5); }
+  @media (min-width: 640px) { .sx-ref { grid-template-columns: 11rem 1fr; } }
+  .sx-ref dt { font-family: var(--font-serif); }
+  .sx-ref dd { margin: 0; }
+  .sx-ref ul { display: grid; gap: 2px; margin: 0; font-size: var(--fs-sm); }
+  .sx-ref ul a { color: var(--fg); }
+  .sx-kind { display: inline-block; min-width: 4.5rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-2); }
+</style>

@@ -1,0 +1,9 @@
+---
+// Every artwork is served as AVIF with a WebP fallback, in responsive sizes.
+import { Picture } from 'astro:assets';
+import type { ComponentProps } from 'astro/types';
+
+type Props = ComponentProps<typeof Picture>;
+---
+
+<Picture formats={['avif', 'webp']} {...Astro.props} />

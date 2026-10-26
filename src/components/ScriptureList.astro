@@ -1,0 +1,76 @@
+---
+import Icon from './Icon.astro';
+import { parseRef, formatRef, refUrl, compareRefs, versionFor } from '../lib/scripture.mjs';
+
+interface Props {
+  refs: string[];
+  version?: string;
+  title?: string;
+  sort?: boolean;
+  headingLevel?: 'h2' | 'h3';
+}
+const { refs, version = 'KJV', title = 'Scripture in this study', sort = false, headingLevel = 'h2' } = Astro.props;
+const list = (sort ? [...refs].sort(compareRefs) : refs).map((r) => {
+  const parsed = parseRef(r);
+  const v = versionFor(parsed?.version ?? version, parsed?.testament);
+  return { label: formatRef(r), url: refUrl(r, parsed?.version ?? version), version: v.label, versionName: v.name };
+});
+const Heading = headingLevel;
+---
+
+{
+  list.length > 0 && (
+    <section class="scripture-list" aria-labelledby="scripture-list-title">
+      <Heading id="scripture-list-title" class="scripture-list__title">
+        <Icon name="book" size={18} /> {title}
+      </Heading>
+      <ul role="list">
+        {list.map((r) => (
+          <li>
+            <a href={r.url} rel="noopener" target="_blank">
+              <span class="scripture-list__ref">{r.label}</span>
+              <abbr class="version" title={r.versionName}>{r.version}</abbr>
+              <span class="visually-hidden">(opens Bible Gateway in a new tab)</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="scripture-list__note">Links open the full passage on Bible Gateway so you can read each verse in its context.</p>
+    </section>
+  )
+}
+
+<style>
+  .scripture-list { padding: var(--s-5); border-radius: var(--r-md); border: 1px solid var(--line); background: var(--card); }
+  .scripture-list__title {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-bottom: var(--s-4);
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .scripture-list ul { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: 0; }
+  .scripture-list a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 36px;
+    padding: 0.3rem 0.5rem 0.3rem 0.8rem;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    color: var(--fg);
+    font-family: var(--font-serif);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
+  }
+  .scripture-list a:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  .scripture-list .version { font-size: 0.62rem; }
+  .scripture-list__note { margin-top: var(--s-4); font-size: var(--fs-xs); color: var(--fg-2); }
+</style>

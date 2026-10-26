@@ -1,0 +1,59 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  url?: string;
+  label?: string;
+}
+const { title, url = new URL(Astro.url.pathname, Astro.site).toString(), label = 'Share' } = Astro.props;
+const enc = encodeURIComponent;
+const links = [
+  { name: 'Facebook', icon: 'facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}` },
+  { name: 'X', icon: 'x', href: `https://x.com/intent/post?url=${enc(url)}&text=${enc(title)}` },
+  { name: 'Email', icon: 'mail', href: `mailto:?subject=${enc(title)}&body=${enc(url)}` },
+];
+---
+
+<div class="share" role="group" aria-label={label}>
+  <span class="share__label">{label}</span>
+  <button class="share__btn" type="button" data-native-share={url} hidden>
+    <Icon name="share" size={18} /><span class="visually-hidden">Share using your device</span>
+  </button>
+  {
+    links.map((l) => (
+      <a class="share__btn" href={l.href} rel="noopener" target={l.name === 'Email' ? undefined : '_blank'}>
+        <Icon name={l.icon} size={18} />
+        <span class="visually-hidden">Share on {l.name}{l.name !== 'Email' && ' (opens in a new tab)'}</span>
+      </a>
+    ))
+  }
+  <button class="share__btn share__btn--wide" type="button" data-copy-link={url}>
+    <Icon name="link" size={18} /><span data-copy-status aria-live="polite">Copy link</span>
+  </button>
+</div>
+
+<style>
+  .share { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); }
+  .share__label { margin-right: var(--s-2); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-2); }
+  .share__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s-2);
+    min-width: 44px;
+    height: 44px;
+    padding: 0 var(--s-3);
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--fg);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+  }
+  .share__btn:hover { border-color: var(--accent); color: var(--accent-strong); }
+  .share__btn--wide { padding: 0 var(--s-4); }
+  .share__btn[hidden] { display: none; }
+</style>

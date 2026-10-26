@@ -1,0 +1,50 @@
+---
+// "Yona Tree Study Perspective" — shown whenever a page advances an interpretation
+// that differs from mainstream or competing Christian readings.
+import Icon from './Icon.astro';
+import Markdown from './Markdown.astro';
+
+interface Props {
+  content: string;
+  title?: string;
+}
+const { content, title = 'Yona Tree Study Perspective' } = Astro.props;
+---
+
+<aside class="perspective" aria-labelledby="perspective-title">
+  <p id="perspective-title" class="perspective__title"><Icon name="tree" size={20} /> {title}</p>
+  <Markdown content={content} class="perspective__body" />
+  <p class="perspective__foot">
+    <a href="/about/#how-we-study">How Yona Tree distinguishes Scripture, history and interpretation</a>
+  </p>
+</aside>
+
+<style>
+  .perspective {
+    display: grid;
+    gap: var(--s-3);
+    padding: var(--s-5) var(--s-5) var(--s-4);
+    border-radius: var(--r-md);
+    border: 1px solid rgb(68 80 37 / 0.3);
+    background:
+      linear-gradient(140deg, rgb(68 80 37 / 0.09), rgb(231 173 79 / 0.08)),
+      var(--card);
+  }
+  :global(.surface-dark) .perspective { border-color: rgb(195 209 154 / 0.3); background: rgb(195 209 154 / 0.06); }
+  .perspective__title {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-olive);
+  }
+  :global(.surface-dark) .perspective__title { color: #c3d19a; }
+  .perspective :global(.perspective__body) { font-family: var(--font-serif); font-size: var(--fs-sm); line-height: 1.65; color: var(--fg); }
+  .perspective :global(.perspective__body p + p) { margin-top: 0.7em; }
+  .perspective__foot { font-size: var(--fs-xs); }
+  .perspective__foot a { color: var(--fg-2); }
+</style>

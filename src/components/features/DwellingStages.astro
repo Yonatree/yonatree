@@ -1,0 +1,59 @@
+---
+import Icon from '../Icon.astro';
+import { refUrl, formatRef } from '../../lib/scripture.mjs';
+
+const stages = [
+  { n: 'I', title: "Abraham's Bosom", who: 'The righteous awaiting redemption', icon: 'home', refs: ['Luke 16:22–26', 'Luke 23:43', 'Ephesians 4:8–10'], basis: 'Many interpreters' },
+  { n: 'II', title: 'The Present Heavenly Paradise', who: 'The redeemed with Christ', icon: 'gate', refs: ['2 Corinthians 5:8', 'Philippians 1:23', 'Hebrews 12:22–23'], basis: 'Scripture & Yona Tree' },
+  { n: 'III', title: 'The New Creation & New Jerusalem', who: 'Resurrected humanity dwelling with God forever', icon: 'city', refs: ['1 Corinthians 15:52–53', 'Revelation 21:1–3', 'Revelation 22:3–5'], basis: 'Scripture' },
+];
+---
+
+<section class="ds surface-dark" aria-labelledby="ds-title">
+  <div class="container">
+    <p class="eyebrow">A progression in Scripture</p>
+    <h2 id="ds-title" class="ds__title">Three stages in the dwelling of the righteous</h2>
+    <ol class="ds__list" role="list">
+      {
+        stages.map((s, i) => (
+          <li class="ds__stage">
+            <span class="ds__num" aria-hidden="true">{s.n}</span>
+            <div class="ds__card">
+              <p class="ds__icon"><Icon name={s.icon} size={24} /></p>
+              <h3><span class="visually-hidden">Stage {i + 1}: </span>{s.title}</h3>
+              <p class="ds__who">{s.who}</p>
+              <ul class="ds__refs" role="list">
+                {s.refs.map((r) => <li><a class="scripture-ref" href={refUrl(r)} rel="noopener" target="_blank">{formatRef(r)}</a></li>)}
+              </ul>
+              <p class="ds__basis">Basis: {s.basis}</p>
+            </div>
+            {i < stages.length - 1 && <span class="ds__arrow" aria-hidden="true"><Icon name="arrow-right" size={22} /></span>}
+          </li>
+        ))
+      }
+    </ol>
+    <p class="ds__note">The labels below each stage show how firmly it rests on explicit Scripture. Each is discussed with its passages in the study that follows.</p>
+  </div>
+</section>
+
+<style>
+  .ds { padding-block: var(--s-8); background: radial-gradient(50rem 26rem at 50% 100%, rgb(241 199 91 / 0.14), transparent 70%), linear-gradient(180deg, var(--c-midnight), var(--c-midnight-2)); }
+  .ds__title { margin-top: var(--s-3); font-size: var(--fs-2xl); max-width: 22ch; }
+  .ds__list { display: grid; gap: var(--s-6); margin: var(--s-7) 0 0; }
+  @media (min-width: 960px) { .ds__list { grid-template-columns: repeat(3, 1fr); gap: var(--s-5); } }
+  .ds__stage { position: relative; display: grid; gap: var(--s-3); }
+  .ds__num { font-family: var(--font-display); font-size: 2.5rem; line-height: 1; color: rgb(241 199 91 / 0.5); }
+  .ds__card { display: grid; gap: var(--s-2); height: 100%; padding: var(--s-5); border-radius: var(--r-lg); border: 1px solid rgb(231 173 79 / 0.3); background: rgb(255 253 247 / 0.04); }
+  .ds__stage:last-child .ds__card { border-color: var(--c-gold); box-shadow: var(--glow-gold); }
+  .ds__icon { color: var(--c-gold-300); }
+  .ds__card h3 { font-size: 1.3rem; }
+  .ds__who { font-family: var(--font-serif); font-style: italic; color: var(--c-on-dark-2); }
+  .ds__refs { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-3); margin: var(--s-2) 0 0; font-size: var(--fs-sm); }
+  .ds__refs a { color: var(--c-gold-300); }
+  .ds__basis { margin-top: auto; padding-top: var(--s-3); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-on-dark-3); }
+  .ds__arrow { display: grid; place-items: center; color: var(--c-gold); transform: rotate(90deg); }
+  @media (min-width: 960px) {
+    .ds__arrow { position: absolute; right: calc(-1 * var(--s-5)); top: 55%; transform: translate(50%, -50%); z-index: 1; width: 40px; height: 40px; border-radius: 50%; background: var(--c-midnight); border: 1px solid rgb(231 173 79 / 0.4); }
+  }
+  .ds__note { margin-top: var(--s-6); font-size: var(--fs-xs); color: var(--c-on-dark-3); }
+</style>

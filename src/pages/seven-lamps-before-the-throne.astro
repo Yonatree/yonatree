@@ -1,0 +1,116 @@
+---
+import { getEntries } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import VideoCard from '../components/VideoCard.astro';
+import YouTubeEmbed from '../components/YouTubeEmbed.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ThreePaths from '../components/ThreePaths.astro';
+import BookPromo from '../components/BookPromo.astro';
+import Icon from '../components/Icon.astro';
+import { getEpisodes, getFlagshipBook } from '../lib/content';
+import { SERIES, settings, YOUTUBE_SUBSCRIBE, episodeUrl, absoluteUrl } from '../lib/site';
+import { breadcrumbs } from '../lib/schema';
+import heroArt from '../assets/art/menorah-seven-lamps.jpg';
+import playlistPoster from '../assets/thumbnails/part-1-three-person-god.jpg';
+
+const [episodes, book] = await Promise.all([getEpisodes(), getFlagshipBook()]);
+const firstArticle = await Promise.all(
+  episodes.map(async (ep) => {
+    const [a] = await getEntries(ep.data.relatedArticles.slice(0, 1));
+    return a ? { title: a.data.title, href: `/articles/${a.id}/` } : undefined;
+  }),
+);
+const totalSeconds = episodes.reduce((sum, ep) => {
+  const [m, s] = ep.data.duration.split(':').map(Number);
+  return sum + m * 60 + s;
+}, 0);
+const totalMinutes = Math.round(totalSeconds / 60);
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Seven Lamps Before the Throne', href: SERIES.hub },
+];
+const itemList = {
+  '@type': 'ItemList',
+  name: `${SERIES.title} — ${SERIES.subtitle}`,
+  numberOfItems: episodes.length,
+  itemListElement: episodes.map((ep, i) => ({ '@type': 'ListItem', position: i + 1, url: absoluteUrl(episodeUrl(ep.id)), name: `Part ${ep.data.episode}: ${ep.data.title}` })),
+};
+---
+
+<BaseLayout
+  title="Seven Lamps Before the Throne — A 16-Part Audiobook Video Series"
+  description="Watch all sixteen parts of Seven Lamps Before the Throne, Yona Tree's audiobook video series on the Holy Spirit, Lady Wisdom, the Tree of Life and the Holy Trinity."
+  image={heroArt}
+  searchType="Page"
+  jsonLd={[breadcrumbs(crumbs), itemList]}
+>
+  <PageHero
+    eyebrow="Yona Tree Presents"
+    title="Seven Lamps Before the Throne"
+    subtitle={SERIES.subtitle}
+    lede={`The complete book, read and illustrated in sixteen episodes — about ${totalMinutes} minutes in all. Begin with Part 1, or step in wherever a theme draws you.`}
+    image={heroArt}
+    imagePosition="center 30%"
+    crumbs={crumbs}
+  >
+    <div class="btn-row">
+      <a class="btn btn--gold" href={episodeUrl(episodes[0].id)}><Icon name="play" size={16} /> Start with Part 1</a>
+      <a class="btn btn--outline" href="#complete-series">Watch Complete Series</a>
+    </div>
+    <p class="hub-verse serif">“There were seven lamps of fire burning before the throne, which are the seven Spirits of God.” — Revelation 4:5</p>
+  </PageHero>
+
+  <section class="section surface-parchment" aria-labelledby="episodes-title">
+    <div class="container">
+      <SectionHeading
+        eyebrow={`${episodes.length} episodes`}
+        title="The complete series"
+        id="episodes-title"
+        lede="Each episode has its own page with the video, Scripture references, key themes, and links to related articles and studies."
+      />
+      <ol class="grid episodes" role="list" style="--min: 19rem">
+        {
+          episodes.map((ep, i) => (
+            <li>
+              <VideoCard video={ep} variant="episode" headingLevel="h3" showScripture={3} relatedArticle={firstArticle[i]} />
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section surface-dark" id="complete-series" aria-labelledby="playlist-title">
+    <div class="container playlist">
+      <div class="stack" style="--stack: var(--s-4)">
+        <p class="eyebrow">Playlist</p>
+        <h2 id="playlist-title">Watch Complete Series</h2>
+        <p class="lede">Play every episode in order on YouTube. The playlist continues automatically from one part to the next.</p>
+        <div class="btn-row">
+          <a class="btn btn--gold" href={SERIES.playlistUrl} rel="noopener" target="_blank"><Icon name="youtube" size={18} /> Open on YouTube</a>
+          <a class="btn btn--outline" href={YOUTUBE_SUBSCRIBE} rel="noopener" target="_blank">Subscribe to {settings.youtube.handle}</a>
+        </div>
+      </div>
+      <YouTubeEmbed playlistId={settings.youtube.seriesPlaylistId} title="Seven Lamps Before the Throne — complete series playlist" thumbnail={playlistPoster} />
+    </div>
+  </section>
+
+  <ThreePaths surface="surface-white" />
+
+  <section class="section section--tight surface-parchment">
+    <div class="container">
+      <BookPromo book={book} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hub-verse { max-width: 34rem; margin-top: var(--s-3); font-style: italic; color: var(--c-on-dark-3); font-size: var(--fs-sm); }
+  .episodes { margin: 0; }
+  .episodes > li { display: flex; }
+  .episodes > li > :global(*) { flex: 1; }
+  .playlist { display: grid; gap: var(--s-7); align-items: center; }
+  @media (min-width: 960px) { .playlist { grid-template-columns: 0.8fr 1.2fr; } }
+</style>

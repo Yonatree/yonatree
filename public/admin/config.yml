@@ -1,0 +1,310 @@
+# Decap CMS configuration for Yonatree.com
+# Editors add articles, videos, books and studies here without touching code.
+# Every save is a Git commit; the site rebuilds and lists, related content,
+# topic hubs, the Scripture index and search update automatically.
+
+backend:
+  name: github
+  repo: southernaircare/yonatree
+  branch: main
+  # On Netlify, GitHub sign-in works through Netlify's OAuth provider (Site settings › Access control › OAuth).
+  # Other hosts: set base_url to your own OAuth proxy.
+
+# Lets you edit locally: run `npm run dev` and `npm run cms` together, then open http://localhost:4321/admin/
+local_backend: true
+
+publish_mode: editorial_workflow
+site_url: https://yonatree.com
+display_url: https://yonatree.com
+logo_url: /icon-192.png
+
+media_folder: src/assets/art
+public_folder: /src/assets/art
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  # ───────────────────────────── Articles ─────────────────────────────
+  - name: articles
+    label: Articles
+    label_singular: Article
+    description: Biblical studies and theological articles. Use the evidence-tier blocks (see the hint on Body) whenever an article moves from Scripture to interpretation.
+    folder: src/content/articles
+    create: true
+    slug: '{{slug}}'
+    extension: md
+    format: frontmatter
+    media_folder: /src/assets/art
+    public_folder: ../../assets/art
+    summary: '{{title}} — {{publishDate}}'
+    sortable_fields: [publishDate, title]
+    view_filters:
+      - { label: Drafts, field: draft, pattern: true }
+      - { label: Featured, field: featured, pattern: true }
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Subtitle, name: subtitle, widget: string, required: false }
+      - { label: Excerpt, name: excerpt, widget: text, hint: 'One or two sentences shown on cards and in search results.' }
+      - { label: Featured image, name: image, widget: image, hint: 'Use existing Yona Tree artwork where possible. Large originals are fine — the site creates AVIF/WebP sizes automatically.' }
+      - { label: Image description (alt text), name: imageAlt, widget: string, hint: 'Describe what the image shows for readers using screen readers.' }
+      - { label: Image focus, name: imagePosition, widget: select, default: center, options: [center, 'center 25%', 'center 35%', 'center 45%', 'center 60%', top, bottom] }
+      - { label: Author, name: author, widget: string, default: Yona Tree }
+      - { label: Adapted from, name: adaptedFrom, widget: string, required: false, hint: 'e.g. "Seven Lamps Before the Throne, Chapter 5"' }
+      - { label: Publication date, name: publishDate, widget: datetime, format: YYYY-MM-DD, date_format: YYYY-MM-DD, time_format: false }
+      - { label: Updated date, name: updatedDate, widget: datetime, format: YYYY-MM-DD, date_format: YYYY-MM-DD, time_format: false, required: false }
+      - label: Topics
+        name: categories
+        widget: relation
+        collection: taxonomy
+        file: topics
+        search_fields: ['topics.*.title']
+        display_fields: ['topics.*.title']
+        value_field: 'topics.*.id'
+        multiple: true
+        min: 1
+      - { label: Tags, name: tags, widget: list, required: false, hint: 'Short keywords, e.g. menorah, Proverbs 8' }
+      - { label: Scripture references, name: scripture, widget: list, required: false, hint: 'One per line, e.g. "Proverbs 8:22–35" or "Revelation 4:5". These feed the Scripture index.' }
+      - { label: Bible version for links, name: bibleVersion, widget: select, default: KJV, options: [KJV, NKJV, NLT, NIV, ESV, CSB, GNV] }
+      - { label: Yona Tree Study Perspective, name: perspective, widget: text, required: false, hint: 'Shown in a discreet box when the article advances an interpretation that differs from mainstream or competing readings.' }
+      - { label: Related videos, name: relatedVideos, widget: relation, collection: videos, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
+      - { label: Related articles, name: relatedArticles, widget: relation, collection: articles, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
+      - { label: Related studies, name: relatedStudies, widget: relation, collection: studies, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
+      - { label: Related book, name: book, widget: relation, collection: books, search_fields: [title], display_fields: [title], value_field: '{{slug}}', required: false }
+      - { label: Featured on the Articles page, name: featured, widget: boolean, default: false }
+      - { label: Popular study, name: popular, widget: boolean, default: false }
+      - { label: Draft (hidden from the live site), name: draft, widget: boolean, default: false }
+      - { label: SEO title, name: seoTitle, widget: string, required: false }
+      - { label: SEO description, name: seoDescription, widget: text, required: false, hint: 'Up to 170 characters.' }
+      - label: Body
+        name: body
+        widget: markdown
+        hint: |
+          Scripture references such as John 3:5–8 link automatically. Footnotes: write [^1] and add "[^1]: note" at the end.
+          Evidence tiers — start a line with :::scripture, :::history, :::interpreters, :::yonatree, :::possible or :::speculation, write the text, then close with ::: on its own line.
+
+  # ───────────────────────────── Videos ─────────────────────────────
+  - name: videos
+    label: Videos
+    label_singular: Video
+    description: Seven Lamps episodes and other YouTube videos. Series episodes appear at /seven-lamps/<slug>/, other videos at /videos/<slug>/.
+    folder: src/content/videos
+    create: true
+    slug: '{{slug}}'
+    extension: md
+    format: frontmatter
+    media_folder: /src/assets/thumbnails
+    public_folder: ../../assets/thumbnails
+    summary: '{{episode}} {{title}}'
+    sortable_fields: [uploadDate, episode, title]
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Series, name: series, widget: select, required: false, options: [{ label: 'Seven Lamps Before the Throne', value: seven-lamps-before-the-throne }], hint: 'Leave empty for videos that are not part of a series.' }
+      - { label: Episode number, name: episode, widget: number, value_type: int, required: false }
+      - { label: YouTube video ID, name: youtubeId, widget: string, pattern: ['^[\w-]{11}$', 'The 11 characters after "watch?v=" in the YouTube link'] }
+      - { label: Thumbnail, name: thumbnail, widget: image, hint: 'Download from https://i.ytimg.com/vi/<ID>/maxresdefault.jpg' }
+      - { label: Duration, name: duration, widget: string, pattern: ['^\d{1,2}:\d{2}(:\d{2})?$', 'Format m:ss, e.g. 9:47'] }
+      - { label: Upload date, name: uploadDate, widget: datetime }
+      - { label: Summary, name: summary, widget: text }
+      - label: Library categories
+        name: categories
+        widget: select
+        multiple: true
+        options:
+          - { label: Seven Lamps Before the Throne, value: seven-lamps }
+          - { label: Biblical Symbolism, value: biblical-symbolism }
+          - { label: Holy Spirit Studies, value: holy-spirit-studies }
+          - { label: Tree of Life, value: tree-of-life }
+          - { label: New Jerusalem, value: new-jerusalem }
+          - { label: Christian Theology, value: christian-theology }
+          - { label: Scripture Studies, value: scripture-studies }
+          - { label: Worship Music, value: worship-music }
+          - { label: Future Series, value: future-series }
+      - { label: Topics, name: topics, widget: relation, collection: taxonomy, file: topics, search_fields: ['topics.*.title'], display_fields: ['topics.*.title'], value_field: 'topics.*.id', multiple: true, required: false }
+      - { label: Key themes, name: themes, widget: list, required: false }
+      - { label: Scripture references, name: scripture, widget: list, required: false }
+      - { label: Related articles, name: relatedArticles, widget: relation, collection: articles, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
+      - { label: Related studies, name: relatedStudies, widget: relation, collection: studies, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
+      - { label: Related book, name: book, widget: relation, collection: books, search_fields: [title], display_fields: [title], value_field: '{{slug}}', required: false }
+      - { label: Book chapter, name: bookChapter, widget: string, required: false }
+      - { label: Transcript, name: transcript, widget: markdown, required: false, hint: 'Optional. Shown in a collapsible section on the video page.' }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - { label: Draft, name: draft, widget: boolean, default: false }
+      - { label: SEO title, name: seoTitle, widget: string, required: false }
+      - { label: SEO description, name: seoDescription, widget: text, required: false }
+      - { label: Description, name: body, widget: markdown }
+
+  # ───────────────────────────── Books ─────────────────────────────
+  - name: books
+    label: Books
+    label_singular: Book
+    folder: src/content/books
+    create: true
+    slug: '{{slug}}'
+    extension: md
+    format: frontmatter
+    media_folder: /src/assets/art
+    public_folder: ../../assets/art
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Subtitle, name: subtitle, widget: string, required: false }
+      - { label: Cover, name: cover, widget: image }
+      - { label: Cover description (alt text), name: coverAlt, widget: string }
+      - { label: Authors, name: authors, widget: list }
+      - { label: Publisher, name: publisher, widget: string, default: Yona Tree }
+      - { label: Publisher location, name: publisherLocation, widget: string, required: false }
+      - { label: Copyright year, name: copyrightYear, widget: number, value_type: int, required: false }
+      - { label: Status, name: status, widget: select, options: [{ label: Available, value: available }, { label: Coming soon, value: coming-soon }] }
+      - { label: Tagline, name: tagline, widget: string, required: false }
+      - { label: Short description, name: description, widget: text }
+      - { label: Major themes, name: themes, widget: list, required: false }
+      - label: Purchase links
+        name: purchaseLinks
+        widget: list
+        required: false
+        hint: Only add real retailer links. Never add invented prices or ISBNs.
+        fields:
+          - { label: Button label, name: label, widget: string }
+          - { label: Format, name: format, widget: select, options: [Ebook, Audiobook, Paperback, Hardcover, Video series] }
+          - { label: Retailer, name: retailer, widget: string }
+          - { label: URL, name: url, widget: string }
+      - label: Table of contents
+        name: toc
+        widget: list
+        required: false
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: Summary, name: summary, widget: text, required: false }
+      - { label: Dedication, name: dedication, widget: text, required: false }
+      - { label: Sample chapter title, name: sampleTitle, widget: string, required: false }
+      - { label: Sample chapter, name: sample, widget: markdown, required: false }
+      - label: Reader reflections
+        name: testimonials
+        widget: list
+        required: false
+        hint: Only real, permitted quotations.
+        fields:
+          - { label: Quote, name: quote, widget: text }
+          - { label: Name, name: name, widget: string }
+          - { label: Note, name: note, widget: string, required: false }
+      - { label: Related videos, name: relatedVideos, widget: relation, collection: videos, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
+      - { label: Related articles, name: relatedArticles, widget: relation, collection: articles, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
+      - { label: Related studies, name: relatedStudies, widget: relation, collection: studies, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
+      - { label: Order, name: order, widget: number, value_type: int, default: 1 }
+      - { label: SEO title, name: seoTitle, widget: string, required: false }
+      - { label: SEO description, name: seoDescription, widget: text, required: false }
+      - { label: Synopsis, name: body, widget: markdown }
+
+  # ───────────────────────────── Studies ─────────────────────────────
+  - name: studies
+    label: Studies
+    label_singular: Study
+    description: Study hubs. Each H2 heading in the body becomes a section; the optional feature adds an interactive diagram.
+    folder: src/content/studies
+    create: true
+    slug: '{{slug}}'
+    extension: md
+    format: frontmatter
+    media_folder: /src/assets/art
+    public_folder: ../../assets/art
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Subtitle, name: subtitle, widget: string, required: false }
+      - { label: Eyebrow, name: eyebrow, widget: string, default: Featured Study }
+      - { label: Introduction, name: introduction, widget: text }
+      - { label: Image, name: image, widget: image }
+      - { label: Image description (alt text), name: imageAlt, widget: string }
+      - { label: Image focus, name: imagePosition, widget: select, default: center, options: [center, 'center 25%', 'center 35%', 'center 45%', 'center 60%', top, bottom] }
+      - label: Interactive feature
+        name: feature
+        widget: select
+        default: none
+        options:
+          - { label: None, value: none }
+          - { label: Tree of Life path, value: tree-of-life }
+          - { label: Seven lamps menorah, value: seven-lamps }
+          - { label: Trinity triad, value: trinity }
+          - { label: Names of the Holy Spirit, value: holy-spirit }
+          - { label: Lady Wisdom — text, tradition, conclusion, value: wisdom-tiers }
+          - { label: New Jerusalem plan, value: new-jerusalem }
+          - { label: Three dwelling places, value: dwelling-stages }
+          - { label: Lost and Found panels, value: lost-and-found }
+      - { label: Visible interpretation notice, name: notice, widget: text, required: false }
+      - { label: Yona Tree Study Perspective, name: perspective, widget: text, required: false }
+      - { label: Topics, name: categories, widget: relation, collection: taxonomy, file: topics, search_fields: ['topics.*.title'], display_fields: ['topics.*.title'], value_field: 'topics.*.id', multiple: true, required: false }
+      - { label: Scripture references, name: scripture, widget: list, required: false }
+      - { label: Related articles, name: relatedArticles, widget: relation, collection: articles, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
+      - { label: Related videos, name: relatedVideos, widget: relation, collection: videos, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
+      - { label: Related studies, name: relatedStudies, widget: relation, collection: studies, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
+      - { label: Related book, name: book, widget: relation, collection: books, search_fields: [title], display_fields: [title], value_field: '{{slug}}', required: false }
+      - { label: Order, name: order, widget: number, value_type: int, default: 100 }
+      - { label: Show in Studies menu, name: inMenu, widget: boolean, default: true }
+      - { label: Publication date, name: publishDate, widget: datetime, format: YYYY-MM-DD, date_format: YYYY-MM-DD, time_format: false }
+      - { label: Updated date, name: updatedDate, widget: datetime, format: YYYY-MM-DD, date_format: YYYY-MM-DD, time_format: false, required: false }
+      - { label: Draft, name: draft, widget: boolean, default: false }
+      - { label: SEO title, name: seoTitle, widget: string, required: false }
+      - { label: SEO description, name: seoDescription, widget: text, required: false }
+      - { label: Body, name: body, widget: markdown }
+
+  # ───────────────────────────── Taxonomy & settings ─────────────────────────────
+  - name: taxonomy
+    label: Topics
+    files:
+      - name: topics
+        label: Topic categories
+        file: src/content/topics.json
+        format: json
+        fields:
+          - label: Topics
+            name: topics
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - { label: ID (used in URLs — do not change once published), name: id, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Description, name: description, widget: text }
+              - { label: Icon, name: icon, widget: select, options: [tree, dove, menorah, lamp, flame, book, scroll, river, sword, crown, city, gate, star, trinity, crook, coin, home] }
+              - { label: Show on homepage, name: featured, widget: boolean, default: false }
+              - { label: Order, name: order, widget: number, value_type: int, default: 100 }
+
+  - name: settings
+    label: Site settings
+    files:
+      - name: site
+        label: Site settings
+        file: src/data/settings.json
+        format: json
+        fields:
+          - { label: Site name, name: siteName, widget: string }
+          - { label: Site URL, name: siteUrl, widget: string }
+          - { label: Tagline, name: tagline, widget: string }
+          - { label: Secondary tagline, name: secondaryTagline, widget: string }
+          - { label: Default meta description, name: description, widget: text }
+          - { label: Mission statement, name: mission, widget: text }
+          - { label: Location, name: location, widget: string }
+          - { label: Public contact email, name: contactEmail, widget: string, required: false, hint: 'Leave empty to show only the contact form.' }
+          - label: YouTube
+            name: youtube
+            widget: object
+            fields:
+              - { label: Channel URL, name: channelUrl, widget: string }
+              - { label: Handle, name: handle, widget: string }
+              - { label: Series playlist ID, name: seriesPlaylistId, widget: string }
+              - { label: Worship playlist ID, name: worshipPlaylistId, widget: string }
+          - label: Social links
+            name: social
+            widget: list
+            hint: Verified accounts only.
+            fields:
+              - { label: Name, name: name, widget: string }
+              - { label: Icon, name: icon, widget: select, options: [youtube, facebook, instagram, tiktok, x] }
+              - { label: URL, name: url, widget: string }
+          - label: Forms
+            name: forms
+            widget: object
+            fields:
+              - { label: Provider, name: provider, widget: select, options: [netlify, custom] }
+              - { label: Newsletter form action, name: newsletterAction, widget: string, hint: 'For Netlify Forms keep /thank-you/?form=newsletter. For Mailchimp, ConvertKit or Buttondown paste the form action URL and set Provider to custom.' }
+              - { label: Contact form action, name: contactAction, widget: string }
+          - { label: Accepts financial support, name: acceptsSupport, widget: boolean, default: false, hint: 'Only turn on once real payment infrastructure exists.' }

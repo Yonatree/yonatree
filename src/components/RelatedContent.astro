@@ -1,0 +1,82 @@
+---
+// The relationship engine's output: every page ends by pointing to the next
+// video, study, article and book, so visitors keep exploring.
+import ArticleCard from './ArticleCard.astro';
+import VideoCard from './VideoCard.astro';
+import StudyCard from './StudyCard.astro';
+import BookPromo from './BookPromo.astro';
+import SectionHeading from './SectionHeading.astro';
+import type { Article, Video, Study, Book } from '../lib/content';
+
+interface Props {
+  articles?: Article[];
+  videos?: Video[];
+  studies?: Study[];
+  book?: Book;
+  title?: string;
+  eyebrow?: string;
+}
+const { articles = [], videos = [], studies = [], book, title = 'Continue the study', eyebrow = 'Keep exploring' } = Astro.props;
+---
+
+<section class="related section surface-white" aria-labelledby="related-title">
+  <div class="container">
+    <SectionHeading eyebrow={eyebrow} title={title} id="related-title" />
+
+    {
+      videos.length > 0 && (
+        <div class="related__group">
+          <h3 class="related__label">{videos.length > 1 ? 'Related videos' : 'Related video'}</h3>
+          <div class="grid" style="--min: 18rem">
+            {videos.map((v) => <VideoCard video={v} headingLevel="h4" showScripture={3} />)}
+          </div>
+        </div>
+      )
+    }
+    {
+      studies.length > 0 && (
+        <div class="related__group">
+          <h3 class="related__label">{studies.length > 1 ? 'Related studies' : 'Related study'}</h3>
+          <div class="grid" style="--min: 16rem">
+            {studies.map((s) => <StudyCard study={s} headingLevel="h4" />)}
+          </div>
+        </div>
+      )
+    }
+    {
+      articles.length > 0 && (
+        <div class="related__group">
+          <h3 class="related__label">{articles.length > 1 ? 'Related articles' : 'Related article'}</h3>
+          <div class="grid" style="--min: 18rem">
+            {articles.map((a) => <ArticleCard article={a} headingLevel="h4" />)}
+          </div>
+        </div>
+      )
+    }
+    {
+      book && (
+        <div class="related__group">
+          <h3 class="related__label">Related book</h3>
+          <BookPromo book={book} />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .related__group + .related__group { margin-top: var(--s-8); }
+  .related__label {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    margin-bottom: var(--s-5);
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .related__label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+</style>

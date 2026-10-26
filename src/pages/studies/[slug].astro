@@ -1,0 +1,148 @@
+---
+import { render, getEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import PerspectiveBox from '../../components/PerspectiveBox.astro';
+import ScriptureList from '../../components/ScriptureList.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
+import RelatedContent from '../../components/RelatedContent.astro';
+import Icon from '../../components/Icon.astro';
+import TrinityTriad from '../../components/features/TrinityTriad.astro';
+import TreeOfLifeDiagram from '../../components/features/TreeOfLifeDiagram.astro';
+import SevenLampsExplorer from '../../components/features/SevenLampsExplorer.astro';
+import SpiritNames from '../../components/features/SpiritNames.astro';
+import WisdomTiers from '../../components/features/WisdomTiers.astro';
+import NewJerusalemDiagram from '../../components/features/NewJerusalemDiagram.astro';
+import DwellingStages from '../../components/features/DwellingStages.astro';
+import LostAndFoundPanels from '../../components/features/LostAndFoundPanels.astro';
+import { getStudies, getRelated } from '../../lib/content';
+import { absoluteUrl } from '../../lib/site';
+import { article as articleLd, breadcrumbs } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const studies = await getStudies();
+  return studies.map((study) => ({ params: { slug: study.id }, props: { study } }));
+}
+
+const { study } = Astro.props;
+const { data } = study;
+const { Content, headings } = await render(study);
+const sections = headings.filter((h) => h.depth === 2);
+const related = await getRelated('studies', study.id, { articles: 3, videos: 3, studies: 3 });
+const book = data.book ? await getEntry(data.book) : undefined;
+const url = `/studies/${study.id}/`;
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Studies', href: '/studies/' },
+  { name: data.title, href: url },
+];
+const img = await getImage({ src: data.image, width: 1600, format: 'jpg' });
+const ld = [
+  breadcrumbs(crumbs),
+  articleLd({
+    url: absoluteUrl(url),
+    title: data.title,
+    description: data.introduction,
+    image: absoluteUrl(img.src),
+    published: data.publishDate,
+    modified: data.updatedDate,
+    author: 'Yona Tree',
+    section: 'Studies',
+  }),
+];
+const features: Record<string, any> = {
+  trinity: TrinityTriad,
+  'tree-of-life': TreeOfLifeDiagram,
+  'seven-lamps': SevenLampsExplorer,
+  'holy-spirit': SpiritNames,
+  'wisdom-tiers': WisdomTiers,
+  'new-jerusalem': NewJerusalemDiagram,
+  'dwelling-stages': DwellingStages,
+  'lost-and-found': LostAndFoundPanels,
+};
+const Feature = features[data.feature];
+---
+
+<BaseLayout
+  title={data.seoTitle ?? data.title}
+  description={data.seoDescription ?? data.introduction}
+  image={data.image}
+  imageAlt={data.imageAlt}
+  type="article"
+  searchType="Study"
+  jsonLd={ld}
+>
+  <PageHero eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} lede={data.introduction} image={data.image} imagePosition={data.imagePosition} crumbs={crumbs}>
+    {
+      sections.length > 2 && (
+        <nav class="study-sections" aria-label="Sections of this study">
+          <ul role="list">{sections.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ul>
+        </nav>
+      )
+    }
+  </PageHero>
+
+  {
+    data.notice && (
+      <div class="study-notice surface-parchment">
+        <div class="container">
+          <p class="study-notice__box" role="note">
+            <Icon name="tree" size={22} />
+            <span><strong>A note on interpretation.</strong> {data.notice}</span>
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  {Feature && <Feature />}
+
+  <section class="section surface-parchment">
+    <div class="container study-layout">
+      <div class="prose" data-pagefind-weight="2"><Content /></div>
+      <aside class="study-aside">
+        {data.perspective && <PerspectiveBox content={data.perspective} />}
+        {data.scripture.length > 0 && <ScriptureList refs={data.scripture} sort title="Scripture in this study" headingLevel="h2" />}
+        <ShareButtons title={data.title} label="Share this study" />
+      </aside>
+    </div>
+  </section>
+
+  <RelatedContent videos={related.videos} articles={related.articles} studies={related.studies} book={book} title="Go deeper" eyebrow="Related content" />
+</BaseLayout>
+
+<style>
+  .study-sections ul { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-3) 0 0; }
+  .study-sections a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0.3rem 0.85rem;
+    border-radius: var(--r-pill);
+    border: 1px solid rgb(231 173 79 / 0.3);
+    color: var(--c-on-dark-2);
+    font-size: var(--fs-xs);
+    text-decoration: none;
+  }
+  .study-sections a:hover { border-color: var(--c-gold); color: var(--c-parchment); }
+  .study-notice { padding-top: var(--s-6); }
+  .study-notice__box {
+    display: flex;
+    gap: var(--s-3);
+    padding: var(--s-4) var(--s-5);
+    border-radius: var(--r-md);
+    border: 1px solid rgb(68 80 37 / 0.35);
+    background: linear-gradient(140deg, rgb(68 80 37 / 0.1), rgb(231 173 79 / 0.1)), var(--c-white);
+    font-family: var(--font-serif);
+    font-size: var(--fs-base);
+    line-height: 1.6;
+  }
+  .study-notice__box :global(svg) { flex: none; color: var(--c-olive); margin-top: 2px; }
+  .study-layout { display: grid; gap: var(--s-7); }
+  @media (min-width: 1100px) {
+    .study-layout { grid-template-columns: minmax(0, 44rem) 20rem; justify-content: space-between; gap: var(--s-8); }
+    .study-aside { position: sticky; top: calc(var(--header-h) + var(--s-5)); align-self: start; }
+  }
+  .study-aside { display: grid; gap: var(--s-5); align-content: start; }
+</style>

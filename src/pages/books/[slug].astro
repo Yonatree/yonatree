@@ -1,0 +1,323 @@
+---
+import { render, getEntries } from 'astro:content';
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import BookCover from '../../components/BookCover.astro';
+import ThreePaths from '../../components/ThreePaths.astro';
+import Markdown from '../../components/Markdown.astro';
+import VideoCard from '../../components/VideoCard.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import BookTwoTeaser from '../../components/BookTwoTeaser.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
+import Icon from '../../components/Icon.astro';
+import SevenLamps from '../../components/SevenLamps.astro';
+import { getBooks, getEpisodes } from '../../lib/content';
+import { SERIES, episodeUrl, absoluteUrl } from '../../lib/site';
+import { book as bookLd, breadcrumbs } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const books = (await getBooks()).filter((b) => b.data.status === 'available');
+  return books.map((book) => ({ params: { slug: book.id }, props: { book } }));
+}
+
+const { book } = Astro.props;
+const { data } = book;
+const { Content } = await render(book);
+const [episodes, articles] = await Promise.all([getEpisodes(), getEntries(data.relatedArticles)]);
+const url = `/books/${book.id}/`;
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Books', href: '/books/' },
+  { name: data.title, href: url },
+];
+const cover = await getImage({ src: data.cover, width: 800, format: 'jpg' });
+const ebook = data.purchaseLinks.find((l) => l.format === 'Ebook') ?? data.purchaseLinks[0];
+// Which episodes read each section of the book (Introduction, chapters 1–7, Conclusion).
+const chapterEpisodes = [[1, 2, 3], [4, 5], [6], [7, 8], [8, 9, 10], [10, 11], [12, 13], [14, 15, 16], [16]];
+const ld = [
+  breadcrumbs(crumbs),
+  bookLd({
+    url: absoluteUrl(url),
+    title: data.title,
+    subtitle: data.subtitle,
+    description: data.description,
+    image: absoluteUrl(cover.src),
+    authors: data.authors,
+    publisher: data.publisher,
+    copyrightYear: data.copyrightYear,
+    formats: data.purchaseLinks.map((l) => ({ format: l.format, url: l.url })),
+  }),
+];
+---
+
+<BaseLayout
+  title={data.seoTitle ?? `${data.title} — ${data.subtitle}`}
+  description={data.seoDescription ?? data.description}
+  image={data.cover}
+  imageAlt={data.coverAlt}
+  type="book"
+  searchType="Book"
+  jsonLd={ld}
+>
+  <section class="bk-hero surface-dark">
+    <div class="container bk-hero__inner">
+      <div class="bk-hero__cover"><BookCover src={data.cover} alt={data.coverAlt} size="lg" eager /></div>
+      <div class="bk-hero__text">
+        <Breadcrumbs items={crumbs} />
+        <p class="eyebrow">A Yona Tree publication</p>
+        <h1 class="bk-hero__title">{data.title}</h1>
+        {data.subtitle && <p class="bk-hero__subtitle">{data.subtitle}</p>}
+        <p class="bk-hero__by">by {data.authors.join(' & ')}</p>
+        {data.tagline && <p class="bk-hero__tagline">{data.tagline}</p>}
+        <div class="btn-row">
+          {ebook && <a class="btn btn--gold" href={ebook.url} rel="noopener" target="_blank"><Icon name="book" size={18} /> Read the Book<span class="visually-hidden"> — {ebook.format} on {ebook.retailer} (opens in a new tab)</span></a>}
+          <a class="btn btn--outline" href={SERIES.hub}><Icon name="play" size={16} /> Watch the Audiobook Series</a>
+        </div>
+        <ul class="bk-formats" role="list">
+          {data.purchaseLinks.map((l) => (
+            <li><a href={l.url} rel="noopener" target="_blank"><Icon name={l.format === 'Audiobook' ? 'headphones' : 'book'} size={16} /> {l.format} · {l.retailer}<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+          ))}
+          <li><a href={SERIES.hub}><Icon name="play" size={16} /> Free video series · YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section surface-parchment" aria-labelledby="synopsis-title">
+    <div class="container bk-synopsis">
+      <div>
+        <p class="eyebrow">Synopsis</p>
+        <h2 id="synopsis-title" class="bk-h2">Who is the Holy Spirit?</h2>
+        <div class="prose bk-prose"><Content /></div>
+      </div>
+      <aside class="bk-themes" aria-labelledby="themes-title">
+        <h2 id="themes-title" class="bk-label">Major themes</h2>
+        <ul role="list">{data.themes.map((t) => <li><Icon name="lamp" size={16} /> {t}</li>)}</ul>
+      </aside>
+    </div>
+  </section>
+
+  <ThreePaths surface="surface-white" />
+
+  <section class="section surface-dark" aria-labelledby="toc-title">
+    <div class="container container--text">
+      <SevenLamps class="bk-lamps" />
+      <SectionHeading eyebrow="Contents" title="Table of Contents" id="toc-title" align="center" />
+      <ol class="bk-toc" role="list">
+        {
+          data.toc.map((c, i) => (
+            <li class="bk-toc__item">
+              <span class="bk-toc__num" aria-hidden="true">{i === 0 ? '·' : i === data.toc.length - 1 ? '·' : i}</span>
+              <div>
+                <h3>{c.title}</h3>
+                {c.summary && <p>{c.summary}</p>}
+                {chapterEpisodes[i] && (
+                  <p class="bk-toc__watch">
+                    <Icon name="play" size={14} /> Watch:{' '}
+                    {chapterEpisodes[i].map((n, j) => {
+                      const ep = episodes.find((e) => e.data.episode === n);
+                      return ep ? (<>{j > 0 && ', '}<a href={episodeUrl(ep.id)}>Part {n}</a></>) : null;
+                    })}
+                  </p>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {
+    data.sample && (
+      <section class="section surface-parchment" aria-labelledby="sample-title">
+        <div class="container">
+          <div class="bk-sample">
+            <p class="eyebrow">Sample chapter</p>
+            <h2 id="sample-title" class="bk-h2">{data.sampleTitle ?? 'Read a sample'}</h2>
+            <Markdown content={data.sample} class="prose bk-sample__text" />
+            <div class="btn-row bk-sample__ctas">
+              {ebook && <a class="btn btn--bronze" href={ebook.url} rel="noopener" target="_blank">Continue reading<span class="visually-hidden"> on {ebook.retailer} (opens in a new tab)</span> <Icon name="external" size={16} /></a>}
+              <a class="btn btn--outline" href="/articles/who-is-the-holy-spirit-eleven-questions/">The eleven questions</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section surface-dark" aria-labelledby="series-title">
+    <div class="container">
+      <SectionHeading eyebrow="Audiobook video series" title="Listen and watch, free" id="series-title" lede="The whole book is read aloud and illustrated in sixteen episodes on YouTube.">
+        <a slot="actions" class="btn btn--gold" href={SERIES.hub}>All 16 episodes <Icon name="arrow-right" size={18} /></a>
+      </SectionHeading>
+      <ul class="grid grid--3 bk-episodes" role="list">
+        {episodes.map((ep) => <li><VideoCard video={ep} variant="compact" headingLevel="h3" /></li>)}
+      </ul>
+    </div>
+  </section>
+
+  {
+    data.testimonials.length > 0 && (
+      <section class="section surface-white" aria-labelledby="reflections-title">
+        <div class="container">
+          <SectionHeading eyebrow="Readers" title="Reader reflections" id="reflections-title" align="center" />
+          <ul class="bk-quotes" role="list">
+            {data.testimonials.map((t) => (
+              <li>
+                <figure>
+                  <blockquote><p>“{t.quote}”</p></blockquote>
+                  <figcaption>{t.name}{t.note && <span> · {t.note}</span>}</figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section surface-parchment" aria-labelledby="buy-title">
+    <div class="container bk-buy">
+      <div class="stack" style="--stack: var(--s-4)">
+        <p class="eyebrow">Get the book</p>
+        <h2 id="buy-title" class="bk-h2">Where to read and listen</h2>
+        <ul class="bk-buy__list" role="list">
+          {data.purchaseLinks.map((l) => (
+            <li>
+              <a class="bk-buy__card" href={l.url} rel="noopener" target="_blank">
+                <Icon name={l.format === 'Audiobook' ? 'headphones' : 'book'} size={26} />
+                <span><strong>{l.format}</strong><span>{l.retailer}</span></span>
+                <Icon name="external" size={18} />
+                <span class="visually-hidden">(opens in a new tab)</span>
+              </a>
+            </li>
+          ))}
+          <li>
+            <a class="bk-buy__card" href={SERIES.hub}>
+              <Icon name="play" size={26} />
+              <span><strong>Video series</strong><span>Free on YouTube</span></span>
+              <Icon name="arrow-right" size={18} />
+            </a>
+          </li>
+        </ul>
+        <p class="muted bk-small">Prices and availability are set by each retailer.</p>
+      </div>
+      <div class="bk-about stack" style="--stack: var(--s-4)">
+        <p class="eyebrow">About the book</p>
+        <dl class="bk-facts">
+          <div><dt>Authors</dt><dd>{data.authors.join(' & ')}</dd></div>
+          <div><dt>Publisher</dt><dd>{data.publisher}{data.publisherLocation && `, ${data.publisherLocation}`}</dd></div>
+          {data.copyrightYear && <div><dt>Copyright</dt><dd>© {data.copyrightYear} {data.authors.join(' & ')}</dd></div>}
+          <div><dt>Scripture</dt><dd>King James Version unless otherwise noted</dd></div>
+        </dl>
+        {data.dedication && <p class="bk-dedication"><span>Dedication</span>{data.dedication}</p>}
+        <ShareButtons title={data.title} label="Share this book" />
+      </div>
+    </div>
+  </section>
+
+  {
+    articles.length > 0 && (
+      <section class="section surface-white" aria-labelledby="bk-articles-title">
+        <div class="container">
+          <SectionHeading eyebrow="From the book" title="Related articles" id="bk-articles-title">
+            <a slot="actions" class="btn btn--outline" href="/articles/">All articles <Icon name="arrow-right" size={18} /></a>
+          </SectionHeading>
+          <div class="grid grid--3">{articles.map((a) => <ArticleCard article={a} />)}</div>
+        </div>
+      </section>
+    )
+  }
+
+  <BookTwoTeaser />
+</BaseLayout>
+
+<style>
+  .bk-hero {
+    padding-block: var(--s-7) var(--s-9);
+    background:
+      radial-gradient(40rem 30rem at 25% 50%, rgb(241 199 91 / 0.2), transparent 70%),
+      radial-gradient(50rem 30rem at 90% 0%, rgb(18 58 109 / 0.8), transparent 70%),
+      var(--c-midnight);
+  }
+  .bk-hero__inner { display: grid; gap: var(--s-8); align-items: center; }
+  @media (min-width: 960px) { .bk-hero__inner { grid-template-columns: 0.9fr 1.1fr; } }
+  .bk-hero__cover { padding-block: var(--s-5); }
+  .bk-hero__text { display: grid; gap: var(--s-4); justify-items: start; }
+  .bk-hero__title { font-size: var(--fs-3xl); }
+  .bk-hero__subtitle { font-family: var(--font-serif); font-style: italic; font-size: var(--fs-xl); color: var(--c-gold-300); line-height: 1.3; }
+  .bk-hero__by { font-size: var(--fs-md); color: var(--c-on-dark-2); }
+  .bk-hero__tagline { font-family: var(--font-display); letter-spacing: 0.06em; color: var(--c-on-dark-2); padding-block: var(--s-3); border-block: 1px solid rgb(231 173 79 / 0.2); }
+  .bk-formats { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); margin: var(--s-2) 0 0; font-size: var(--fs-sm); }
+  .bk-formats a { display: inline-flex; align-items: center; gap: var(--s-2); color: var(--c-on-dark-2); }
+
+  .bk-h2 { margin: var(--s-3) 0 var(--s-5); font-size: var(--fs-2xl); }
+  .bk-synopsis { display: grid; gap: var(--s-7); }
+  @media (min-width: 960px) { .bk-synopsis { grid-template-columns: minmax(0, 1fr) 20rem; gap: var(--s-8); } }
+  .bk-label { margin-bottom: var(--s-4); font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+  .bk-themes { padding: var(--s-5); border-radius: var(--r-md); border: 1px solid var(--line); background: var(--c-white); align-self: start; }
+  .bk-themes ul { display: grid; gap: var(--s-3); margin: 0; font-family: var(--font-serif); }
+  .bk-themes li { display: flex; gap: var(--s-2); align-items: baseline; }
+  .bk-themes :global(svg) { flex: none; color: var(--accent); transform: translateY(2px); }
+
+  .surface-dark :global(.bk-lamps) { width: min(16rem, 60%); margin: 0 auto var(--s-6); }
+  .bk-toc { display: grid; margin: 0; }
+  .bk-toc__item { display: grid; grid-template-columns: 3rem 1fr; gap: var(--s-4); padding-block: var(--s-5); border-bottom: 1px solid rgb(231 173 79 / 0.18); }
+  .bk-toc__num { font-family: var(--font-display); font-size: 1.6rem; color: var(--c-gold); line-height: 1.2; text-align: center; }
+  .bk-toc__item h3 { font-size: 1.25rem; }
+  .bk-toc__item p { margin-top: var(--s-2); font-family: var(--font-serif); font-size: var(--fs-sm); color: var(--c-on-dark-2); line-height: 1.6; }
+  .bk-toc__watch { font-family: var(--font-sans) !important; font-size: var(--fs-xs) !important; }
+  .bk-toc__watch :global(svg) { display: inline-block; vertical-align: -2px; margin-right: 4px; }
+  .bk-toc__watch a { color: var(--c-gold-300); }
+
+  .bk-sample {
+    max-width: 50rem;
+    margin-inline: auto;
+    padding: clamp(1.5rem, 1rem + 4vw, 4rem);
+    border-radius: 6px;
+    background: linear-gradient(180deg, #fffdf7, #f8f0de);
+    box-shadow: 0 1px 0 #e9dfc8, 0 2px 0 #fff, 0 3px 0 #e2d6bb, 0 30px 60px -30px rgb(77 45 11 / 0.45);
+    border: 1px solid rgb(146 102 37 / 0.2);
+  }
+  .bk-sample :global(.bk-sample__text) { max-width: none; }
+  .bk-sample__ctas { margin-top: var(--s-6); }
+
+  .bk-episodes { margin: 0; }
+  .bk-quotes { display: grid; gap: var(--s-5); margin: 0; }
+  @media (min-width: 820px) { .bk-quotes { grid-template-columns: 1fr 1fr; } }
+  .bk-quotes figure { height: 100%; margin: 0; padding: var(--s-6); border-radius: var(--r-lg); background: var(--c-parchment); border: 1px solid var(--line); }
+  .bk-quotes blockquote { font-family: var(--font-serif); font-size: var(--fs-md); font-style: italic; line-height: 1.6; }
+  .bk-quotes figcaption { margin-top: var(--s-4); font-family: var(--font-display); font-weight: 600; color: var(--c-bronze); }
+  .bk-quotes figcaption span { font-family: var(--font-sans); font-weight: 400; font-size: var(--fs-sm); color: var(--fg-2); }
+
+  .bk-buy { display: grid; gap: var(--s-8); }
+  @media (min-width: 960px) { .bk-buy { grid-template-columns: 1fr 1fr; } }
+  .bk-buy__list { display: grid; gap: var(--s-3); margin: 0; }
+  .bk-buy__card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--s-4);
+    padding: var(--s-4) var(--s-5);
+    border-radius: var(--r-md);
+    border: 1px solid var(--line);
+    background: var(--c-white);
+    color: var(--fg);
+    text-decoration: none;
+    transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+  }
+  .bk-buy__card:hover { border-color: var(--accent); box-shadow: var(--shadow-card); }
+  .bk-buy__card > :global(svg:first-child) { color: var(--accent); }
+  .bk-buy__card strong { display: block; font-family: var(--font-display); font-size: 1.1rem; }
+  .bk-buy__card span span { font-size: var(--fs-sm); color: var(--fg-2); }
+  .bk-small { font-size: var(--fs-xs); }
+  .bk-facts { display: grid; gap: var(--s-3); margin: 0; }
+  .bk-facts div { display: grid; grid-template-columns: 7rem 1fr; gap: var(--s-3); padding-bottom: var(--s-3); border-bottom: 1px solid var(--line); }
+  .bk-facts dt { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  .bk-facts dd { margin: 0; font-family: var(--font-serif); }
+  .bk-dedication { display: grid; gap: var(--s-2); padding: var(--s-4) var(--s-5); border-left: 3px solid var(--c-gold-600); font-family: var(--font-serif); font-style: italic; color: var(--fg-2); }
+  .bk-dedication span { font-family: var(--font-sans); font-style: normal; font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+</style>

@@ -1,0 +1,84 @@
+---
+// Netlify Forms by default (no third-party script). To switch to Mailchimp,
+// ConvertKit, Buttondown etc., change `forms.newsletterAction` in
+// src/data/settings.json (or in the CMS under Settings) to the provider's URL.
+import { settings } from '../lib/site';
+
+interface Props {
+  id?: string;
+  compact?: boolean;
+  buttonLabel?: string;
+  source?: string;
+}
+const { id = 'newsletter', compact = false, buttonLabel = 'Join Yona Tree', source = 'site' } = Astro.props;
+const netlify = settings.forms.provider === 'netlify';
+---
+
+<form
+  class:list={['newsletter', { 'newsletter--compact': compact }]}
+  name="newsletter"
+  method="POST"
+  action={settings.forms.newsletterAction}
+  data-netlify={netlify ? 'true' : undefined}
+  netlify-honeypot={netlify ? 'bot-field' : undefined}
+  data-newsletter
+  novalidate
+>
+  {netlify && <input type="hidden" name="form-name" value="newsletter" />}
+  <input type="hidden" name="source" value={source} />
+  <p class="visually-hidden"><label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+  <div class="field newsletter__field">
+    <label for={`${id}-email`}>Email address</label>
+    <div class="newsletter__row">
+      <input
+        class="input"
+        id={`${id}-email`}
+        name="email"
+        type="email"
+        inputmode="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+        required
+        aria-describedby={`${id}-hint ${id}-error`}
+      />
+      <button class="btn btn--gold" type="submit">{buttonLabel}</button>
+    </div>
+    <p class="hint" id={`${id}-hint`}>New studies, articles, videos and book announcements. No spam — unsubscribe anytime.</p>
+    <p class="field-error" id={`${id}-error`} role="alert" hidden data-error>Please enter a valid email address, like name@example.com.</p>
+  </div>
+</form>
+
+<style>
+  .newsletter { width: 100%; max-width: 34rem; }
+  .newsletter__row { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .newsletter__row .input { flex: 1 1 16rem; }
+  .newsletter__row .btn { flex: 0 0 auto; }
+  .newsletter label { font-size: var(--fs-xs); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-2); }
+  @media (max-width: 480px) { .newsletter__row .btn { flex: 1 1 100%; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) => {
+    const input = form.querySelector<HTMLInputElement>('input[type=email]')!;
+    const error = form.querySelector<HTMLElement>('[data-error]')!;
+    const validate = () => {
+      const ok = input.validity.valid && input.value.trim() !== '';
+      error.hidden = ok;
+      input.setAttribute('aria-invalid', String(!ok));
+      return ok;
+    };
+    input.addEventListener('blur', () => input.value && validate());
+    form.addEventListener('submit', (e) => {
+      if (!validate()) {
+        e.preventDefault();
+        input.focus();
+        return;
+      }
+      const btn = form.querySelector<HTMLButtonElement>('button[type=submit]');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Joining…';
+      }
+    });
+  });
+</script>

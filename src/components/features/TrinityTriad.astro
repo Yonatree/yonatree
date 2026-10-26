@@ -1,0 +1,98 @@
+---
+// Three Persons drawn at identical scale around one center, so the layout
+// never implies unequal divinity. Order of office is described in words only.
+import Icon from '../Icon.astro';
+
+const persons = [
+  { name: 'God the Father', anchor: '#god-the-father', icon: 'crown', titles: ['Jehovah', 'Ancient of Days', 'Fountainhead of the River of Life'] },
+  { name: 'God the Son', anchor: '#god-the-son', icon: 'sword', titles: ['Jesus Christ', 'Lamb of God', 'Word of God'] },
+  { name: 'God the Holy Spirit', anchor: '#god-the-holy-spirit', icon: 'dove', titles: ['Breath of God', 'Comforter', 'Seven Lamps'] },
+];
+---
+
+<section class="triad surface-dark" aria-labelledby="triad-title">
+  <div class="container">
+    <h2 id="triad-title" class="triad__title">One God · Three Persons</h2>
+    <p class="triad__lede">Equal in Godhood, distinct in office.</p>
+    <div class="triad__stage">
+      <svg class="triad__lines" viewBox="0 0 600 520" aria-hidden="true">
+        <defs>
+          <radialGradient id="triad-glow">
+            <stop offset="0" stop-color="#f1c75b" stop-opacity=".45" />
+            <stop offset="1" stop-color="#f1c75b" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <circle cx="300" cy="300" r="200" fill="url(#triad-glow)" />
+        <path d="M300 90 L482 405 L118 405 Z" fill="none" stroke="#e7ad4f" stroke-opacity=".8" stroke-width="1.5" />
+        <circle cx="300" cy="300" r="150" fill="none" stroke="#e7ad4f" stroke-opacity=".25" stroke-dasharray="2 6" />
+      </svg>
+      <p class="triad__center">One God</p>
+      <ul class="triad__persons" role="list">
+        {
+          persons.map((p, i) => (
+            <li class={`triad__person triad__person--${i}`}>
+              <a href={p.anchor}>
+                <span class="triad__icon"><Icon name={p.icon} size={30} /></span>
+                <span class="triad__name">{p.name}</span>
+                <span class="triad__titles">{p.titles.join(' · ')}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <p class="triad__note">The Father, the Son and the Holy Spirit are shown at equal size because Scripture reveals them as equally God. Select a Person to read more.</p>
+  </div>
+</section>
+
+<style>
+  .triad { padding-block: var(--s-8); text-align: center; background: radial-gradient(40rem 30rem at 50% 50%, rgb(18 58 109 / 0.8), transparent 70%), var(--c-midnight); }
+  .triad__title { font-size: var(--fs-2xl); }
+  .triad__lede { margin-top: var(--s-2); font-family: var(--font-serif); font-style: italic; color: var(--c-gold-300); font-size: var(--fs-lg); }
+  .triad__stage { position: relative; width: min(100%, 720px); margin: var(--s-6) auto 0; }
+  .triad__lines { display: none; }
+  .triad__center { display: none; }
+  .triad__persons { display: grid; gap: var(--s-4); margin: 0; }
+  .triad__person a {
+    display: grid;
+    justify-items: center;
+    gap: var(--s-2);
+    padding: var(--s-5);
+    border-radius: var(--r-lg);
+    border: 1px solid rgb(231 173 79 / 0.3);
+    background: rgb(7 24 46 / 0.8);
+    color: var(--c-parchment);
+    min-height: 12.5rem;
+    align-content: center;
+    text-decoration: none;
+    transition: border-color var(--dur-3) var(--ease-out), box-shadow var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out);
+  }
+  .triad__person a:hover { border-color: var(--c-gold); box-shadow: var(--glow-gold); transform: translateY(-3px); }
+  .triad__icon { display: grid; place-items: center; width: 68px; height: 68px; border-radius: 50%; color: var(--c-gold-300); border: 1px solid rgb(241 199 91 / 0.45); background: radial-gradient(circle, rgb(241 199 91 / 0.22), transparent 70%); }
+  .triad__name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; line-height: 1.2; }
+  .triad__titles { font-size: var(--fs-xs); color: var(--c-on-dark-3); letter-spacing: 0.04em; }
+  .triad__note { max-width: 36rem; margin: var(--s-6) auto 0; font-size: var(--fs-xs); color: var(--c-on-dark-3); }
+
+  @media (min-width: 720px) {
+    .triad__stage { aspect-ratio: 600 / 520; }
+    .triad__lines, .triad__center { display: block; }
+    .triad__lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .triad__center {
+      position: absolute;
+      left: 50%;
+      top: 57.7%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--c-gold-300);
+    }
+    .triad__persons { position: absolute; inset: 0; display: block; }
+    .triad__person { position: absolute; width: 34%; transform: translate(-50%, -50%); }
+    .triad__person a { height: 12.5rem; padding: var(--s-4); }
+    .triad__person--0 { left: 50%; top: 17.3%; }
+    .triad__person--1 { left: 19.7%; top: 77.9%; }
+    .triad__person--2 { left: 80.3%; top: 77.9%; }
+  }
+</style>

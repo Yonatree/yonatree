@@ -1,0 +1,72 @@
+---
+import Icon from './Icon.astro';
+import { SERIES } from '../lib/site';
+
+interface Props {
+  surface?: string;
+}
+const { surface = 'surface-parchment' } = Astro.props;
+const paths = [
+  { icon: 'book', title: 'Read the Book', text: 'Seven chapters on the Holy Spirit in Scripture, symbolism and history — in ebook and audiobook.', href: '/books/seven-lamps-before-the-throne/', cta: 'Explore the Book' },
+  { icon: 'play', title: 'Watch the Series', text: 'Sixteen audiobook video episodes of about ten minutes each, free on YouTube.', href: SERIES.hub, cta: 'Watch the Series' },
+  { icon: 'scroll', title: 'Explore the Studies', text: 'Study hubs on the Trinity, Lady Wisdom, the Tree of Life, New Jerusalem and more.', href: '/studies/', cta: 'Read the Studies' },
+];
+---
+
+<section class:list={['three-paths', 'section', 'section--tight', surface]} aria-labelledby="three-paths-title">
+  <div class="container">
+    <h2 id="three-paths-title" class="three-paths__title">
+      <span>Read the Book.</span> <span>Watch the Series.</span> <span>Explore the Studies.</span>
+    </h2>
+    <ol class="three-paths__list" role="list">
+      {
+        paths.map((p, i) => (
+          <li class="three-paths__item" data-reveal style={`--reveal-i:${i}`}>
+            <span class="three-paths__icon"><Icon name={p.icon} size={26} /></span>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+            <a class="text-link" href={p.href}>{p.cta} <Icon name="arrow-right" size={16} /></a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .three-paths__title {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 0.5em;
+    margin-bottom: var(--s-7);
+    font-size: var(--fs-xl);
+    text-align: center;
+  }
+  .three-paths__title span:nth-child(2) { color: var(--accent); }
+  .three-paths__list { display: grid; gap: var(--s-5); margin: 0; }
+  @media (min-width: 820px) { .three-paths__list { grid-template-columns: repeat(3, 1fr); } }
+  .three-paths__item {
+    position: relative;
+    display: grid;
+    gap: var(--s-3);
+    justify-items: start;
+    align-content: start;
+    padding: var(--s-6) var(--s-5);
+    border-radius: var(--r-md);
+    border: 1px solid var(--line);
+    background: var(--card);
+  }
+  .three-paths__item h3 { font-size: 1.3rem; }
+  .three-paths__item p { font-family: var(--font-serif); color: var(--fg-2); font-size: var(--fs-sm); }
+  .three-paths__icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    background: radial-gradient(circle, color-mix(in srgb, var(--c-gold) 22%, transparent), transparent 70%);
+  }
+</style>

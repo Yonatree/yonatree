@@ -1,0 +1,60 @@
+---
+// Lady Wisdom in three columns: the biblical text, how she has been
+// interpreted, and Yona Tree's conclusion — never blended together.
+import Icon from '../Icon.astro';
+---
+
+<section class="wt section surface-white" aria-labelledby="wt-title">
+  <div class="container">
+    <p class="eyebrow">Three ways to read Proverbs 8</p>
+    <h2 id="wt-title" class="wt__title">Text, tradition and conclusion</h2>
+    <div class="wt__grid">
+      <article class="wt__col wt__col--text">
+        <p class="wt__label"><Icon name="book" size={18} /> The biblical text</p>
+        <h3>What Proverbs says</h3>
+        <ul role="list">
+          <li>Wisdom speaks as a woman and calls aloud in the streets <span>(1:20; 8:1)</span>.</li>
+          <li>"The LORD possessed me in the beginning of his way" <span>(8:22)</span>.</li>
+          <li>"I was set up from everlasting… when there were no depths, I was brought forth" <span>(8:23–24)</span>.</li>
+          <li>"Then I was by him, as one brought up with him… daily his delight" <span>(8:30)</span>.</li>
+          <li>She is "a tree of life" <span>(3:18)</span> and builds a house of seven pillars <span>(9:1)</span>.</li>
+        </ul>
+      </article>
+      <article class="wt__col wt__col--history">
+        <p class="wt__label"><Icon name="scroll" size={18} /> Historical interpretation</p>
+        <h3>How she has been read</h3>
+        <ul role="list">
+          <li><strong>Jewish tradition</strong> associated Wisdom with the Torah, God's instruction (Sirach 24).</li>
+          <li><strong>Most Church Fathers</strong> read Wisdom as Christ, "the wisdom of God" (1 Corinthians 1:24).</li>
+          <li><strong>Theophilus and Irenaeus</strong> (2nd century) identified Wisdom with the Holy Spirit.</li>
+          <li><strong>Many modern scholars</strong> read her as a poetic personification of God's wisdom.</li>
+        </ul>
+      </article>
+      <article class="wt__col wt__col--yt">
+        <p class="wt__label"><Icon name="tree" size={18} /> Yona Tree's conclusion</p>
+        <h3>What we propose</h3>
+        <p>
+          Lady Wisdom is the Holy Spirit portrayed in feminine form: she names herself by two of the Spirit's seven attributes and
+          claims the other five, was poured out from the Father before creation, whirled like the Spirit-wind of Ezekiel 1, stood as
+          architect beside the Father, and is called a tree of life.
+        </p>
+        <p class="wt__small">This is the ministry's theological interpretation, offered for prayerful study.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .wt__title { margin-top: var(--s-3); font-size: var(--fs-2xl); }
+  .wt__grid { display: grid; gap: var(--s-4); margin-top: var(--s-6); }
+  @media (min-width: 900px) { .wt__grid { grid-template-columns: repeat(3, 1fr); } }
+  .wt__col { --tier: #1e5f8a; display: grid; gap: var(--s-3); align-content: start; padding: var(--s-5); border-radius: var(--r-md); border: 1px solid color-mix(in srgb, var(--tier) 30%, transparent); border-top: 4px solid var(--tier); background: color-mix(in srgb, var(--tier) 5%, var(--c-parchment)); }
+  .wt__col--history { --tier: #7a5320; }
+  .wt__col--yt { --tier: var(--c-olive); }
+  .wt__label { display: flex; align-items: center; gap: var(--s-2); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--tier); }
+  .wt__col h3 { font-size: 1.25rem; }
+  .wt__col ul { display: grid; gap: var(--s-2); margin: 0; font-family: var(--font-serif); font-size: var(--fs-sm); line-height: 1.55; }
+  .wt__col li span { color: var(--fg-2); font-size: 0.9em; }
+  .wt__col p { font-family: var(--font-serif); font-size: var(--fs-sm); line-height: 1.6; }
+  .wt__small { color: var(--fg-2); font-style: italic; }
+</style>

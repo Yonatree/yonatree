@@ -1,0 +1,259 @@
+---
+// Shared template for every video: series episodes (/seven-lamps/…) and other videos (/videos/…).
+import { render, getEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import YouTubeEmbed from './YouTubeEmbed.astro';
+import ScriptureList from './ScriptureList.astro';
+import ShareButtons from './ShareButtons.astro';
+import RelatedContent from './RelatedContent.astro';
+import Markdown from './Markdown.astro';
+import Icon from './Icon.astro';
+import { getEpisodes, getRelated, adjacentEpisodes, type Video } from '../lib/content';
+import { SERIES, VIDEO_CATEGORIES, formatDate, videoUrl, episodeUrl, absoluteUrl } from '../lib/site';
+import { breadcrumbs, video as videoLd } from '../lib/schema';
+
+interface Props {
+  video: Video;
+}
+const { video } = Astro.props;
+const { data } = video;
+const { Content } = await render(video);
+const isEpisode = data.series === SERIES.slug;
+const episodes = isEpisode ? await getEpisodes() : [];
+const { prev, next } = adjacentEpisodes(episodes, video.id);
+const related = await getRelated('videos', video.id, { articles: 3, studies: 2, videos: 0 });
+const book = data.book ? await getEntry(data.book) : undefined;
+const url = videoUrl(video);
+const pageTitle = isEpisode ? `${data.title} — Seven Lamps Part ${data.episode}` : data.title;
+const crumbs = isEpisode
+  ? [
+      { name: 'Home', href: '/' },
+      { name: 'Seven Lamps', href: SERIES.hub },
+      { name: `Part ${data.episode}: ${data.title}`, href: url },
+    ]
+  : [
+      { name: 'Home', href: '/' },
+      { name: 'Videos', href: '/videos/' },
+      { name: data.title, href: url },
+    ];
+const thumb = await getImage({ src: data.thumbnail, width: 1280, format: 'jpg' });
+const ld = [
+  breadcrumbs(crumbs),
+  videoLd({
+    url: absoluteUrl(url),
+    title: isEpisode ? `${SERIES.title} — Part ${data.episode}: ${data.title}` : data.title,
+    description: data.summary,
+    thumbnail: absoluteUrl(thumb.src),
+    uploadDate: data.uploadDate,
+    duration: data.duration,
+    youtubeId: data.youtubeId,
+  }),
+];
+const categoryNames = data.categories.map((c) => VIDEO_CATEGORIES.find((v) => v.slug === c)?.title).filter(Boolean);
+---
+
+<BaseLayout
+  title={data.seoTitle ?? pageTitle}
+  description={data.seoDescription ?? data.summary}
+  image={data.thumbnail}
+  type="video.other"
+  searchType="Video"
+  jsonLd={ld}
+  publishedTime={data.uploadDate}
+>
+  <section class="vp-hero surface-dark">
+    <div class="container container--wide vp-hero__inner">
+      <Breadcrumbs items={crumbs} />
+      <div class="vp-player">
+        <YouTubeEmbed youtubeId={data.youtubeId} title={data.title} thumbnail={data.thumbnail} eager />
+      </div>
+      <div class="vp-head">
+        <div class="vp-head__text">
+          <p class="vp-kicker">
+            {isEpisode ? <span class="part-label">Part {data.episode} of {SERIES.totalParts}</span> : <span class="eyebrow">{categoryNames[0] ?? 'Video'}</span>}
+            {isEpisode && <a href={SERIES.hub}>{SERIES.title}</a>}
+          </p>
+          <h1 class="vp-title">{data.title}</h1>
+          <p class="vp-meta">
+            <span><Icon name="clock" size={15} /> {data.duration}</span>
+            <span><Icon name="calendar" size={15} /> <time datetime={data.uploadDate.toISOString()}>{formatDate(data.uploadDate)}</time></span>
+            {data.bookChapter && <span><Icon name="book" size={15} /> {data.bookChapter}</span>}
+          </p>
+          <p class="lede">{data.summary}</p>
+        </div>
+        {
+          isEpisode && (
+            <nav class="vp-pager" aria-label="Episodes">
+              {prev ? (
+                <a class="vp-pager__link" href={episodeUrl(prev.id)} rel="prev">
+                  <Icon name="arrow-left" size={18} />
+                  <span><small>Previous · Part {prev.data.episode}</small>{prev.data.title}</span>
+                </a>
+              ) : (
+                <a class="vp-pager__link" href={SERIES.hub}><Icon name="arrow-left" size={18} /><span><small>Series</small>All episodes</span></a>
+              )}
+              {next ? (
+                <a class="vp-pager__link vp-pager__link--next" href={episodeUrl(next.id)} rel="next">
+                  <span><small>Next · Part {next.data.episode}</small>{next.data.title}</span>
+                  <Icon name="arrow-right" size={18} />
+                </a>
+              ) : (
+                <a class="vp-pager__link vp-pager__link--next" href="/studies/lost-and-found/"><span><small>Continue</small>Lost and Found study</span><Icon name="arrow-right" size={18} /></a>
+              )}
+            </nav>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section surface-parchment">
+    <div class="container vp-body">
+      <div class="vp-main">
+        <h2 class="vp-section-title">About this {isEpisode ? 'episode' : 'video'}</h2>
+        <div class="prose"><Content /></div>
+
+        {
+          data.themes.length > 0 && (
+            <div class="vp-block">
+              <h2 class="vp-section-title">Key themes</h2>
+              <ul class="tag-list" role="list">{data.themes.map((t) => <li><span class="tag tag--green">{t}</span></li>)}</ul>
+            </div>
+          )
+        }
+
+        {data.scripture.length > 0 && <div class="vp-block"><ScriptureList refs={data.scripture} title="Scripture references" /></div>}
+
+        <div class="vp-block">
+          {
+            data.transcript ? (
+              <details class="transcript">
+                <summary><Icon name="scroll" size={18} /> Episode transcript</summary>
+                <Markdown content={data.transcript} class="prose transcript__body" />
+              </details>
+            ) : (
+              <p class="vp-note">
+                <Icon name="headphones" size={16} /> Captions are available in the YouTube player.
+                {isEpisode && book && (
+                  <>
+                    {' '}The full text of this episode appears in <a href={`/books/${book.id}/`}>{book.data.title}</a>.
+                  </>
+                )}
+              </p>
+            )
+          }
+        </div>
+
+        <div class="vp-block"><ShareButtons title={pageTitle} label="Share this episode" /></div>
+      </div>
+
+      <aside class="vp-aside" aria-label="Series and reading">
+        {
+          isEpisode && (
+            <nav class="vp-list" aria-labelledby="episode-list-title">
+              <h2 id="episode-list-title" class="vp-section-title">All {SERIES.totalParts} parts</h2>
+              <ol role="list">
+                {episodes.map((ep) => (
+                  <li>
+                    <a href={episodeUrl(ep.id)} aria-current={ep.id === video.id ? 'page' : undefined}>
+                      <span class="vp-list__num">{ep.data.episode}</span>
+                      <span>{ep.data.title}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )
+        }
+        {
+          !isEpisode && (
+            <div class="vp-card">
+              <h2 class="vp-section-title">More from Yona Tree</h2>
+              <p class="serif muted">Watch the 16-part audiobook series, or browse the full video library.</p>
+              <div class="btn-row"><a class="btn btn--bronze btn--sm" href={SERIES.hub}>Seven Lamps series</a><a class="btn btn--outline btn--sm" href="/videos/">All videos</a></div>
+            </div>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+
+  <RelatedContent articles={related.articles} studies={related.studies} book={book} title={isEpisode ? 'Study this episode further' : 'Continue exploring'} />
+</BaseLayout>
+
+<style>
+  .vp-hero { padding-block: var(--s-5) var(--s-8); background: radial-gradient(60rem 30rem at 50% -10%, rgb(18 58 109 / 0.8), transparent 70%), var(--c-midnight); }
+  .vp-hero__inner { display: grid; gap: var(--s-5); }
+  .vp-player { width: min(100%, 1100px); margin-inline: auto; }
+  .vp-head { display: grid; gap: var(--s-6); width: min(100%, 1100px); margin: var(--s-4) auto 0; }
+  @media (min-width: 1000px) { .vp-head { grid-template-columns: 1.4fr 1fr; align-items: start; } }
+  .vp-head__text { display: grid; gap: var(--s-3); }
+  .vp-kicker { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); font-size: var(--fs-xs); letter-spacing: 0.1em; text-transform: uppercase; }
+  .vp-kicker a { color: var(--c-gold); font-weight: 600; text-decoration: none; }
+  .vp-kicker a:hover { text-decoration: underline; }
+  .vp-title { font-size: var(--fs-2xl); }
+  .vp-meta { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); font-size: var(--fs-sm); color: var(--c-on-dark-3); }
+  .vp-meta span { display: inline-flex; align-items: center; gap: var(--s-2); }
+  .vp-hero .lede { color: var(--c-on-dark-2); }
+  .vp-pager { display: grid; gap: var(--s-3); }
+  .vp-pager__link {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    min-height: 64px;
+    padding: var(--s-3) var(--s-4);
+    border-radius: var(--r-md);
+    border: 1px solid rgb(231 173 79 / 0.25);
+    background: rgb(255 253 247 / 0.03);
+    color: var(--c-parchment);
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
+  }
+  .vp-pager__link:hover { border-color: var(--c-gold); background: rgb(231 173 79 / 0.08); }
+  .vp-pager__link span { display: grid; gap: 2px; }
+  .vp-pager__link small { font-family: var(--font-sans); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-gold); }
+  .vp-pager__link--next { justify-content: space-between; text-align: right; }
+  .vp-pager__link :global(svg) { flex: none; color: var(--c-gold); }
+
+  .vp-body { display: grid; gap: var(--s-8); }
+  @media (min-width: 1000px) { .vp-body { grid-template-columns: minmax(0, 1fr) 20rem; gap: var(--s-8); } }
+  .vp-section-title {
+    margin-bottom: var(--s-4);
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .vp-block { margin-top: var(--s-7); }
+  .vp-note { font-size: var(--fs-sm); color: var(--fg-2); }
+  .vp-note :global(svg) { display: inline-block; vertical-align: -3px; margin-right: 6px; }
+  .transcript { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--card); }
+  .transcript summary { display: flex; align-items: center; gap: var(--s-2); min-height: 52px; padding: var(--s-3) var(--s-5); cursor: pointer; font-weight: 600; }
+  .transcript :global(.transcript__body) { padding: 0 var(--s-5) var(--s-5); }
+  .vp-list ol { display: grid; margin: 0; counter-reset: none; }
+  .vp-list a {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: var(--s-2);
+    align-items: baseline;
+    min-height: 44px;
+    padding: var(--s-2) var(--s-3);
+    border-radius: var(--r-sm);
+    color: var(--fg);
+    font-family: var(--font-serif);
+    font-size: var(--fs-sm);
+    text-decoration: none;
+  }
+  .vp-list a:hover { background: rgb(146 102 37 / 0.08); }
+  .vp-list a[aria-current='page'] { background: var(--c-midnight); color: var(--c-parchment); }
+  .vp-list a[aria-current='page'] .vp-list__num { color: var(--c-gold-300); }
+  .vp-list__num { font-family: var(--font-display); font-weight: 600; color: var(--accent); }
+  @media (min-width: 1000px) { .vp-aside { position: sticky; top: calc(var(--header-h) + var(--s-5)); align-self: start; } }
+  .vp-card { display: grid; gap: var(--s-3); padding: var(--s-5); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--card); }
+</style>

@@ -1,0 +1,96 @@
+---
+// Lightweight YouTube facade: a local, optimized thumbnail and a real button.
+// The privacy-enhanced player (youtube-nocookie.com) loads only when pressed.
+import Image from './Img.astro';
+import type { ImageMetadata } from 'astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  youtubeId?: string;
+  playlistId?: string;
+  title: string;
+  thumbnail: ImageMetadata;
+  eager?: boolean;
+}
+const { youtubeId, playlistId, title, thumbnail, eager = false } = Astro.props;
+const src = playlistId
+  ? `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&autoplay=1&rel=0`
+  : `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+const watchUrl = playlistId ? `https://www.youtube.com/playlist?list=${playlistId}` : `https://www.youtube.com/watch?v=${youtubeId}`;
+---
+
+<div class="yt" data-yt data-src={src} data-title={title}>
+  <Image
+    src={thumbnail}
+    alt=""
+    widths={[640, 960, 1280]}
+    sizes="(min-width: 1200px) 1100px, 100vw"
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : 'auto'}
+    class="yt__poster"
+  />
+  <button class="yt__play" type="button" aria-label={`Play video: ${title}`}>
+    <span class="yt__icon"><Icon name="play" size={30} /></span>
+    <span class="yt__label">Play</span>
+  </button>
+  <noscript><a class="yt__fallback" href={watchUrl}>Watch “{title}” on YouTube</a></noscript>
+</div>
+<p class="yt__note">
+  Captions are available in the YouTube player. <a href={watchUrl} rel="noopener" target="_blank">Watch on YouTube<span class="visually-hidden"> (opens in a new tab)</span></a>
+</p>
+
+<style>
+  .yt {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--r-lg);
+    background: #000;
+    box-shadow: 0 0 0 1px rgb(231 173 79 / 0.25), 0 30px 70px -30px rgb(0 0 0 / 0.75);
+  }
+  .yt__poster, .yt :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }
+  .yt__play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--s-2);
+    border: 0;
+    background: radial-gradient(circle at center, rgb(7 24 46 / 0.15), rgb(7 24 46 / 0.45));
+    color: var(--c-parchment);
+    cursor: pointer;
+  }
+  .yt__icon {
+    display: grid;
+    place-items: center;
+    width: 84px;
+    height: 84px;
+    padding-left: 6px;
+    border-radius: 50%;
+    background: var(--c-gold);
+    color: var(--c-midnight);
+    box-shadow: 0 0 0 8px rgb(231 173 79 / 0.22), 0 18px 40px -10px rgb(0 0 0 / 0.6);
+    transition: transform var(--dur-3) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
+  }
+  .yt__play:hover .yt__icon, .yt__play:focus-visible .yt__icon { transform: scale(1.06); box-shadow: 0 0 0 12px rgb(241 199 91 / 0.28), 0 18px 40px -10px rgb(0 0 0 / 0.6); }
+  .yt__play:focus-visible { outline: 3px solid var(--c-gold-300); outline-offset: -6px; }
+  .yt__label { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; text-shadow: 0 1px 8px rgb(0 0 0 / 0.8); }
+  .yt__fallback { position: absolute; inset: auto 0 0; padding: var(--s-3); background: rgb(7 24 46 / 0.85); color: var(--c-parchment); text-align: center; }
+  .yt__note { margin-top: var(--s-3); font-size: var(--fs-xs); color: var(--fg-2); }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-yt]').forEach((el) => {
+    el.querySelector('button')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = el.dataset.src!;
+      iframe.title = el.dataset.title!;
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      el.replaceChildren(iframe);
+      iframe.focus();
+    });
+  });
+</script>

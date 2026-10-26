@@ -1,0 +1,32 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  align?: 'start' | 'center';
+  level?: 'h1' | 'h2' | 'h3';
+  id?: string;
+  class?: string;
+}
+const { eyebrow, title, lede, align = 'start', level = 'h2', id, class: className } = Astro.props;
+const Heading = level;
+---
+
+<div class:list={['section-head', { center: align === 'center' }, className]}>
+  <div class="section-head__row">
+    <div class="section-head__text">
+      {eyebrow && <p class:list={['eyebrow', { 'eyebrow--center': align === 'center' }]}>{eyebrow}</p>}
+      <Heading id={id} class="section-head__title">{title}</Heading>
+    </div>
+    {Astro.slots.has('actions') && <div class="section-head__actions"><slot name="actions" /></div>}
+  </div>
+  {lede && <p class="lede">{lede}</p>}
+</div>
+
+<style>
+  .section-head__text { display: grid; gap: var(--s-3); }
+  .center .section-head__row { justify-content: center; }
+  .center .section-head__text { justify-items: center; }
+  .section-head__title { max-width: 22ch; }
+  .center .section-head__title { margin-inline: auto; }
+</style>

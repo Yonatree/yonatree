@@ -1,0 +1,14 @@
+---
+import { renderMarkdown } from '../lib/markdown';
+
+interface Props {
+  content?: string;
+  class?: string;
+  inline?: boolean;
+}
+const { content = '', class: className, inline = false } = Astro.props;
+let html = content ? await renderMarkdown(content) : '';
+if (inline) html = html.replace(/^<p>([\s\S]*)<\/p>\s*$/, '$1');
+---
+
+{inline ? <Fragment set:html={html} /> : <div class={className} set:html={html} />}

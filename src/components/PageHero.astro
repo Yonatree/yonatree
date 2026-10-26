@@ -1,0 +1,93 @@
+---
+// Interior page hero: midnight surface, optional artwork in a temple-arch frame.
+import Image from './Img.astro';
+import type { ImageMetadata } from 'astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  lede?: string;
+  image?: ImageMetadata;
+  imagePosition?: string;
+  crumbs?: { name: string; href: string }[];
+  layout?: 'split' | 'center' | 'backdrop';
+}
+const { eyebrow, title, subtitle, lede, image, imagePosition = 'center', crumbs, layout = image ? 'split' : 'center' } = Astro.props;
+---
+
+<section class:list={['page-hero', 'surface-dark', `page-hero--${layout}`]}>
+  {
+    image && layout === 'backdrop' && (
+      <div class="page-hero__backdrop" aria-hidden="true">
+        <Image src={image} alt="" widths={[800, 1400, 1900]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${imagePosition}`} />
+      </div>
+    )
+  }
+  <div class="page-hero__inner container">
+    <div class="page-hero__text">
+      {crumbs && <Breadcrumbs items={crumbs} />}
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1 class="page-hero__title">{title}</h1>
+      {subtitle && <p class="page-hero__subtitle">{subtitle}</p>}
+      {lede && <p class="lede">{lede}</p>}
+      <slot />
+    </div>
+    {
+      image && layout === 'split' && (
+        <div class="page-hero__art frame frame--arch frame--gilded">
+          <Image
+            src={image}
+            alt=""
+            widths={[420, 640, 900]}
+            sizes="(min-width: 900px) 420px, 80vw"
+            loading="eager"
+            fetchpriority="high"
+            style={`object-position:${imagePosition}`}
+          />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem);
+    background:
+      radial-gradient(50rem 26rem at 85% 0%, rgb(18 58 109 / 0.7), transparent 70%),
+      radial-gradient(40rem 24rem at 0% 100%, rgb(199 107 6 / 0.14), transparent 70%),
+      var(--c-midnight);
+  }
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(1px 1px at 20% 30%, rgb(255 253 247 / 0.5), transparent),
+      radial-gradient(1px 1px at 70% 20%, rgb(255 253 247 / 0.35), transparent),
+      radial-gradient(1.5px 1.5px at 40% 75%, rgb(241 199 91 / 0.4), transparent),
+      radial-gradient(1px 1px at 85% 65%, rgb(255 253 247 / 0.3), transparent),
+      radial-gradient(1px 1px at 10% 85%, rgb(255 253 247 / 0.25), transparent);
+    background-size: 340px 340px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .page-hero__inner { position: relative; display: grid; gap: var(--s-7); align-items: center; }
+  .page-hero__text { display: grid; gap: var(--s-4); justify-items: start; max-width: 46rem; }
+  .page-hero--center .page-hero__text { margin-inline: auto; justify-items: center; text-align: center; }
+  .page-hero__title { font-size: var(--fs-3xl); }
+  .page-hero__subtitle { font-family: var(--font-serif); font-style: italic; font-size: var(--fs-lg); color: var(--c-gold-300); line-height: 1.4; }
+  .page-hero .lede { color: var(--c-on-dark-2); }
+  .page-hero__art { width: min(100%, 420px); aspect-ratio: 3 / 4; justify-self: center; box-shadow: var(--glow-gold); }
+  @media (min-width: 900px) {
+    .page-hero--split .page-hero__inner { grid-template-columns: 1.3fr 1fr; }
+    .page-hero--split .page-hero__art { justify-self: end; }
+  }
+  .page-hero--backdrop { padding-block: clamp(5rem, 3rem + 8vw, 10rem); }
+  .page-hero__backdrop { position: absolute; inset: 0; }
+  .page-hero__backdrop :global(img) { width: 100%; height: 100%; object-fit: cover; opacity: 0.42; }
+  .page-hero__backdrop::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(7 24 46 / 0.55), rgb(7 24 46 / 0.92)); }
+</style>

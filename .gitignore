@@ -1,0 +1,21 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs & env
+npm-debug.log*
+.env
+.env.*
+
+# macOS
+.DS_Store
+
+# Source originals stay local: full-size artwork and the book manuscript.
+# Optimized copies used by the site live in src/assets.
+Media/
+
+# Local editor/preview settings
+.claude/

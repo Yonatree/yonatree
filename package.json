@@ -1,0 +1,30 @@
+{
+  "name": "yonatree",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Yona Tree — biblical studies, books, articles, audiobooks and video. Home of Seven Lamps Before the Throne.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "cms": "decap-server",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.2",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/cinzel": "^5.2.8",
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource/source-serif-4": "^5.2.8",
+    "astro": "^7.3.8",
+    "remark-directive": "^4.0.0",
+    "sharp": "^0.34.4",
+    "unist-util-visit": "^5.0.0",
+    "unist-util-visit-parents": "^6.0.1"
+  },
+  "devDependencies": {
+    "decap-server": "^3.5.2",
+    "pagefind": "^1.4.0"
+  }
+}

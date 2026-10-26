@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import StudyCard from '../../components/StudyCard.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import Icon from '../../components/Icon.astro';
+import { getArticles, getStudies, getTopics, getByTopic } from '../../lib/content';
+import { BOOKS, parseRef, slugifyBook } from '../../lib/scripture.mjs';
+import { breadcrumbs } from '../../lib/schema';
+
+const [articles, studies, topics] = await Promise.all([getArticles(), getStudies(), getTopics()]);
+const featured = articles.find((a) => a.data.featured) ?? articles[0];
+const rest = articles.filter((a) => a.id !== featured.id);
+const popularStudies = studies.slice(0, 4);
+const topicCounts = await Promise.all(topics.map(async (t) => ({ t, n: (await getByTopic(t.id)).articles.length })));
+
+// Most-cited books across all articles, for the Scripture index teaser.
+const bookCounts = new Map<string, number>();
+for (const a of articles) for (const r of a.data.scripture) {
+  const p = parseRef(r);
+  if (p) bookCounts.set(p.book, (bookCounts.get(p.book) ?? 0) + 1);
+}
+const topBooks = [...bookCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([book]) => BOOKS.find((b) => b.name === book)!);
+
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Articles', href: '/articles/' }];
+---
+
+<BaseLayout
+  title="Articles — Biblical Studies from Yona Tree"
+  description="Articles on the Holy Spirit, Lady Wisdom, the seven Spirits of God, the Tree of Life, the Bride of Christ, New Jerusalem and the Holy Trinity — with Scripture, history and interpretation kept distinct."
+ 
+  jsonLd={[breadcrumbs(crumbs)]}
+>
+  <PageHero
+    eyebrow="The Study Library"
+    title="Articles"
+    lede="Careful studies of Scripture's symbols and mysteries. Every article distinguishes what Scripture says, what historical sources say, what other interpreters believe, and what Yona Tree proposes."
+    crumbs={crumbs}
+  >
+    <form class="article-search" action="/search/" method="get" role="search">
+      <label class="visually-hidden" for="article-search-q">Search articles</label>
+      <Icon name="search" size={18} />
+      <input class="input" id="article-search-q" name="q" type="search" placeholder="Search articles, videos and studies" />
+      <input type="hidden" name="type" value="Article" />
+      <button class="btn btn--gold btn--sm" type="submit">Search</button>
+    </form>
+  </PageHero>
+
+  <section class="section surface-parchment" aria-labelledby="featured-title">
+    <div class="container">
+      <h2 id="featured-title" class="list-label">Featured article</h2>
+      <ArticleCard article={featured} variant="feature" headingLevel="h3" eager />
+
+      <SectionHeading title="Latest Articles" class="latest-head" eyebrow={`${articles.length} articles`} />
+      <div class="grid grid--3">
+        {rest.map((a) => <ArticleCard article={a} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section surface-dark" aria-labelledby="popular-title">
+    <div class="container">
+      <SectionHeading eyebrow="Study Hubs" title="Popular Studies" id="popular-title">
+        <a slot="actions" class="btn btn--outline" href="/studies/">All studies <Icon name="arrow-right" size={18} /></a>
+      </SectionHeading>
+      <div class="grid grid--4">{popularStudies.map((s) => <StudyCard study={s} variant="arch" />)}</div>
+    </div>
+  </section>
+
+  <section class="section surface-white" aria-labelledby="topics-title">
+    <div class="container topics-index">
+      <div>
+        <SectionHeading eyebrow="Browse" title="Topics" id="topics-title" />
+        <ul class="topic-list" role="list">
+          {
+            topicCounts.map(({ t, n }) => (
+              <li>
+                <a href={`/topics/${t.id}/`}>
+                  <Icon name={t.data.icon} size={18} />
+                  <span>{t.data.title}</span>
+                  <span class="topic-list__n">{n}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="scripture-teaser">
+        <p class="eyebrow">Scripture Index</p>
+        <h2 class="scripture-teaser__title">Find every passage we discuss</h2>
+        <p class="serif muted">Every Bible reference cited across Yona Tree articles, from Genesis to Revelation — with links to each passage and to the articles that discuss it.</p>
+        <ul class="tag-list" role="list">
+          {topBooks.map((b) => <li><a class="tag" href={`/articles/scripture-index/#${slugifyBook(b.name)}`}>{b.name}</a></li>)}
+        </ul>
+        <a class="btn btn--bronze" href="/articles/scripture-index/">Open the Scripture Index <Icon name="arrow-right" size={18} /></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .article-search { position: relative; display: flex; flex-wrap: wrap; gap: var(--s-2); width: min(100%, 36rem); margin-top: var(--s-3); }
+  .article-search > :global(svg) { position: absolute; left: 0.9rem; top: 24px; transform: translateY(-50%); color: var(--c-on-dark-3); pointer-events: none; }
+  .article-search .input { flex: 1 1 16rem; padding-left: 2.6rem; }
+  .list-label { margin-bottom: var(--s-4); font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+  :global(.latest-head) { margin-top: var(--s-9); }
+  .topics-index { display: grid; gap: var(--s-8); }
+  @media (min-width: 960px) { .topics-index { grid-template-columns: 1.3fr 1fr; align-items: start; } }
+  .topic-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 0 var(--s-5); margin: 0; }
+  .topic-list a {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--s-3);
+    min-height: 48px;
+    border-bottom: 1px solid var(--line);
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .topic-list a :global(svg) { color: var(--c-olive); }
+  .topic-list a:hover span:nth-child(2) { text-decoration: underline; }
+  .topic-list__n { font-size: var(--fs-xs); color: var(--fg-2); font-variant-numeric: tabular-nums; }
+  .scripture-teaser { display: grid; gap: var(--s-4); justify-items: start; padding: var(--s-6); border-radius: var(--r-lg); background: var(--c-parchment); border: 1px solid var(--line); }
+  .scripture-teaser__title { font-size: var(--fs-xl); }
+</style>

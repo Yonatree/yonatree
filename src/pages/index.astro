@@ -1,0 +1,588 @@
+---
+import { Image } from 'astro:assets';
+import Img from '../components/Img.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import SevenLamps from '../components/SevenLamps.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import BookCover from '../components/BookCover.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import VideoCard from '../components/VideoCard.astro';
+import YouTubeEmbed from '../components/YouTubeEmbed.astro';
+import BookTwoTeaser from '../components/BookTwoTeaser.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+import ThreePaths from '../components/ThreePaths.astro';
+import { getArticles, getEpisodes, getVideos, getTopics, getFlagshipBook, getByTopic } from '../lib/content';
+import { settings, SERIES, YOUTUBE_SUBSCRIBE, episodeUrl, videoUrl } from '../lib/site';
+
+import heroArt from '../assets/art/heavenly-tree-of-life-sanctuary.jpg';
+import triptych from '../assets/art/biblical-mysteries-triptych.jpg';
+import logo from '../assets/brand/yona-tree-logo.png';
+import lostSheep from '../assets/art/good-shepherd-golden-journey.jpg';
+import lostCoin from '../assets/art/searching-for-the-lost-coin.jpg';
+import prodigal from '../assets/art/golden-hour-homecoming-embrace.jpg';
+
+const [articles, episodes, videos, topics, book] = await Promise.all([
+  getArticles(),
+  getEpisodes(),
+  getVideos(),
+  getTopics(),
+  getFlagshipBook(),
+]);
+
+const featuredArticle = articles.find((a) => a.data.featured) ?? articles[0];
+const latestArticles = articles.filter((a) => a.id !== featuredArticle.id).slice(0, 3);
+const spotlightEpisodes = [1, 10, 14, 15].map((n) => episodes.find((e) => e.data.episode === n)!).filter(Boolean);
+const latestVideo = videos[0];
+const moreVideos = videos.filter((v) => v.id !== latestVideo.id).slice(0, 6);
+const featuredTopics = await Promise.all(
+  topics
+    .filter((t) => t.data.featured)
+    .map(async (t) => {
+      const c = await getByTopic(t.id);
+      return { topic: t, count: c.articles.length + c.videos.length + c.studies.length };
+    }),
+);
+const bookThemes = ['The Holy Spirit', 'Lady Wisdom', 'The sevenfold Spirit', 'The Tree of Life', 'The Bride of Christ', 'New Jerusalem', 'The Sword of the Spirit', 'The Holy Trinity'];
+const treePath = ['Tree of Life', 'Wisdom', 'Spirit', 'Life', 'Fruit', 'New Creation'];
+const parables = [
+  { img: lostSheep, alt: 'A smiling shepherd carries a lamb across his shoulders down a rocky hillside path at sunset, his flock behind him and a lakeside town below.', title: 'The Lost Sheep', seeker: 'A Shepherd', person: 'God the Son', ref: 'Luke 15:3–7', position: 'center 30%' },
+  { img: lostCoin, alt: 'A woman in a white head covering kneels with an oil lamp and a broom, sweeping a stone floor where a silver coin glints in the light.', title: 'The Lost Coin', seeker: 'A Woman', person: 'God the Holy Spirit', note: "according to Yona Tree's interpretation", ref: 'Luke 15:8–10', position: 'center 45%' },
+  { img: prodigal, alt: 'An elderly father in a red robe reaches with open arms toward his ragged son kneeling on a stone courtyard at sunset, as servants bring food for a feast.', title: 'The Prodigal Son', seeker: 'A Father', person: 'God the Father', ref: 'Luke 15:11–32', position: 'center 40%' },
+];
+---
+
+<BaseLayout
+  title="Yona Tree | Biblical Studies, Books & Seven Lamps Before the Throne"
+  description={settings.description}
+  image={heroArt}
+  imageAlt="A golden Tree of Life with a radiant dove in its branches, beside waterfalls and a river flowing toward a shining city, above an open Bible."
+  searchType="Page"
+>
+  <!-- HERO ---------------------------------------------------------------->
+  <section class="hero surface-dark" aria-labelledby="hero-title">
+    <div class="hero__sky" aria-hidden="true"></div>
+    <div class="hero__inner container container--wide">
+      <div class="hero__text">
+        <p class="hero__kicker">{settings.secondaryTagline}</p>
+        <h1 id="hero-title" class="hero__title">Yona Tree</h1>
+        <p class="hero__subtitle">Exploring the Mysteries of God Through His Inspired Word</p>
+        <div class="btn-row hero__ctas">
+          <a class="btn btn--gold" href="/books/seven-lamps-before-the-throne/">Explore Seven Lamps <Icon name="arrow-right" size={18} /></a>
+          <a class="btn btn--outline" href={SERIES.hub}><Icon name="play" size={16} /> Watch the Series</a>
+        </div>
+        <a class="text-link hero__tertiary" href="/articles/">Read Articles <Icon name="arrow-right" size={16} /></a>
+      </div>
+
+      <figure class="hero__art">
+        <SevenLamps class="hero__lamps" />
+        <div class="frame frame--arch frame--gilded hero__frame">
+          <Img
+            src={heroArt}
+            alt="A golden Tree of Life with a radiant dove in its branches, framed by temple columns and menorah banners. Waterfalls and a river flow toward a shining city, and an open Bible lies beside lit lamps."
+            widths={[380, 560, 760, 960]}
+            sizes="(min-width: 1100px) 460px, (min-width: 900px) 40vw, min(82vw, 380px)"
+            loading="eager"
+            fetchpriority="high"
+            style="object-position: center 30%"
+          />
+        </div>
+        <figcaption class="hero__caption">
+          <a href="/studies/tree-of-life/">The Tree of Life</a> · <span>Genesis 2:9 &amp; Revelation 22:1–2</span>
+        </figcaption>
+      </figure>
+    </div>
+    <svg class="hero__river" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="river" x1="0" x2="1">
+          <stop offset="0" stop-color="#63b9e8" stop-opacity="0" />
+          <stop offset=".45" stop-color="#63b9e8" stop-opacity=".45" />
+          <stop offset=".6" stop-color="#f1c75b" stop-opacity=".55" />
+          <stop offset="1" stop-color="#63b9e8" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path class="hero__river-a" d="M0 70 C 240 30, 480 110, 720 70 S 1200 30, 1440 70" fill="none" stroke="url(#river)" stroke-width="1.5" />
+      <path class="hero__river-b" d="M0 88 C 260 52, 500 124, 760 86 S 1220 52, 1440 88" fill="none" stroke="url(#river)" stroke-width="1" opacity=".6" />
+    </svg>
+  </section>
+
+  <!-- FEATURED BOOK ------------------------------------------------------->
+  <section class="feature-book section surface-parchment" aria-labelledby="book-title">
+    <div class="container split" style="--split: 0.9fr 1.1fr">
+      <div class="feature-book__cover" data-reveal>
+        <BookCover src={book.data.cover} alt={book.data.coverAlt} size="lg" />
+      </div>
+      <div class="feature-book__text stack" style="--stack: var(--s-4)">
+        <p class="eyebrow">The Flagship Book</p>
+        <h2 id="book-title">{book.data.title}</h2>
+        <p class="feature-book__subtitle">{book.data.subtitle}</p>
+        <p class="feature-book__by">by {book.data.authors.join(' & ')} · Published by Yona Tree</p>
+        <p class="lede">
+          <em>Seven Lamps Before the Throne</em> explores biblical symbolism surrounding the Holy Spirit, Lady Wisdom, the sevenfold
+          Spirit of God, the Tree of Life, the Bride of Christ, New Jerusalem, the Sword of the Spirit, and the mystery of the Holy Trinity.
+        </p>
+        <ul class="tag-list" role="list" aria-label="Key themes">
+          {bookThemes.map((t) => <li><span class="tag">{t}</span></li>)}
+        </ul>
+        <ul class="availability" role="list" aria-label="Available formats">
+          <li><Icon name="book" size={20} /><span><strong>Ebook</strong> on Amazon Kindle</span></li>
+          <li><Icon name="headphones" size={20} /><span><strong>Audiobook</strong> on Google Play</span></li>
+          <li><Icon name="play" size={20} /><span><strong>16-part video series</strong> free on YouTube</span></li>
+        </ul>
+        <p class="feature-book__note">
+          <Icon name="tree" size={16} />
+          <span>The book's distinctive conclusions — including the motherly nature of the Holy Spirit — are presented as Yona Tree's theological position, with the Scriptures and historical sources set out for you to weigh.</span>
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--bronze" href="/books/seven-lamps-before-the-throne/">Discover the Book <Icon name="arrow-right" size={18} /></a>
+          <a class="btn btn--outline" href={SERIES.hub}><Icon name="play" size={16} /> Watch the Series</a>
+        </div>
+        <p class="feature-book__buy">
+          Order now:{' '}
+          {book.data.purchaseLinks.map((l, i) => (
+            <>
+              {i > 0 && ' · '}
+              <a href={l.url} rel="noopener" target="_blank">{l.format} on {l.retailer}<span class="visually-hidden"> (opens in a new tab)</span></a>
+            </>
+          ))}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEVEN LAMPS SERIES -------------------------------------------------->
+  <section class="series section surface-dark" aria-labelledby="series-title">
+    <div class="container">
+      <SectionHeading
+        eyebrow="Audiobook Video Series"
+        title="Seven Lamps Before the Throne"
+        id="series-title"
+        lede="The complete book, read and illustrated in sixteen episodes of about ten minutes each — from the oneness and threeness of God to the Tree of Life, the Sword of the Spirit and the Holy Trinity."
+      >
+        <a slot="actions" class="btn btn--gold" href={SERIES.hub}>Watch Complete Series <Icon name="arrow-right" size={18} /></a>
+      </SectionHeading>
+
+      <div class="grid grid--4 series__spotlight">
+        {spotlightEpisodes.map((ep) => <VideoCard video={ep} headingLevel="h3" />)}
+      </div>
+
+      <h3 class="series__index-title">All sixteen parts</h3>
+      <ol class="series__index" role="list">
+        {
+          episodes.map((ep) => (
+            <li>
+              <a href={episodeUrl(ep.id)}>
+                <span class="series__num">{String(ep.data.episode).padStart(2, '0')}</span>
+                <span class="series__name">{ep.data.title}</span>
+                <span class="series__dur">{ep.data.duration}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- FEATURED STUDY: TREE OF LIFE ---------------------------------------->
+  <section class="tol section surface-olive" aria-labelledby="tol-title">
+    <div class="container split" style="--split: 1.15fr 0.85fr">
+      <figure class="frame frame--gilded tol__art" data-reveal>
+        <Img
+          src={triptych}
+          alt="Three panels joined by streams of light from an open Bible: the burning bush, the golden menorah of the tabernacle, and a radiant Tree of Life beside a river."
+          widths={[480, 800, 1200, 1600]}
+          sizes="(min-width: 900px) 60vw, 100vw"
+          loading="lazy"
+        />
+      </figure>
+      <div class="stack" style="--stack: var(--s-4)">
+        <p class="eyebrow">Featured Study</p>
+        <h2 id="tol-title">The Tree of Life</h2>
+        <p class="lede">
+          The Bible opens and closes with a tree. The burning bush, the seven-branched menorah and the Tree of Life are, Yona Tree
+          believes, variations on one theme — from the garden of Eden to the river of the water of life.
+        </p>
+        <ol class="tol__path" role="list" aria-label="The study's path of symbols">
+          {treePath.map((step, i) => (
+            <li>
+              <span>{step}</span>
+              {i < treePath.length - 1 && <Icon name="arrow-right" size={14} />}
+            </li>
+          ))}
+        </ol>
+        <p class="tol__note">Presented as theological symbolism, with Scripture at every step.</p>
+        <div class="btn-row">
+          <a class="btn btn--gold" href="/studies/tree-of-life/">Read the Study <Icon name="arrow-right" size={18} /></a>
+          <a class="btn btn--outline" href={episodeUrl('part-14-tree-of-life')}><Icon name="play" size={16} /> Watch Part 14</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST ARTICLES ----------------------------------------------------->
+  <section class="section surface-parchment" aria-labelledby="articles-title">
+    <div class="container">
+      <SectionHeading eyebrow="From the Study" title="Latest Articles" id="articles-title">
+        <a slot="actions" class="btn btn--outline" href="/articles/">Explore Articles <Icon name="arrow-right" size={18} /></a>
+      </SectionHeading>
+      <ArticleCard article={featuredArticle} variant="feature" headingLevel="h3" />
+      <div class="grid grid--3 home-articles">
+        {latestArticles.map((a) => <ArticleCard article={a} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- WATCH YONA TREE ------------------------------------------------------>
+  <section class="watch section surface-dark" aria-labelledby="watch-title">
+    <div class="container">
+      <SectionHeading eyebrow="Video" title="Watch Yona Tree" id="watch-title">
+        <a slot="actions" class="btn btn--outline" href={YOUTUBE_SUBSCRIBE} rel="noopener" target="_blank"><Icon name="youtube" size={18} /> Subscribe on YouTube</a>
+      </SectionHeading>
+      <div class="watch__feature">
+        <div class="watch__player">
+          <YouTubeEmbed youtubeId={latestVideo.data.youtubeId} title={latestVideo.data.title} thumbnail={latestVideo.data.thumbnail} />
+        </div>
+        <div class="watch__info stack" style="--stack: var(--s-3)">
+          <p class="watch__kicker">
+            {latestVideo.data.episode && <span class="part-label">Part {latestVideo.data.episode} of 16</span>}
+            <span>Latest episode</span>
+          </p>
+          <h3 class="watch__title"><a href={videoUrl(latestVideo)}>{latestVideo.data.title}</a></h3>
+          <p class="muted serif">{latestVideo.data.summary}</p>
+          <a class="text-link" href={videoUrl(latestVideo)}>Episode notes & Scripture <Icon name="arrow-right" size={16} /></a>
+        </div>
+      </div>
+      <div class="grid grid--3 watch__more">
+        {moreVideos.map((v) => <VideoCard video={v} headingLevel="h3" />)}
+      </div>
+      <p class="center watch__all"><a class="btn btn--gold" href="/videos/">View All Videos <Icon name="arrow-right" size={18} /></a></p>
+    </div>
+  </section>
+
+  <!-- EXPLORE BY TOPIC ----------------------------------------------------->
+  <section class="section surface-white" aria-labelledby="topics-title">
+    <div class="container">
+      <SectionHeading eyebrow="Explore by Topic" title="Follow a theme through Scripture" id="topics-title" align="center" />
+      <ul class="topic-grid" role="list">
+        {
+          featuredTopics.map(({ topic, count }, i) => (
+            <li data-reveal style={`--reveal-i:${i % 4}`}>
+              <a class="topic-tile" href={`/topics/${topic.id}/`}>
+                <span class="topic-tile__icon"><Icon name={topic.data.icon} size={26} /></span>
+                <span class="topic-tile__title">{topic.data.title}</span>
+                <span class="topic-tile__count">{count} {count === 1 ? 'resource' : 'resources'}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="center topics-all"><a class="text-link" href="/topics/">All topics <Icon name="arrow-right" size={16} /></a></p>
+    </div>
+  </section>
+
+  <!-- ABOUT ----------------------------------------------------------------->
+  <section class="about-home section surface-parchment" aria-labelledby="about-title">
+    <div class="container split" style="--split: 0.8fr 1.2fr">
+      <div class="about-home__seal" data-reveal>
+        <Image src={logo} alt="The Yona Tree emblem: a golden tree whose branches form a circle, with a glowing dove in its heart." width={360} height={360} densities={[1, 2]} loading="lazy" />
+      </div>
+      <div class="stack" style="--stack: var(--s-4)">
+        <p class="eyebrow">About Yona Tree</p>
+        <h2 id="about-title">Seeking the Mysteries Hidden in Scripture</h2>
+        <p class="lede">{settings.mission}</p>
+        <p class="serif muted">
+          <em>Yonah</em> is the Hebrew word for <em>dove</em> — the form the Holy Spirit took at the baptism of Jesus. The dove and the
+          tree in our emblem are two symbols that run through the Bible from Genesis to Revelation.
+        </p>
+        <p class="about-home__principles">Search the Scriptures. Examine the evidence. Consider the symbolism. Seek God in prayer.</p>
+        <div class="btn-row"><a class="btn btn--bronze" href="/about/">About Yona Tree <Icon name="arrow-right" size={18} /></a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LUKE 15 ---------------------------------------------------------------->
+  <section class="lost section surface-earth" aria-labelledby="lost-title">
+    <div class="container">
+      <SectionHeading eyebrow="Luke 15" title="Lost and Found" id="lost-title" align="center" lede="Three Parables • Three Seekers • One Divine Love" />
+      <ol class="lost__grid" role="list">
+        {
+          parables.map((p, i) => (
+            <li class="lost__item" data-reveal style={`--reveal-i:${i}`}>
+              <div class="frame frame--arch frame--gilded lost__frame">
+                <Img src={p.img} alt={p.alt} widths={[320, 520, 760]} sizes="(min-width: 900px) 30vw, 80vw" loading="lazy" style={`object-position:${p.position}`} />
+              </div>
+              <h3>{p.title}</h3>
+              <p class="lost__seeker">{p.seeker} · <strong>{p.person}</strong></p>
+              {p.note && <p class="lost__note">{p.note}</p>}
+              <p class="lost__ref">{p.ref}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="btn-row lost__ctas">
+        <a class="btn btn--gold" href="/studies/lost-and-found/">Read the Study <Icon name="arrow-right" size={18} /></a>
+        <a class="btn btn--outline" href={episodeUrl('part-16-holy-trinity')}><Icon name="play" size={16} /> Watch the Final Episode</a>
+      </div>
+    </div>
+  </section>
+
+  <ThreePaths />
+
+  <BookTwoTeaser notifyHref="#continue-title" />
+
+  <!-- CONTINUE THE JOURNEY -------------------------------------------------->
+  <section class="continue section surface-royal" aria-labelledby="continue-title" id="newsletter">
+    <div class="container continue__inner">
+      <SevenLamps class="continue__lamps" />
+      <h2 id="continue-title" tabindex="-1">Continue the Journey</h2>
+      <p class="lede">
+        <em>Seven Lamps Before the Throne</em> may have reached its conclusion, but the exploration has only begun. Join Yona Tree as we
+        continue searching the Scriptures and examining the mysteries woven throughout God's Word.
+      </p>
+      <div class="btn-row continue__ctas">
+        <a class="btn btn--gold" href="/studies/">Explore Yona Tree <Icon name="arrow-right" size={18} /></a>
+        <a class="btn btn--outline" href="#book-two">Book Two — Coming Soon</a>
+      </div>
+      <p class="continue__label serif">Receive new biblical studies, articles, videos, book announcements, and future Yona Tree projects.</p>
+      <NewsletterForm id="home-newsletter" source="home" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    min-height: min(56rem, calc(100svh - var(--header-h)));
+    display: grid;
+    align-items: center;
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) clamp(5rem, 4rem + 4vw, 8rem);
+    background:
+      radial-gradient(48rem 34rem at 78% 30%, rgb(241 199 91 / 0.16), transparent 65%),
+      radial-gradient(60rem 40rem at 90% -10%, rgb(18 58 109 / 0.9), transparent 70%),
+      radial-gradient(40rem 30rem at 0% 110%, rgb(199 107 6 / 0.18), transparent 70%),
+      var(--c-midnight);
+  }
+  .hero__sky {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, rgb(255 253 247 / 0.7), transparent),
+      radial-gradient(1px 1px at 28% 62%, rgb(255 253 247 / 0.45), transparent),
+      radial-gradient(1.5px 1.5px at 44% 12%, rgb(241 199 91 / 0.55), transparent),
+      radial-gradient(1px 1px at 58% 82%, rgb(255 253 247 / 0.35), transparent),
+      radial-gradient(1px 1px at 72% 8%, rgb(255 253 247 / 0.6), transparent),
+      radial-gradient(1.5px 1.5px at 88% 46%, rgb(255 253 247 / 0.4), transparent),
+      radial-gradient(1px 1px at 6% 78%, rgb(241 199 91 / 0.4), transparent);
+    background-size: 520px 420px;
+    opacity: 0.75;
+  }
+  .hero__inner { position: relative; display: grid; gap: clamp(2.5rem, 2rem + 3vw, 5rem); align-items: center; }
+  @media (min-width: 900px) { .hero__inner { grid-template-columns: 1.15fr 0.85fr; } }
+  .hero__text { display: grid; gap: var(--s-5); justify-items: start; }
+  .hero__kicker {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--c-gold);
+  }
+  .hero__title {
+    font-size: var(--fs-hero);
+    font-weight: 600;
+    line-height: 0.95;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #fff3cf 0%, #f1c75b 42%, #e7ad4f 62%, #b8813a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 6px 30px rgb(241 199 91 / 0.25));
+  }
+  .hero__subtitle {
+    max-width: 24ch;
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 1.1rem + 1.2vw, 2rem);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--c-parchment);
+  }
+  .hero__ctas { margin-top: var(--s-2); }
+  .hero__tertiary { color: var(--c-on-dark-2); }
+  .hero__art { position: relative; justify-self: center; width: min(100%, 460px); margin: 0; }
+  .hero :global(.hero__lamps) { width: 78%; margin: 0 auto -6px; position: relative; z-index: 2; }
+  .hero__frame { aspect-ratio: 4 / 5.2; box-shadow: 0 0 0 1px rgb(241 199 91 / 0.35), 0 40px 90px -30px rgb(241 199 91 / 0.45), 0 30px 60px -30px rgb(0 0 0 / 0.8); }
+  .hero__caption { margin-top: var(--s-4); text-align: center; font-size: var(--fs-xs); letter-spacing: 0.08em; color: var(--c-on-dark-3); }
+  .hero__caption a { color: var(--c-gold-300); font-weight: 600; }
+  .hero__river { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 110px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__river-a { animation: drift 16s ease-in-out infinite alternate; }
+    .hero__river-b { animation: drift 22s ease-in-out infinite alternate-reverse; }
+    @keyframes drift { to { transform: translateX(-40px); } }
+  }
+  @media (max-width: 899px) {
+    .hero__frame { aspect-ratio: 4 / 4.4; }
+    .hero__art { width: min(100%, 380px); }
+  }
+
+  /* Featured book */
+  .feature-book__subtitle { font-family: var(--font-serif); font-size: var(--fs-lg); font-style: italic; color: var(--c-bronze); }
+  .feature-book__by { font-size: var(--fs-sm); letter-spacing: 0.04em; color: var(--fg-2); }
+  .availability { display: grid; gap: var(--s-2); margin: 0; }
+  .availability li { display: flex; align-items: center; gap: var(--s-3); font-size: var(--fs-sm); }
+  .availability :global(svg) { color: var(--accent); flex: none; }
+  .feature-book__note {
+    display: flex;
+    gap: var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    border-left: 3px solid var(--c-olive);
+    background: rgb(68 80 37 / 0.06);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    font-family: var(--font-serif);
+    font-size: var(--fs-sm);
+    color: var(--fg-2);
+  }
+  .feature-book__note :global(svg) { flex: none; color: var(--c-olive); margin-top: 3px; }
+  .feature-book__buy { font-size: var(--fs-xs); color: var(--fg-2); }
+  .feature-book__cover { padding-block: var(--s-6); }
+
+  /* Series */
+  .series { background: radial-gradient(50rem 30rem at 50% 0%, rgb(18 58 109 / 0.7), transparent 70%), var(--c-midnight); }
+  .series__index-title {
+    margin: var(--s-8) 0 var(--s-4);
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--c-gold);
+  }
+  .series__index { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: 0 var(--s-6); margin: 0; }
+  .series__index a {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr auto;
+    align-items: baseline;
+    gap: var(--s-3);
+    min-height: 48px;
+    padding-block: var(--s-3);
+    border-bottom: 1px solid rgb(231 173 79 / 0.14);
+    color: var(--c-on-dark);
+    text-decoration: none;
+    transition: color var(--dur-2) var(--ease-out), padding var(--dur-2) var(--ease-out);
+  }
+  .series__index a:hover { color: var(--c-gold-300); padding-left: var(--s-2); }
+  .series__num { font-family: var(--font-display); font-weight: 600; color: var(--c-gold); }
+  .series__name { font-family: var(--font-serif); }
+  .series__dur { font-size: var(--fs-xs); color: var(--c-on-dark-3); font-variant-numeric: tabular-nums; }
+
+  /* Tree of life */
+  .tol { background: radial-gradient(40rem 30rem at 20% 50%, rgb(241 199 91 / 0.12), transparent 70%), var(--c-olive-deep); }
+  .tol__art { aspect-ratio: 16 / 9; margin: 0; box-shadow: 0 30px 70px -30px rgb(0 0 0 / 0.7); }
+  .tol__path { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-2) 0 0; }
+  .tol__path li { display: inline-flex; align-items: center; gap: var(--s-2); }
+  .tol__path span {
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--r-pill);
+    border: 1px solid rgb(241 199 91 / 0.4);
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--c-gold-300);
+    background: rgb(241 199 91 / 0.06);
+  }
+  .tol__path :global(svg) { color: rgb(241 199 91 / 0.6); }
+  .tol__note { font-size: var(--fs-xs); color: var(--c-on-dark-3); }
+
+  .home-articles { margin-top: var(--s-6); }
+
+  /* Watch */
+  .watch__feature { display: grid; gap: var(--s-6); align-items: center; }
+  @media (min-width: 960px) { .watch__feature { grid-template-columns: 1.6fr 1fr; } }
+  .watch__kicker { display: flex; align-items: center; gap: var(--s-3); font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-on-dark-3); }
+  .watch__title { font-size: var(--fs-xl); }
+  .watch__title a { color: inherit; text-decoration: none; }
+  .watch__title a:hover { color: var(--c-gold-300); }
+  .watch__more { margin-top: var(--s-8); }
+  .watch__all { margin-top: var(--s-7); }
+
+  /* Topics */
+  .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: var(--s-4); margin: 0; }
+  .topic-tile {
+    display: grid;
+    gap: var(--s-2);
+    justify-items: start;
+    height: 100%;
+    padding: var(--s-5);
+    border-radius: var(--r-md);
+    border: 1px solid var(--line);
+    background: var(--c-parchment);
+    color: var(--fg);
+    text-decoration: none;
+    transition: transform var(--dur-3) var(--ease-out), box-shadow var(--dur-3) var(--ease-out), border-color var(--dur-3) var(--ease-out);
+  }
+  .topic-tile:hover { transform: translateY(-3px); box-shadow: var(--shadow-card); border-color: rgb(146 102 37 / 0.45); }
+  .topic-tile__icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    margin-bottom: var(--s-2);
+    border-radius: 50%;
+    color: var(--c-olive);
+    background: radial-gradient(circle, rgb(231 173 79 / 0.25), rgb(231 173 79 / 0.05));
+    border: 1px solid rgb(146 102 37 / 0.3);
+  }
+  .topic-tile__title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
+  .topic-tile__count { font-size: var(--fs-xs); color: var(--fg-2); }
+  .topics-all { margin-top: var(--s-6); }
+
+  /* About */
+  .about-home__seal { display: grid; place-items: center; }
+  .about-home__seal :global(img) {
+    width: min(100%, 360px);
+    border-radius: 50%;
+    box-shadow: 0 0 0 10px rgb(233 211 182 / 0.6), 0 0 0 11px rgb(146 102 37 / 0.35), 0 40px 80px -30px rgb(77 45 11 / 0.55);
+  }
+  .about-home__principles {
+    font-family: var(--font-display);
+    font-size: clamp(1.05rem, 1rem + 0.4vw, 1.3rem);
+    line-height: 1.5;
+    color: var(--c-olive);
+    padding-block: var(--s-3);
+    border-block: 1px solid var(--line);
+  }
+
+  /* Lost & found */
+  .lost {
+    background:
+      radial-gradient(50rem 30rem at 50% 0%, rgb(199 107 6 / 0.28), transparent 70%),
+      radial-gradient(40rem 26rem at 50% 110%, rgb(249 153 62 / 0.12), transparent 70%),
+      #2a1806;
+  }
+  .lost__grid { display: grid; gap: var(--s-7); margin: 0; }
+  @media (min-width: 820px) { .lost__grid { grid-template-columns: repeat(3, 1fr); gap: var(--s-6); } }
+  .lost__item { display: grid; gap: var(--s-2); justify-items: center; align-content: start; text-align: center; }
+  .lost__frame { width: min(100%, 320px); aspect-ratio: 3 / 4; margin-bottom: var(--s-4); }
+  .lost__item h3 { font-size: 1.45rem; }
+  .lost__seeker { font-family: var(--font-serif); color: var(--c-on-dark-2); }
+  .lost__seeker strong { color: var(--c-gold-300); font-weight: 600; }
+  .lost__note { font-size: var(--fs-xs); font-style: italic; color: var(--c-on-dark-3); }
+  .lost__ref { font-size: var(--fs-xs); letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-gold); }
+  .lost__ctas { justify-content: center; margin-top: var(--s-7); }
+
+  /* Continue */
+  .continue {
+    text-align: center;
+    background:
+      radial-gradient(50rem 26rem at 50% 0%, rgb(241 199 91 / 0.14), transparent 70%),
+      linear-gradient(180deg, var(--c-midnight-2), var(--c-royal));
+  }
+  .continue__inner { display: grid; justify-items: center; gap: var(--s-5); max-width: 46rem; }
+  .continue :global(.continue__lamps) { width: min(18rem, 70%); }
+  .continue .lede { color: var(--c-on-dark-2); }
+  .continue__ctas { justify-content: center; }
+  .continue__label { margin-top: var(--s-5); color: var(--c-parchment); }
+  .continue :global(.newsletter) { text-align: left; }
+</style>

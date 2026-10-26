@@ -1,0 +1,73 @@
+---
+// Names and offices of the Holy Spirit explored by Yona Tree. Each is marked
+// as a direct scriptural description or as the ministry's interpretation.
+import Icon from '../Icon.astro';
+import { refUrl, formatRef } from '../../lib/scripture.mjs';
+
+const names = [
+  { name: 'Breath of God', icon: 'river', ref: 'Job 33:4', basis: 'scripture' },
+  { name: 'Comforting Helper', icon: 'heart', ref: 'John 14:16', basis: 'scripture' },
+  { name: 'Teacher', icon: 'book', ref: 'John 14:26', basis: 'scripture' },
+  { name: 'Indweller', icon: 'home', ref: '1 Corinthians 3:16', basis: 'scripture' },
+  { name: 'Intercessor', icon: 'flame', ref: 'Romans 8:26', basis: 'scripture' },
+  { name: 'Dove', icon: 'dove', ref: 'Matthew 3:16', basis: 'scripture' },
+  { name: 'Seven Lamps', icon: 'menorah', ref: 'Revelation 4:5', basis: 'scripture' },
+  { name: 'Heavenly Mother', icon: 'tree', ref: 'John 3:5–6', basis: 'interpretation' },
+  { name: 'Lady Wisdom', icon: 'scroll', ref: 'Proverbs 8:22–30', basis: 'interpretation' },
+  { name: 'Architect', icon: 'gate', ref: 'Proverbs 8:30', basis: 'interpretation' },
+  { name: 'Jerusalem Above', icon: 'city', ref: 'Galatians 4:26', basis: 'interpretation' },
+  { name: 'Divine Whirlwind', icon: 'star', ref: 'Ezekiel 1:4', basis: 'interpretation' },
+  { name: 'Tree of Life', icon: 'tree', ref: 'Proverbs 3:18', basis: 'interpretation' },
+];
+---
+
+<section class="names section surface-white" aria-labelledby="names-title">
+  <div class="container">
+    <p class="eyebrow">Names & offices</p>
+    <h2 id="names-title" class="names__title">How Scripture pictures the Spirit</h2>
+    <ul class="names__legend" role="list" aria-label="Legend">
+      <li><span class="names__badge names__badge--scripture">Scripture</span> named or described directly in the cited passage</li>
+      <li><span class="names__badge names__badge--interp">Yona Tree reading</span> the ministry's interpretation of the passage</li>
+    </ul>
+    <ul class="names__grid" role="list">
+      {
+        names.map((n) => (
+          <li class:list={['names__item', `names__item--${n.basis}`]}>
+            <span class="names__icon"><Icon name={n.icon} size={22} /></span>
+            <span class="names__name">{n.name}</span>
+            <a class="scripture-ref names__ref" href={refUrl(n.ref)} rel="noopener" target="_blank">{formatRef(n.ref)}</a>
+            <span class:list={['names__badge', n.basis === 'scripture' ? 'names__badge--scripture' : 'names__badge--interp']}>
+              {n.basis === 'scripture' ? 'Scripture' : 'Yona Tree reading'}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .names__title { margin-top: var(--s-3); font-size: var(--fs-2xl); }
+  .names__legend { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-6); margin: var(--s-4) 0 var(--s-6); font-size: var(--fs-sm); color: var(--fg-2); }
+  .names__legend li { display: flex; align-items: center; gap: var(--s-2); }
+  .names__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 14.5rem), 1fr)); gap: var(--s-3); margin: 0; }
+  .names__item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'icon name' 'icon ref' 'badge badge';
+    align-items: center;
+    gap: var(--s-1) var(--s-3);
+    padding: var(--s-4);
+    border-radius: var(--r-md);
+    border: 1px solid var(--line);
+    background: var(--c-parchment);
+  }
+  .names__item--interpretation { background: linear-gradient(140deg, rgb(68 80 37 / 0.08), rgb(231 173 79 / 0.07)), var(--c-parchment); border-color: rgb(68 80 37 / 0.25); }
+  .names__icon { grid-area: icon; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--c-bronze); border: 1px solid rgb(146 102 37 / 0.3); }
+  .names__name { grid-area: name; font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; }
+  .names__ref { grid-area: ref; font-size: var(--fs-xs); justify-self: start; }
+  .names__item .names__badge { grid-area: badge; justify-self: start; margin-top: var(--s-2); }
+  .names__badge { padding: 0.15rem 0.55rem; border-radius: var(--r-pill); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+  .names__badge--scripture { color: #1e5f8a; background: rgb(30 95 138 / 0.1); }
+  .names__badge--interp { color: var(--c-olive); background: rgb(68 80 37 / 0.12); }
+</style>

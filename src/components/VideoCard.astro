@@ -1,0 +1,136 @@
+---
+import Image from './Img.astro';
+import Icon from './Icon.astro';
+import type { Video } from '../lib/content';
+import { videoUrl, formatDate, SERIES } from '../lib/site';
+import { formatRef, refUrl } from '../lib/scripture.mjs';
+
+interface Props {
+  video: Video;
+  variant?: 'default' | 'episode' | 'compact';
+  headingLevel?: 'h2' | 'h3' | 'h4';
+  showScripture?: number;
+  relatedArticle?: { title: string; href: string };
+  eager?: boolean;
+}
+const { video, variant = 'default', headingLevel = 'h3', showScripture = 0, relatedArticle, eager = false } = Astro.props;
+const { data } = video;
+const href = videoUrl(video);
+const isEpisode = data.series === SERIES.slug && data.episode;
+const Heading = headingLevel;
+const refs = data.scripture.slice(0, showScripture);
+const cats = data.categories.join(' ');
+---
+
+<article
+  class:list={['card', 'video-card', `video-card--${variant}`]}
+  data-video-card
+  data-categories={cats}
+  data-search={`${data.title} ${data.summary} ${data.themes.join(' ')} ${data.scripture.join(' ')}`.toLowerCase()}
+>
+  <div class="card__media video-card__media">
+    <Image
+      src={data.thumbnail}
+      alt=""
+      widths={[400, 640, 960]}
+      sizes={variant === 'compact' ? '240px' : '(min-width: 1100px) 380px, (min-width: 700px) 45vw, 100vw'}
+      loading={eager ? 'eager' : 'lazy'}
+    />
+    <span class="video-card__play" aria-hidden="true"><Icon name="play" size={22} /></span>
+    <span class="video-card__duration"><span class="visually-hidden">Duration </span>{data.duration}</span>
+  </div>
+  <div class="card__body">
+    {
+      isEpisode ? (
+        <p class="video-card__kicker">
+          <span class="part-label">Part {data.episode}</span>
+          <span class="video-card__series">of {SERIES.totalParts}</span>
+        </p>
+      ) : (
+        <p class="video-card__kicker">
+          <span class="video-card__series">{data.categories.includes('worship-music') ? 'Worship Music' : 'Yona Tree'}</span>
+        </p>
+      )
+    }
+    <Heading class="card__title">
+      <a class="card__link" href={href}>{data.title}</a>
+    </Heading>
+    {variant !== 'compact' && <p class="card__text">{data.summary}</p>}
+    {
+      refs.length > 0 && (
+        <p class="video-card__refs">
+          <span class="visually-hidden">Scripture: </span>
+          {refs.map((r, i) => (
+            <>
+              {i > 0 && <span aria-hidden="true"> · </span>}
+              <a href={refUrl(r)} rel="noopener" target="_blank" class="scripture-ref">{formatRef(r)}</a>
+            </>
+          ))}
+        </p>
+      )
+    }
+    {
+      relatedArticle && (
+        <p class="video-card__article">
+          <Icon name="book" size={15} /> <a href={relatedArticle.href}>{relatedArticle.title}</a>
+        </p>
+      )
+    }
+    {
+      variant === 'episode' && (
+        <p class="video-card__cta">
+          <span class="btn btn--gold btn--sm" aria-hidden="true"><Icon name="play" size={14} /> Watch</span>
+          <time class="card__meta" datetime={data.uploadDate.toISOString()}>{formatDate(data.uploadDate)}</time>
+        </p>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .video-card__media { position: relative; }
+  .video-card__play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    padding-left: 4px;
+    border-radius: 50%;
+    background: rgb(7 24 46 / 0.72);
+    color: var(--c-gold-300);
+    box-shadow: 0 0 0 1px rgb(241 199 91 / 0.5), 0 10px 30px -8px rgb(0 0 0 / 0.6);
+    transform: translate(-50%, -50%) scale(0.92);
+    opacity: 0.92;
+    transition: transform var(--dur-3) var(--ease-out), background-color var(--dur-3) var(--ease-out);
+  }
+  .video-card:hover .video-card__play { transform: translate(-50%, -50%) scale(1); background: var(--c-gold); color: var(--c-midnight); }
+  .video-card__duration {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgb(7 24 46 / 0.85);
+    color: var(--c-parchment);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+  }
+  .video-card__kicker { display: flex; align-items: center; gap: var(--s-2); }
+  .video-card__series { font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .video-card__refs { font-size: var(--fs-xs); color: var(--fg-2); line-height: 1.7; }
+  .video-card__refs .scripture-ref { font-weight: 600; }
+  .video-card__article { display: flex; align-items: flex-start; gap: var(--s-2); font-size: var(--fs-xs); line-height: 1.45; }
+  .video-card__article :global(svg) { flex: none; margin-top: 2px; color: var(--accent); }
+  .video-card__article a { color: var(--fg); }
+  .video-card__cta { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); margin-top: auto; padding-top: var(--s-2); }
+  .video-card--compact { flex-direction: row; align-items: stretch; }
+  .video-card--compact .card__media { width: 42%; flex: none; aspect-ratio: 16 / 10; }
+  .video-card--compact .card__body { padding: var(--s-3) var(--s-4); gap: var(--s-2); align-content: center; }
+  .video-card--compact .card__title { font-size: 0.98rem; }
+  .video-card--compact .video-card__play { width: 40px; height: 40px; }
+</style>

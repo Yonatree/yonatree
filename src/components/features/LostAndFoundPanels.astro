@@ -1,0 +1,54 @@
+---
+import Image from '../Img.astro';
+import { refUrl } from '../../lib/scripture.mjs';
+import lostSheep from '../../assets/art/good-shepherd-golden-journey.jpg';
+import lostCoin from '../../assets/art/searching-for-the-lost-coin.jpg';
+import prodigal from '../../assets/art/golden-hour-homecoming-embrace.jpg';
+
+const parables = [
+  { img: lostSheep, alt: 'A smiling shepherd carries a lamb across his shoulders down a rocky hillside path at sunset, his flock behind him and a lakeside town below.', title: 'The Lost Sheep', seeker: 'Shepherd', person: 'Son', ref: 'Luke 15:3–7', line: '“Rejoice with me; for I have found my sheep which was lost.”', pos: 'center 30%' },
+  { img: lostCoin, alt: 'A woman in a white head covering kneels with an oil lamp and a broom, sweeping a stone floor where a silver coin glints in the light.', title: 'The Lost Coin', seeker: 'Woman', person: 'Holy Spirit', note: "according to Yona Tree's interpretation", ref: 'Luke 15:8–10', line: '“Rejoice with me; for I have found the piece which I had lost.”', pos: 'center 45%' },
+  { img: prodigal, alt: 'An elderly father in a red robe reaches with open arms toward his ragged son kneeling on a stone courtyard at sunset, as servants bring food for a feast.', title: 'The Prodigal Son', seeker: 'Father', person: 'Heavenly Father', ref: 'Luke 15:11–32', line: '“For this my son was dead, and is alive again; he was lost, and is found.”', pos: 'center 40%' },
+];
+---
+
+<section class="lf surface-earth" aria-labelledby="lf-title">
+  <div class="container">
+    <h2 id="lf-title" class="lf__title">Three Parables · Three Seekers · One Divine Love</h2>
+    <ol class="lf__grid" role="list">
+      {
+        parables.map((p) => (
+          <li class="lf__item">
+            <div class="frame frame--arch frame--gilded lf__frame">
+              <Image src={p.img} alt={p.alt} widths={[320, 520, 760]} sizes="(min-width: 900px) 30vw, 85vw" loading="lazy" style={`object-position:${p.pos}`} />
+            </div>
+            <h3>{p.title}</h3>
+            <dl class="lf__roles">
+              <div><dt>Seeker</dt><dd>{p.seeker}</dd></div>
+              <div><dt>Portrait of</dt><dd>{p.person}</dd></div>
+            </dl>
+            {p.note && <p class="lf__note">{p.note}</p>}
+            <p class="lf__line">{p.line}</p>
+            <a class="scripture-ref lf__ref" href={refUrl(p.ref)} rel="noopener" target="_blank">{p.ref}</a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .lf { padding-block: var(--s-8); background: radial-gradient(50rem 30rem at 50% 0%, rgb(199 107 6 / 0.3), transparent 70%), #2a1806; }
+  .lf__title { max-width: 30ch; margin-inline: auto; text-align: center; font-size: var(--fs-xl); }
+  .lf__grid { display: grid; gap: var(--s-8); margin: var(--s-7) 0 0; }
+  @media (min-width: 860px) { .lf__grid { grid-template-columns: repeat(3, 1fr); gap: var(--s-6); } }
+  .lf__item { display: grid; gap: var(--s-3); justify-items: center; align-content: start; text-align: center; }
+  .lf__frame { width: min(100%, 320px); aspect-ratio: 3 / 4; margin-bottom: var(--s-3); }
+  .lf__item h3 { font-size: 1.5rem; }
+  .lf__roles { display: flex; gap: var(--s-5); margin: 0; }
+  .lf__roles dt { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--c-on-dark-3); }
+  .lf__roles dd { margin: 0; font-family: var(--font-display); font-size: 1.1rem; color: var(--c-gold-300); }
+  .lf__note { font-size: var(--fs-xs); font-style: italic; color: var(--c-on-dark-3); }
+  .lf__line { font-family: var(--font-serif); font-style: italic; color: var(--c-on-dark-2); max-width: 22rem; }
+  .lf__ref { font-size: var(--fs-xs); letter-spacing: 0.08em; color: var(--c-gold); }
+</style>

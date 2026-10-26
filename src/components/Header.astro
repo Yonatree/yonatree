@@ -1,0 +1,426 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import logo from '../assets/brand/yona-tree-logo.png';
+import { NAV, STUDIES_MENU, SERIES, settings } from '../lib/site';
+
+const path = Astro.url.pathname;
+const isActive = (item: { href: string; match?: string[] }) =>
+  item.href === '/' ? path === '/' : [item.href, ...(item.match ?? [])].some((m) => path.startsWith(m.replace(/\/$/, '')));
+const isCurrent = (href: string) => path === href || path === href.replace(/\/$/, '');
+---
+
+<header class="site-header" data-header>
+  <div class="site-header__inner container container--wide">
+    <a class="brand" href="/" aria-label="Yona Tree — home">
+      <Image src={logo} alt="" width={48} height={48} densities={[1, 2]} loading="eager" class="brand__mark" />
+      <span class="brand__name">Yona Tree</span>
+    </a>
+
+    <nav class="primary-nav" aria-label="Primary">
+      <ul role="list">
+        {
+          NAV.map((item) =>
+            item.mega ? (
+              <li class="has-mega">
+                <button
+                  class:list={['nav-link', { 'is-active': isActive(item) }]}
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="mega-studies"
+                  data-mega-toggle
+                >
+                  {item.label}
+                  <Icon name="chevron-down" size={16} />
+                </button>
+              </li>
+            ) : (
+              <li>
+                <a
+                  class:list={['nav-link', { 'is-active': isActive(item) }]}
+                  href={item.href}
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ),
+          )
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <a class="icon-btn" href="/search/" aria-label="Search Yona Tree">
+        <Icon name="search" size={22} />
+      </a>
+      <a class="btn btn--gold btn--sm header-cta" href={SERIES.hub}>Explore the Series</a>
+      <button class="icon-btn menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
+        <span class="visually-hidden" data-menu-label>Open menu</span>
+        <Icon name="menu" size={24} class="menu-toggle__open" />
+        <Icon name="close" size={24} class="menu-toggle__close" />
+      </button>
+    </div>
+  </div>
+
+  <div class="mega" id="mega-studies" hidden data-mega>
+    <div class="mega__inner container container--wide">
+      <div class="mega__intro">
+        <p class="eyebrow">Studies</p>
+        <p class="mega__title">Study the mysteries woven through Scripture</p>
+        <p class="mega__text">Each study gathers the passages, history and symbolism behind a theme — and links to the articles, episodes and book chapters that explore it.</p>
+        <a class="text-link" href="/studies/">All studies <Icon name="arrow-right" size={16} /></a>
+      </div>
+      <ul class="mega__grid" role="list">
+        {
+          STUDIES_MENU.map((s) => (
+            <li>
+              <a class="mega__link" href={s.href} aria-current={isCurrent(s.href) ? 'page' : undefined}>
+                <span class="mega__icon"><Icon name={s.icon} size={22} /></span>
+                <span>
+                  <span class="mega__label">{s.label}</span>
+                  <span class="mega__note">{s.note}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" hidden data-mobile-menu>
+    <nav class="mobile-menu__nav container" aria-label="Mobile">
+      <ul role="list">
+        {
+          NAV.map((item) =>
+            item.mega ? (
+              <li>
+                <details class="mobile-studies">
+                  <summary class="mobile-link">
+                    {item.label}
+                    <Icon name="chevron-down" size={20} />
+                  </summary>
+                  <ul role="list">
+                    <li><a href="/studies/">All studies</a></li>
+                    {STUDIES_MENU.map((s) => (
+                      <li>
+                        <a href={s.href}>
+                          <Icon name={s.icon} size={18} /> {s.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              </li>
+            ) : (
+              <li>
+                <a class="mobile-link" href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ),
+          )
+        }
+      </ul>
+      <div class="mobile-menu__footer">
+        <a class="btn btn--gold" href={SERIES.hub}>Explore the Series</a>
+        <a class="btn btn--outline" href="/search/"><Icon name="search" size={18} /> Search</a>
+        <ul class="social-row" role="list">
+          {
+            settings.social.map((s) => (
+              <li>
+                <a class="icon-btn" href={s.url} rel="noopener" target="_blank" aria-label={`Yona Tree on ${s.name} (opens in a new tab)`}>
+                  <Icon name={s.icon} size={20} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    --focus: var(--c-gold-300);
+    --accent: var(--c-gold);
+    --fg: var(--c-on-dark);
+    --line: rgb(231 173 79 / 0.3);
+    color-scheme: dark;
+    color: var(--c-on-dark);
+    background: transparent;
+    border-bottom: 1px solid rgb(231 173 79 / 0.14);
+    transition: box-shadow var(--dur-3) var(--ease-out);
+  }
+  /* The blur lives on a pseudo-element so it doesn't become the containing
+     block for the fixed-position mobile menu. */
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgb(7 24 46 / 0.94);
+    backdrop-filter: saturate(1.2) blur(10px);
+    -webkit-backdrop-filter: saturate(1.2) blur(10px);
+  }
+  .site-header.is-scrolled { box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.7); }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--s-5);
+    min-height: var(--header-h);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--c-parchment);
+    text-decoration: none;
+    flex: none;
+  }
+  .brand__mark { width: 48px; height: 48px; border-radius: 50%; box-shadow: 0 0 0 1px rgb(231 173 79 / 0.4), 0 6px 18px -6px rgb(241 199 91 / 0.45); }
+  .brand__name {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #f7dfa4 0%, var(--c-gold) 55%, #c78f3a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .primary-nav { margin-inline: auto; display: none; }
+  .primary-nav ul { display: flex; align-items: center; gap: 0.15rem; margin: 0; }
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-height: 44px;
+    padding: 0 0.8rem;
+    border: 0;
+    background: none;
+    color: var(--c-on-dark-2);
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    border-radius: var(--r-pill);
+    transition: color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
+  }
+  .nav-link:hover, .nav-link[aria-expanded='true'] { color: var(--c-parchment); background: rgb(255 253 247 / 0.06); }
+  .nav-link.is-active { color: var(--c-gold-300); }
+  .nav-link.is-active::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 4px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--c-gold-300);
+    box-shadow: 0 0 8px var(--c-gold-300);
+    transform: translateX(-50%);
+  }
+  .nav-link :global(svg) { transition: transform var(--dur-2) var(--ease-out); }
+  .nav-link[aria-expanded='true'] :global(svg) { transform: rotate(180deg); }
+
+  .site-header__actions { display: flex; align-items: center; gap: var(--s-2); margin-left: auto; }
+  .icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--c-on-dark-2);
+    transition: color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
+  }
+  .icon-btn:hover { color: var(--c-gold-300); background: rgb(255 253 247 / 0.06); }
+  .header-cta { display: none; }
+  .menu-toggle__close { display: none; }
+  .menu-toggle[aria-expanded='true'] .menu-toggle__open { display: none; }
+  .menu-toggle[aria-expanded='true'] .menu-toggle__close { display: block; }
+
+  @media (min-width: 640px) {
+    .header-cta { display: inline-flex; }
+  }
+  @media (min-width: 1120px) {
+    .primary-nav { display: block; }
+    .site-header__actions { margin-left: 0; }
+    .menu-toggle { display: none; }
+  }
+
+  /* Mega menu */
+  .mega {
+    position: absolute;
+    inset: 100% 0 auto;
+    background: linear-gradient(180deg, var(--c-midnight-2), var(--c-midnight));
+    border-bottom: 1px solid rgb(231 173 79 / 0.2);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.8);
+  }
+  .mega:not([hidden]) { animation: mega-in var(--dur-3) var(--ease-out); }
+  @keyframes mega-in { from { opacity: 0; transform: translateY(-6px); } }
+  .mega__inner { display: grid; gap: var(--s-6); padding-block: var(--s-6) var(--s-7); }
+  @media (min-width: 1120px) { .mega__inner { grid-template-columns: minmax(16rem, 0.8fr) 2.4fr; } }
+  .mega__intro { display: grid; gap: var(--s-3); align-content: start; }
+  .mega__title { font-family: var(--font-display); font-size: 1.5rem; line-height: 1.25; color: var(--c-parchment); }
+  .mega__text { font-family: var(--font-serif); color: var(--c-on-dark-2); font-size: var(--fs-sm); }
+  .mega__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: var(--s-2); margin: 0; }
+  .mega__link {
+    display: flex;
+    gap: var(--s-3);
+    align-items: flex-start;
+    padding: var(--s-3) var(--s-4);
+    border-radius: var(--r-md);
+    color: var(--c-parchment);
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: background-color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+  }
+  .mega__link:hover, .mega__link[aria-current='page'] { background: rgb(255 253 247 / 0.05); border-color: rgb(231 173 79 / 0.25); }
+  .mega__icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: var(--c-gold);
+    background: radial-gradient(circle, rgb(231 173 79 / 0.16), rgb(231 173 79 / 0.04));
+    border: 1px solid rgb(231 173 79 / 0.3);
+  }
+  .mega__label { display: block; font-family: var(--font-display); font-weight: 600; font-size: 1rem; letter-spacing: 0.02em; }
+  .mega__note { display: block; font-size: var(--fs-xs); color: var(--c-on-dark-3); margin-top: 2px; }
+
+  /* Mobile menu */
+  .mobile-menu {
+    position: fixed;
+    inset: var(--header-h) 0 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--c-midnight);
+    padding-block: var(--s-5) var(--s-8);
+  }
+  .mobile-menu:not([hidden]) { animation: mega-in var(--dur-3) var(--ease-out); }
+  .mobile-menu__nav > ul { margin: 0; }
+  .mobile-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    padding-block: var(--s-3);
+    border-bottom: 1px solid rgb(231 173 79 / 0.14);
+    color: var(--c-parchment);
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    cursor: pointer;
+    list-style: none;
+  }
+  .mobile-link::-webkit-details-marker { display: none; }
+  .mobile-link[aria-current='page'] { color: var(--c-gold-300); }
+  .mobile-studies[open] summary :global(svg) { transform: rotate(180deg); }
+  .mobile-studies ul { display: grid; gap: 2px; margin: var(--s-2) 0 var(--s-4); }
+  .mobile-studies a {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    min-height: 44px;
+    padding: var(--s-2) var(--s-3);
+    border-radius: var(--r-sm);
+    color: var(--c-on-dark-2);
+    text-decoration: none;
+  }
+  .mobile-studies a :global(svg) { color: var(--c-gold); }
+  .mobile-studies a:hover { background: rgb(255 253 247 / 0.05); color: var(--c-parchment); }
+  .mobile-menu__footer { display: grid; gap: var(--s-3); margin-top: var(--s-6); }
+  .social-row { display: flex; gap: var(--s-2); justify-content: center; margin: var(--s-3) 0 0; }
+  @media (min-width: 1120px) { .mobile-menu { display: none; } }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const megaToggle = document.querySelector<HTMLButtonElement>('[data-mega-toggle]');
+  const mega = document.querySelector<HTMLElement>('[data-mega]');
+  const menuToggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+  const menuLabel = document.querySelector<HTMLElement>('[data-menu-label]');
+
+  const setMega = (open: boolean, focusFirst = false) => {
+    if (!megaToggle || !mega) return;
+    megaToggle.setAttribute('aria-expanded', String(open));
+    mega.hidden = !open;
+    if (open && focusFirst) mega.querySelector<HTMLElement>('a')?.focus();
+  };
+
+  const setMenu = (open: boolean) => {
+    if (!menuToggle || !menu) return;
+    menuToggle.setAttribute('aria-expanded', String(open));
+    menu.hidden = !open;
+    if (menuLabel) menuLabel.textContent = open ? 'Close menu' : 'Open menu';
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+  };
+
+  megaToggle?.addEventListener('click', () => setMega(megaToggle.getAttribute('aria-expanded') !== 'true'));
+  megaToggle?.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setMega(true, true);
+    }
+  });
+
+  // Hover intent for fine pointers only; click and keyboard remain the primary path.
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches && megaToggle && mega) {
+    let timer: number | undefined;
+    const item = megaToggle.closest('li')!;
+    const open = () => { clearTimeout(timer); setMega(true); };
+    const close = () => { timer = window.setTimeout(() => setMega(false), 220); };
+    item.addEventListener('mouseenter', open);
+    item.addEventListener('mouseleave', close);
+    mega.addEventListener('mouseenter', open);
+    mega.addEventListener('mouseleave', close);
+  }
+
+  menuToggle?.addEventListener('click', () => setMenu(menuToggle.getAttribute('aria-expanded') !== 'true'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (megaToggle?.getAttribute('aria-expanded') === 'true') {
+      setMega(false);
+      megaToggle.focus();
+    }
+    if (menuToggle?.getAttribute('aria-expanded') === 'true') {
+      setMenu(false);
+      menuToggle.focus();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as Node;
+    if (mega && !mega.hidden && !mega.contains(target) && !megaToggle?.contains(target)) setMega(false);
+  });
+
+  mega?.addEventListener('focusout', (e) => {
+    const next = e.relatedTarget as Node | null;
+    if (next && !mega.contains(next) && next !== megaToggle) setMega(false);
+  });
+
+  matchMedia('(min-width: 1120px)').addEventListener('change', (e) => e.matches && setMenu(false));
+
+  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+</script>

@@ -1,0 +1,269 @@
+---
+// Brand audit of the existing Yonatree.com, the expanded palette, and the
+// before/after comparison. Internal reference page: noindex, not in sitemap or search.
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Icon from '../components/Icon.astro';
+import SevenLamps from '../components/SevenLamps.astro';
+import { TIERS } from '../lib/remark-tiers.mjs';
+import existing from '../assets/brand-audit/existing-home-desktop.jpg';
+import proposed from '../assets/brand-audit/proposed-home-desktop.jpg';
+import logo from '../assets/brand/yona-tree-logo.png';
+
+const hexToRgb = (h: string) => {
+  const n = parseInt(h.slice(1), 16);
+  return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+};
+const lum = (h: string) => {
+  const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+};
+const contrast = (a: string, b: string) => {
+  const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
+  return ((x + 0.05) / (y + 0.05)).toFixed(2);
+};
+
+const existingPalette = [
+  { hex: '#FFFFFF', name: 'Header & page white', use: 'Header background, body background' },
+  { hex: '#666666', name: 'Body gray', use: 'Body text (Alice 14px)' },
+  { hex: '#000000', name: 'Heading black', use: 'H1–H4, outline buttons' },
+  { hex: '#F9993E', name: 'Orange accent', use: 'Links, social “Follow” text, peach gradient start' },
+  { hex: '#F97800', name: 'Active orange', use: 'Current navigation item' },
+  { hex: '#C76B06', name: 'Amber', use: 'Hero section gradient' },
+  { hex: '#F9CB9F', name: 'Peach', use: 'Section gradient overlays' },
+  { hex: '#FFD611', name: 'Yellow', use: 'Decorative border' },
+  { hex: '#4D2D0B', name: 'Earth brown', use: 'Overlay on “Touched by God” section' },
+  { hex: '#2C2A27', name: 'Overlay charcoal', use: 'Parallax overlay (60%)' },
+  { hex: '#222222', name: 'Footer charcoal', use: 'Footer background' },
+];
+const logoPalette = [
+  { hex: '#E7AD4F', name: 'Gilded gold', use: 'Leaf highlights, lettering' },
+  { hex: '#F1B44B', name: 'Bright gold', use: 'Highlights on the dove and branches' },
+  { hex: '#926625', name: 'Antique bronze', use: 'Trunk, roots, letter shading' },
+  { hex: '#445025', name: 'Leaf olive', use: 'Leaves' },
+  { hex: '#E9D3B6', name: 'Vellum', use: 'Paper medallion' },
+];
+const system = [
+  { hex: '#07182E', name: 'Midnight Heaven', token: '--c-midnight', use: 'Header, footer, heroes, video sections', ratio: 55 },
+  { hex: '#123A6D', name: 'Royal Biblical Blue', token: '--c-royal', use: 'Gradients, raised dark surfaces', ratio: 0 },
+  { hex: '#F7F1E3', name: 'Parchment Ivory', token: '--c-parchment', use: 'Reading surfaces, light sections', ratio: 20 },
+  { hex: '#FFFDF7', name: 'Scripture White', token: '--c-white', use: 'Cards, light surfaces', ratio: 0 },
+  { hex: '#445025', name: 'Tree of Life Green', token: '--c-olive', use: 'Taxonomy, perspective boxes, Tree of Life sections (from logo)', ratio: 10 },
+  { hex: '#E7AD4F', name: 'Throne Gold', token: '--c-gold', use: 'Headings & accents on dark, primary buttons (from logo)', ratio: 10 },
+  { hex: '#F1C75B', name: 'Radiant Gold', token: '--c-gold-300', use: 'Glows, active states, focus on dark', ratio: 0 },
+  { hex: '#926625', name: 'Antique Bronze', token: '--c-gold-600', use: 'Large gold-family text & ornaments on light (from logo)', ratio: 0 },
+  { hex: '#7A5320', name: 'Deep Bronze', token: '--c-bronze', use: 'Gold-family text & buttons on light', ratio: 0 },
+  { hex: '#781C27', name: 'Royal Crimson', token: '--c-crimson', use: 'Part labels, Book Two', ratio: 3 },
+  { hex: '#63B9E8', name: 'Living Water', token: '--c-water', use: 'River of Life, Scripture tier on dark', ratio: 2 },
+  { hex: '#F9993E', name: 'Lampfire Amber', token: '--c-amber', use: 'Flame glows (heritage accent, never text on light)', ratio: 0 },
+  { hex: '#C76B06', name: 'Ember', token: '--c-ember', use: 'Luke 15 & warm gradients (heritage)', ratio: 0 },
+  { hex: '#171717', name: 'Charcoal', token: '--c-ink', use: 'Body text on light', ratio: 0 },
+  { hex: '#D9D2C4', name: 'Soft Stone', token: '--c-stone', use: 'Dividers, quiet surfaces', ratio: 0 },
+];
+const pairs = [
+  ['#E7AD4F', '#07182E', 'Gold on Midnight'],
+  ['#F7F1E3', '#07182E', 'Parchment on Midnight'],
+  ['#171717', '#F7F1E3', 'Charcoal on Parchment'],
+  ['#7A5320', '#F7F1E3', 'Deep Bronze on Parchment'],
+  ['#FFFDF7', '#7A5320', 'White on Deep Bronze button'],
+  ['#07182E', '#E7AD4F', 'Midnight on Gold button'],
+  ['#445025', '#F7F1E3', 'Olive on Parchment'],
+  ['#F9993E', '#FFFFFF', 'Existing orange link on white'],
+];
+const icons = ['tree', 'dove', 'menorah', 'lamp', 'flame', 'book', 'scroll', 'river', 'sword', 'crown', 'city', 'gate', 'star', 'trinity', 'crook', 'coin', 'home', 'heart', 'headphones', 'play', 'search', 'share', 'youtube', 'facebook', 'instagram', 'tiktok'];
+const findings = [
+  ['Platform', 'WordPress 7.1.3 with the Divi 5.0.1 theme'],
+  ['Title', '“Yona Tree | Begotten of the Father, Born of the Spirit, Betrothed to the Son”'],
+  ['Meta description', 'None'],
+  ['Open Graph / Twitter cards', 'None'],
+  ['Viewport', '“maximum-scale=1.0, user-scalable=0” — blocks pinch-zoom (WCAG 1.4.4 failure); fixed in the redesign'],
+  ['Navigation', 'A single “Home” link and a search icon'],
+  ['Fonts', 'Alice (body and most headings), Hedvig Letters Serif (H1), Inter (eyebrows, secondary buttons)'],
+  ['Buttons', 'Transparent with 2px black border, 3px radius, Alice 20px (“Ebook – Order Now!”, “Audio Book – Order Now!”)'],
+  ['Links', '#F9993E orange — 2.18:1 contrast on white, below the 4.5:1 AA minimum'],
+  ['Imagery', 'Seven Lamps announcement, Trinity artwork (4 images), Burning Bush/Menorah/Tree triptych, Touched by God'],
+  ['Content', 'Book introduction, seven chapter summaries, the eleven questions, mission statement, two reader testimonials'],
+  ['Template leftovers', 'Placeholder phone “(555) 111-1111” and a “Book An Appointment” button — not carried over'],
+  ['Indexed URLs', '/ and /our-spiritual-mother/ — both preserved'],
+  ['Retail links', 'Amazon Kindle (B0H1TYHPP6) and Google Play audiobook — carried over unchanged'],
+  ['Social', 'YouTube @YonaTree, Facebook, Instagram @theyonatree, TikTok @yonatree7 — carried over'],
+];
+---
+
+<BaseLayout title="Brand System & Redesign" description="Yona Tree brand audit, color system, typography, iconography and the before-and-after comparison of the Yonatree.com redesign." noindex>
+  <PageHero eyebrow="Internal reference" title="Brand System & Redesign" lede="An audit of the existing Yonatree.com, the expanded visual system built from it, and a side-by-side comparison. This page is not indexed by search engines." />
+
+  <section class="section surface-parchment" aria-labelledby="compare-title">
+    <div class="container container--wide">
+      <SectionHeading eyebrow="Before → after" title="Existing Yonatree.com → Proposed redesign" id="compare-title" />
+      <div class="compare-shots">
+        <figure>
+          <figcaption><span class="shot-label">Existing</span> yonatree.com · captured October 25, 2026</figcaption>
+          <div class="shot"><Image src={existing} alt="The existing Yonatree.com homepage: a white header, the Seven Lamps announcement image, “The Family of God” heading on a peach-to-orange gradient, and seven chapter summaries with black icons." widths={[700, 1000, 1440]} sizes="(min-width: 1000px) 46vw, 100vw" /></div>
+        </figure>
+        <figure>
+          <figcaption><span class="shot-label shot-label--new">Proposed</span> the redesigned homepage</figcaption>
+          <div class="shot"><Image src={proposed} alt="The redesigned homepage: a midnight-blue hero with a gilded YONA TREE title beside an arch-framed Tree of Life under seven lamps, followed by the book on parchment and the series on midnight blue." widths={[700, 1000, 1440]} sizes="(min-width: 1000px) 46vw, 100vw" /></div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section surface-white" aria-labelledby="audit-title">
+    <div class="container">
+      <SectionHeading eyebrow="Brand audit" title="What the live site uses today" id="audit-title" />
+      <div class="audit">
+        <div>
+          <h3 class="b-h3">Existing palette — sampled from computed styles</h3>
+          <ul class="swatches" role="list">
+            {existingPalette.map((c) => (
+              <li><span class="sw" style={`background:${c.hex}`}></span><span><strong>{c.name}</strong><code>{c.hex} · rgb({hexToRgb(c.hex)})</code><span>{c.use}</span></span></li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h3 class="b-h3">Logo palette — sampled from the emblem</h3>
+          <div class="logo-row">
+            <Image src={logo} alt="The Yona Tree emblem." width={120} height={120} densities={[1, 2]} />
+            <p class="serif muted">The dove-and-tree emblem is kept exactly as supplied. Its golds and olive greens became the core of the new system.</p>
+          </div>
+          <ul class="swatches" role="list">
+            {logoPalette.map((c) => (
+              <li><span class="sw" style={`background:${c.hex}`}></span><span><strong>{c.name}</strong><code>{c.hex} · rgb({hexToRgb(c.hex)})</code><span>{c.use}</span></span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <h3 class="b-h3 b-spaced">Findings</h3>
+      <dl class="findings">{findings.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+    </div>
+  </section>
+
+  <section class="section surface-parchment" aria-labelledby="system-title">
+    <div class="container">
+      <SectionHeading eyebrow="Expanded palette" title="The Yona Tree color system" id="system-title" lede="Heritage colors from the logo and the existing site, joined to the midnight-and-gold language of the Seven Lamps series. Gold stays precious by being used sparingly." />
+      <div class="ratio" role="img" aria-label="Target usage: 55% midnight and neutral, 20% parchment, 10% Tree of Life green, 10% gold, 5% crimson and Living Water accents.">
+        <span style="flex:55;background:#07182E">55% midnight & neutral</span>
+        <span style="flex:20;background:#F7F1E3;color:#171717">20% parchment</span>
+        <span style="flex:10;background:#445025">10% green</span>
+        <span style="flex:10;background:#E7AD4F;color:#07182E">10% gold</span>
+        <span style="flex:5;background:linear-gradient(90deg,#781C27 60%,#63B9E8 60%)"><span class="visually-hidden">5% crimson & water</span></span>
+      </div>
+      <ul class="system" role="list">
+        {system.map((c) => (
+          <li>
+            <span class="system__chip" style={`background:${c.hex}`}></span>
+            <strong>{c.name}</strong>
+            <code>{c.hex} · {c.token}</code>
+            <span>{c.use}</span>
+          </li>
+        ))}
+      </ul>
+      <h3 class="b-h3 b-spaced">Contrast checks (WCAG 2.2)</h3>
+      <ul class="pairs" role="list">
+        {pairs.map(([fg, bg, label]) => {
+          const r = Number(contrast(fg, bg));
+          return (
+            <li style={`background:${bg};color:${fg}`}>
+              <span class="pairs__sample">Aa</span>
+              <span>{label}</span>
+              <span class="pairs__ratio" style={`color:${fg}`}>{r}:1 · {r >= 7 ? 'AAA' : r >= 4.5 ? 'AA' : r >= 3 ? 'AA large only' : 'Fails'}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section surface-white" aria-labelledby="type-title">
+    <div class="container">
+      <SectionHeading eyebrow="Typography" title="Three voices" id="type-title" />
+      <div class="type-grid">
+        <div class="type-card"><p class="type-meta">Display · Cinzel</p><p class="type-display">Seven Lamps Before the Throne</p><p class="muted">Classical Roman capitals echoing the lettering of the logo. Headings and titles.</p></div>
+        <div class="type-card"><p class="type-meta">Reading · Source Serif 4</p><p class="type-serif">“There were seven lamps of fire burning before the throne.”</p><p class="muted">An optical-size serif built for long reading. Articles, studies, subtitles.</p></div>
+        <div class="type-card"><p class="type-meta">Interface · Inter</p><p class="type-sans">Watch the Series · Part 15 of 16 · 9:26</p><p class="muted">Navigation, buttons, labels and metadata.</p></div>
+      </div>
+      <p class="muted b-note">Replaces Alice and Hedvig Letters Serif from the existing site. All three are self-hosted variable fonts with Latin subsets.</p>
+    </div>
+  </section>
+
+  <section class="section surface-dark" aria-labelledby="icons-title">
+    <div class="container">
+      <SectionHeading eyebrow="Iconography" title="Symbols of the study" id="icons-title" lede="One line style — 24px grid, 1.6 stroke, round caps — for interface icons and ministry symbols alike." />
+      <SevenLamps class="b-lamps" label="The seven lamps ornament" />
+      <ul class="icons" role="list">
+        {icons.map((name) => <li><Icon name={name} size={30} /><span>{name}</span></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section surface-parchment" aria-labelledby="ui-title">
+    <div class="container">
+      <SectionHeading eyebrow="Components" title="Buttons, labels and evidence tiers" id="ui-title" />
+      <div class="btn-row">
+        <span class="btn btn--bronze">Explore the Book</span>
+        <span class="btn btn--midnight">Read the Studies</span>
+        <span class="btn btn--outline">Watch the Series</span>
+        <span class="part-label">Part 15</span>
+        <span class="tag tag--green">Tree of Life</span>
+      </div>
+      <div class="tiers-demo">
+        {(['scripture', 'history', 'interpreters', 'yonatree', 'possible', 'speculation'] as const).map((k) => (
+          <aside class={`tier tier--${k}`}><p class="tier__label">{TIERS[k].label}</p><p class="serif">Written in Markdown as <code>:::{k}</code> … <code>:::</code></p></aside>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .compare-shots { display: grid; gap: var(--s-6); }
+  @media (min-width: 1000px) { .compare-shots { grid-template-columns: 1fr 1fr; } }
+  .compare-shots figure { margin: 0; display: grid; gap: var(--s-3); }
+  .compare-shots figcaption { font-size: var(--fs-sm); color: var(--fg-2); }
+  .shot { max-height: 64rem; overflow: hidden; border-radius: var(--r-md); border: 1px solid var(--line); box-shadow: var(--shadow-lift); }
+  .shot-label { display: inline-block; margin-right: var(--s-2); padding: 0.15rem 0.6rem; border-radius: var(--r-pill); background: var(--c-stone); color: var(--c-ink); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  .shot-label--new { background: var(--c-midnight); color: var(--c-gold-300); }
+  .b-h3 { margin-bottom: var(--s-4); font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+  .b-spaced { margin-top: var(--s-8); }
+  .audit { display: grid; gap: var(--s-7); }
+  @media (min-width: 960px) { .audit { grid-template-columns: 1fr 1fr; } }
+  .swatches { display: grid; gap: var(--s-2); margin: 0; }
+  .swatches li { display: flex; gap: var(--s-3); align-items: flex-start; }
+  .swatches li > span:last-child { display: grid; font-size: var(--fs-sm); }
+  .swatches code, .system code { font-size: 0.78rem; color: var(--fg-2); }
+  .sw { flex: none; width: 44px; height: 44px; border-radius: var(--r-sm); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15); }
+  .logo-row { display: flex; gap: var(--s-4); align-items: center; margin-bottom: var(--s-4); }
+  .logo-row :global(img) { border-radius: 50%; }
+  .findings { display: grid; gap: 0; margin: 0; }
+  .findings div { display: grid; gap: var(--s-1) var(--s-5); padding-block: var(--s-3); border-bottom: 1px solid var(--line); }
+  @media (min-width: 720px) { .findings div { grid-template-columns: 14rem 1fr; } }
+  .findings dt { font-weight: 600; }
+  .findings dd { margin: 0; font-family: var(--font-serif); color: var(--fg-2); }
+  .ratio { display: flex; height: 56px; margin-bottom: var(--s-6); border-radius: var(--r-md); overflow: hidden; font-size: var(--fs-xs); font-weight: 600; color: var(--c-parchment); }
+  .ratio > span { display: grid; place-items: center; white-space: nowrap; overflow: hidden; }
+  .system { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: var(--s-4); margin: 0; }
+  .system li { display: grid; gap: 2px; padding: var(--s-3); border-radius: var(--r-md); background: var(--c-white); border: 1px solid var(--line); font-size: var(--fs-sm); }
+  .system__chip { height: 72px; margin-bottom: var(--s-2); border-radius: var(--r-sm); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12); }
+  .system li > span:last-child { color: var(--fg-2); font-size: var(--fs-xs); }
+  .pairs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--s-3); margin: 0; }
+  .pairs li { display: grid; gap: var(--s-1); padding: var(--s-4); border-radius: var(--r-md); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.1); font-size: var(--fs-sm); }
+  .pairs__sample { font-family: var(--font-display); font-size: 2rem; line-height: 1; }
+  .pairs__ratio { font-weight: 700; }
+  .type-grid { display: grid; gap: var(--s-4); }
+  @media (min-width: 900px) { .type-grid { grid-template-columns: repeat(3, 1fr); } }
+  .type-card { display: grid; gap: var(--s-3); padding: var(--s-5); border-radius: var(--r-md); border: 1px solid var(--line); background: var(--c-parchment); }
+  .type-meta { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .type-display { font-family: var(--font-display); font-size: 2rem; line-height: 1.15; }
+  .type-serif { font-family: var(--font-serif); font-size: 1.4rem; font-style: italic; line-height: 1.4; }
+  .type-sans { font-family: var(--font-sans); font-size: 1.2rem; font-weight: 600; }
+  .b-note { margin-top: var(--s-4); font-size: var(--fs-sm); }
+  .surface-dark :global(.b-lamps) { width: min(20rem, 70%); margin: 0 auto var(--s-6); }
+  .icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr)); gap: var(--s-3); margin: 0; }
+  .icons li { display: grid; justify-items: center; gap: var(--s-2); padding: var(--s-4) var(--s-2); border-radius: var(--r-md); border: 1px solid rgb(231 173 79 / 0.2); color: var(--c-gold-300); font-size: var(--fs-xs); }
+  .icons li span { color: var(--c-on-dark-3); }
+  .tiers-demo { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); gap: var(--s-3); margin-top: var(--s-6); }
+  .tiers-demo .tier { margin: 0; }
+</style>

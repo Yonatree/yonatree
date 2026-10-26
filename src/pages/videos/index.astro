@@ -1,0 +1,157 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import VideoCard from '../../components/VideoCard.astro';
+import Icon from '../../components/Icon.astro';
+import { getVideos } from '../../lib/content';
+import { VIDEO_CATEGORIES, YOUTUBE_SUBSCRIBE, SERIES } from '../../lib/site';
+import { breadcrumbs } from '../../lib/schema';
+
+const videos = await getVideos();
+// Series in episode order first, then everything else by date.
+const ordered = [
+  ...videos.filter((v) => v.data.series === SERIES.slug).sort((a, b) => (a.data.episode ?? 0) - (b.data.episode ?? 0)),
+  ...videos.filter((v) => v.data.series !== SERIES.slug),
+];
+const counts = Object.fromEntries(VIDEO_CATEGORIES.map((c) => [c.slug, videos.filter((v) => v.data.categories.includes(c.slug)).length]));
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Videos', href: '/videos/' }];
+---
+
+<BaseLayout
+  title="Videos — Watch Yona Tree"
+  description="The Yona Tree video library: the 16-part Seven Lamps Before the Throne audiobook series, biblical symbolism, Holy Spirit studies, the Tree of Life, New Jerusalem and worship music."
+ 
+  jsonLd={[breadcrumbs(crumbs)]}
+>
+  <PageHero
+    eyebrow="Video Library"
+    title="Watch Yona Tree"
+    lede="Audiobook episodes, biblical studies and original worship music. Search by title, theme or Scripture reference, or filter by category."
+    crumbs={crumbs}
+  >
+    <div class="btn-row">
+      <a class="btn btn--gold" href={SERIES.hub}><Icon name="play" size={16} /> Seven Lamps Series</a>
+      <a class="btn btn--outline" href={YOUTUBE_SUBSCRIBE} rel="noopener" target="_blank"><Icon name="youtube" size={18} /> Subscribe on YouTube</a>
+    </div>
+  </PageHero>
+
+  <section class="section surface-parchment library" aria-labelledby="library-title" data-library>
+    <div class="container">
+      <h2 id="library-title" class="visually-hidden">All videos</h2>
+      <div class="library__controls" role="search">
+        <div class="field library__search">
+          <label for="video-search">Search videos</label>
+          <div class="library__input">
+            <Icon name="search" size={18} />
+            <input class="input" id="video-search" type="search" placeholder="Try “Wisdom”, “Revelation 22” or “Tree of Life”" autocomplete="off" data-filter-search />
+          </div>
+        </div>
+        <fieldset class="library__cats">
+          <legend>Category</legend>
+          <div class="chip-row">
+            <button class="chip" type="button" aria-pressed="true" data-filter-cat="all">All <span>{videos.length}</span></button>
+            {
+              VIDEO_CATEGORIES.map((c) => (
+                <button class="chip" type="button" aria-pressed="false" data-filter-cat={c.slug}>
+                  {c.title} <span>{counts[c.slug]}</span>
+                </button>
+              ))
+            }
+          </div>
+        </fieldset>
+      </div>
+
+      <p class="library__status" role="status" aria-live="polite" data-filter-status>Showing all {videos.length} videos</p>
+
+      <ul class="grid grid--3 library__grid" role="list">
+        {ordered.map((v) => <li data-filter-item><VideoCard video={v} headingLevel="h3" showScripture={2} /></li>)}
+      </ul>
+
+      <div class="library__empty" hidden data-filter-empty>
+        <Icon name="lamp" size={32} />
+        <p class="library__empty-title">Nothing here yet</p>
+        <p class="muted">Future series are in preparation. Subscribe on YouTube or join the newsletter to hear when new videos are released.</p>
+        <div class="btn-row">
+          <a class="btn btn--bronze btn--sm" href={YOUTUBE_SUBSCRIBE} rel="noopener" target="_blank">Subscribe on YouTube</a>
+          <button class="btn btn--outline btn--sm" type="button" data-filter-reset>Show all videos</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .library__controls { display: grid; gap: var(--s-5); margin-bottom: var(--s-5); }
+  .library__search { max-width: 34rem; }
+  .library__input { position: relative; }
+  .library__input :global(svg) { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--fg-2); pointer-events: none; }
+  .library__input .input { padding-left: 2.6rem; }
+  .library__cats { border: 0; margin: 0; padding: 0; }
+  .library__cats legend { margin-bottom: var(--s-2); font-size: var(--fs-sm); font-weight: 600; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 40px;
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--fg);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    transition: background-color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+  }
+  .chip span { font-size: 0.75rem; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+  .chip:hover { border-color: var(--accent); }
+  .chip[aria-pressed='true'] { background: var(--c-midnight); border-color: var(--c-midnight); color: var(--c-parchment); }
+  .chip[aria-pressed='true'] span { color: var(--c-gold-300); }
+  .library__status { margin-bottom: var(--s-5); font-size: var(--fs-sm); color: var(--fg-2); }
+  .library__grid { margin: 0; }
+  .library__grid > li { display: flex; }
+  .library__grid > li > :global(*) { flex: 1; }
+  .library__grid > li[hidden] { display: none; }
+  .library__empty { display: grid; justify-items: center; gap: var(--s-3); padding: var(--s-8) var(--s-5); text-align: center; border: 1px dashed var(--line); border-radius: var(--r-lg); }
+  .library__empty :global(svg) { color: var(--accent); }
+  .library__empty-title { font-family: var(--font-display); font-size: var(--fs-lg); }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-library]');
+  if (root) {
+    const search = root.querySelector<HTMLInputElement>('[data-filter-search]')!;
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-filter-cat]')];
+    const items = [...root.querySelectorAll<HTMLElement>('[data-filter-item]')];
+    const status = root.querySelector<HTMLElement>('[data-filter-status]')!;
+    const empty = root.querySelector<HTMLElement>('[data-filter-empty]')!;
+    let cat = new URLSearchParams(location.search).get('category') ?? 'all';
+    let timer: number | undefined;
+
+    const apply = () => {
+      const q = search.value.trim().toLowerCase();
+      let shown = 0;
+      for (const item of items) {
+        const card = item.querySelector<HTMLElement>('[data-video-card]')!;
+        const inCat = cat === 'all' || (card.dataset.categories ?? '').split(' ').includes(cat);
+        const inSearch = !q || (card.dataset.search ?? '').includes(q);
+        item.hidden = !(inCat && inSearch);
+        if (!item.hidden) shown++;
+      }
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filterCat === cat)));
+      const label = chips.find((c) => c.dataset.filterCat === cat)?.firstChild?.textContent?.trim();
+      status.textContent = shown
+        ? `Showing ${shown} ${shown === 1 ? 'video' : 'videos'}${cat !== 'all' ? ` in ${label}` : ''}${q ? ` matching “${search.value.trim()}”` : ''}`
+        : 'No videos match this search';
+      empty.hidden = shown > 0;
+      const url = new URL(location.href);
+      cat === 'all' ? url.searchParams.delete('category') : url.searchParams.set('category', cat);
+      history.replaceState(null, '', url);
+    };
+
+    chips.forEach((chip) => chip.addEventListener('click', () => { cat = chip.dataset.filterCat!; apply(); }));
+    search.addEventListener('input', () => { clearTimeout(timer); timer = window.setTimeout(apply, 150); });
+    root.querySelector('[data-filter-reset]')?.addEventListener('click', () => { cat = 'all'; search.value = ''; apply(); });
+    if (cat !== 'all') apply();
+  }
+</script>

@@ -1,0 +1,164 @@
+---
+// Tree of Life → Wisdom → Spirit → Life → Fruit → New Creation.
+// A theological reading of symbols, presented as a guided path (ARIA tabs).
+// Without JavaScript every step is shown in sequence.
+import { refUrl, formatRef } from '../../lib/scripture.mjs';
+
+const steps = [
+  {
+    id: 'tree', title: 'Tree of Life', place: 'Eden',
+    text: 'In the midst of the garden stood the tree of life. After the fall, cherubim and a flaming sword kept "the way of the tree of life." Eternal life with God became the thing humanity lost.',
+    refs: ['Genesis 2:9', 'Genesis 3:22–24'],
+  },
+  {
+    id: 'wisdom', title: 'Wisdom', place: 'Proverbs',
+    text: 'Wisdom "is a tree of life to them that lay hold upon her." The Woman who was with God before creation offers what Eden lost: "whoso findeth me findeth life."',
+    refs: ['Proverbs 3:18', 'Proverbs 8:35'],
+  },
+  {
+    id: 'spirit', title: 'Spirit', place: 'Tabernacle & Gospel',
+    text: 'The menorah — a tree of fire with seven lamps — burned before the LORD continually, as the seven lamps burn before His throne. Jesus spoke of rivers of living water: "this spake he of the Spirit."',
+    refs: ['Exodus 25:31–37', 'Revelation 4:5', 'John 7:38–39'],
+  },
+  {
+    id: 'life', title: 'Life', place: 'New Birth',
+    text: 'The Spirit gives life. Whoever is born of the Spirit receives the eternal life the Tree represents — and the way to it passes through the Sword of the Spirit, the Word made flesh.',
+    refs: ['John 3:5–6', 'John 6:63', 'John 14:6'],
+  },
+  {
+    id: 'fruit', title: 'Fruit', place: 'The Believer',
+    text: 'A life planted by the river bears fruit: love, joy, peace, longsuffering, gentleness, goodness, faith, meekness, temperance. "The fruit of the righteous is a tree of life."',
+    refs: ['Psalm 1:3', 'Galatians 5:22–23', 'Proverbs 11:30'],
+  },
+  {
+    id: 'new', title: 'New Creation', place: 'New Jerusalem',
+    text: 'On either side of the river of the water of life stands the tree of life, bearing twelve fruits, its leaves for the healing of the nations. What the sword once guarded is open to the redeemed.',
+    refs: ['Revelation 22:1–2', 'Revelation 2:7', 'Revelation 22:14'],
+  },
+];
+---
+
+<section class="tree-path surface-olive" aria-labelledby="tree-path-title" data-tabs>
+  <div class="container">
+    <p class="eyebrow">A path through Scripture</p>
+    <h2 id="tree-path-title" class="tree-path__title">From Eden to the New Creation</h2>
+    <p class="tree-path__note">Theological symbolism, traced step by step. Select a symbol to read the passages behind it.</p>
+
+    <div class="tree-path__rail" role="tablist" aria-label="Symbols in the Tree of Life study" data-tablist>
+      {
+        steps.map((s, i) => (
+          <button
+            class="tree-path__node"
+            role="tab"
+            type="button"
+            id={`tp-tab-${s.id}`}
+            aria-controls={`tp-panel-${s.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+          >
+            <span class="tree-path__dot" aria-hidden="true"></span>
+            <span class="tree-path__name">{s.title}</span>
+            <span class="tree-path__place">{s.place}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="tree-path__panels">
+      {
+        steps.map((s, i) => (
+          <div class="tree-path__panel" role="tabpanel" id={`tp-panel-${s.id}`} aria-labelledby={`tp-tab-${s.id}`} tabindex="0" data-panel data-initial={i === 0 ? 'true' : undefined}>
+            <p class="tree-path__step">Step {i + 1} of {steps.length}</p>
+            <h3>{s.title}</h3>
+            <p class="tree-path__text">{s.text}</p>
+            <ul class="tree-path__refs" role="list">
+              {s.refs.map((r) => (
+                <li><a class="scripture-ref" href={refUrl(r)} rel="noopener" target="_blank">{formatRef(r)}</a></li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .tree-path { padding-block: var(--s-8); background: radial-gradient(40rem 26rem at 50% 0%, rgb(241 199 91 / 0.14), transparent 70%), var(--c-olive-deep); }
+  .tree-path__title { margin-top: var(--s-3); font-size: var(--fs-2xl); }
+  .tree-path__note { margin-top: var(--s-2); font-size: var(--fs-sm); color: var(--c-on-dark-3); }
+  .tree-path__rail {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--s-2);
+    margin-top: var(--s-7);
+  }
+  .tree-path__rail::before {
+    content: '';
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 22px;
+    height: 2px;
+    background: linear-gradient(90deg, rgb(241 199 91 / 0.15), rgb(241 199 91 / 0.7), rgb(99 185 232 / 0.6));
+  }
+  .tree-path__node {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: var(--s-2);
+    padding: 0 var(--s-1) var(--s-3);
+    border: 0;
+    border-radius: var(--r-md);
+    background: none;
+    color: var(--c-on-dark-2);
+    text-align: center;
+  }
+  .tree-path__dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid rgb(241 199 91 / 0.5);
+    background: var(--c-olive-deep);
+    transition: background-color var(--dur-3) var(--ease-out), box-shadow var(--dur-3) var(--ease-out), border-color var(--dur-3) var(--ease-out);
+  }
+  .tree-path__node:hover .tree-path__dot { border-color: var(--c-gold-300); }
+  .tree-path__node[aria-selected='true'] { color: var(--c-parchment); }
+  .tree-path__node[aria-selected='true'] .tree-path__dot {
+    border-color: var(--c-gold-300);
+    background: radial-gradient(circle, #fff3cf 0 18%, var(--c-gold) 40%, rgb(231 173 79 / 0.2) 72%);
+    box-shadow: 0 0 0 6px rgb(241 199 91 / 0.15), 0 0 30px rgb(241 199 91 / 0.55);
+  }
+  .tree-path__name { font-family: var(--font-display); font-weight: 600; font-size: clamp(0.78rem, 0.6rem + 0.6vw, 1rem); line-height: 1.2; }
+  .tree-path__place { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-on-dark-3); }
+  .tree-path__panels { margin-top: var(--s-5); }
+  .tree-path__panel {
+    display: grid;
+    gap: var(--s-3);
+    max-width: 46rem;
+    margin-inline: auto;
+    padding: var(--s-6);
+    border-radius: var(--r-lg);
+    border: 1px solid rgb(241 199 91 / 0.25);
+    background: rgb(7 24 46 / 0.35);
+    text-align: center;
+  }
+  :global(.js) .tree-path__panel:not(.is-active) { display: none; }
+  .tree-path__panel + .tree-path__panel { margin-top: var(--s-4); }
+  :global(.js) .tree-path__panel + .tree-path__panel { margin-top: 0; }
+  .tree-path__step { font-size: var(--fs-xs); letter-spacing: 0.18em; text-transform: uppercase; color: var(--c-gold); }
+  .tree-path__panel h3 { font-size: var(--fs-xl); }
+  .tree-path__text { font-family: var(--font-serif); font-size: var(--fs-md); line-height: 1.65; color: var(--c-on-dark-2); }
+  .tree-path__refs { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-2) var(--s-4); margin: 0; }
+  .tree-path__refs a { color: var(--c-gold-300); }
+
+  @media (max-width: 719px) {
+    .tree-path__rail { grid-template-columns: 1fr 1fr 1fr; row-gap: var(--s-4); }
+    .tree-path__rail::before { display: none; }
+  }
+</style>
+
+<script>
+  import '../../scripts/tabs';
+</script>

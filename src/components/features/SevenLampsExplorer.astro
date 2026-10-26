@@ -1,0 +1,164 @@
+---
+// An interactive menorah: each lamp is a tab revealing one attribute of the
+// sevenfold Spirit (Isaiah 11:2) beside the words of Lady Wisdom (Proverbs 8).
+import { refUrl } from '../../lib/scripture.mjs';
+
+// Arranged as on the menorah: Isaiah's three pairs share an arm —
+// wisdom & understanding, counsel & might, knowledge & the fear of the LORD.
+const lamps = [
+  { id: 'knowledge', name: 'Knowledge', isaiah: 'the spirit of knowledge', wisdom: 'Receive my instruction… and knowledge rather than choice gold', ref: 'Proverbs 8:10' },
+  { id: 'counsel', name: 'Counsel', isaiah: 'the spirit of counsel', wisdom: 'Counsel is mine, and sound wisdom', ref: 'Proverbs 8:14' },
+  { id: 'wisdom', name: 'Wisdom', isaiah: 'the spirit of wisdom', wisdom: 'Doth not wisdom cry? and understanding put forth her voice?', ref: 'Proverbs 8:1' },
+  { id: 'lord', name: 'The LORD', isaiah: 'the spirit of the LORD shall rest upon him', wisdom: 'The LORD possessed me in the beginning of his way, before his works of old', ref: 'Proverbs 8:22', center: true },
+  { id: 'understanding', name: 'Understanding', isaiah: 'the spirit of … understanding', wisdom: 'I am understanding', ref: 'Proverbs 8:14' },
+  { id: 'might', name: 'Might', isaiah: 'the spirit of … might', wisdom: 'I have strength', ref: 'Proverbs 8:14' },
+  { id: 'fear', name: 'Fear of the LORD', isaiah: 'the spirit … of the fear of the LORD', wisdom: 'The fear of the LORD is to hate evil… the evil way… do I hate', ref: 'Proverbs 8:13' },
+];
+const xs = [60, 130, 200, 270, 340, 410, 480];
+---
+
+<section class="lamps surface-dark" aria-labelledby="lamps-title" data-tabs>
+  <div class="container">
+    <p class="eyebrow eyebrow--center lamps__eyebrow">Isaiah 11:2 · Revelation 4:5 · Proverbs 8</p>
+    <h2 id="lamps-title" class="lamps__title">The Sevenfold Spirit</h2>
+    <p class="lamps__note">Select a lamp. The central shaft is the Spirit of the LORD; the six branches are the attributes that flow from it.</p>
+
+    <div class="lamps__stand">
+      <svg class="lamps__svg" viewBox="0 0 540 250" aria-hidden="true">
+        <defs>
+          <linearGradient id="lamp-gold" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#f1c75b" />
+            <stop offset="1" stop-color="#926625" />
+          </linearGradient>
+        </defs>
+        <g fill="none" stroke="url(#lamp-gold)" stroke-width="5" stroke-linecap="round">
+          <path d="M270 70 V215" />
+          <path d="M60 70 V95 A210 120 0 0 0 480 95 V70" />
+          <path d="M130 70 V95 A140 85 0 0 0 410 95 V70" />
+          <path d="M200 70 V95 A70 50 0 0 0 340 95 V70" />
+        </g>
+        <path d="M230 215 h80 l14 22 h-108 Z" fill="url(#lamp-gold)" />
+        {xs.map((x) => <path d={`M${x - 14} 70 h28 l-5 10 h-18 Z`} fill="#e7ad4f" />)}
+      </svg>
+      <div class="lamps__buttons" role="tablist" aria-label="The seven attributes of the Spirit" data-tablist>
+        {
+          lamps.map((l, i) => (
+            <button
+              class:list={['lamps__lamp', { 'lamps__lamp--center': l.center }]}
+              style={`left:${(xs[i] / 540) * 100}%`}
+              role="tab"
+              type="button"
+              id={`lamp-tab-${l.id}`}
+              aria-controls={`lamp-panel-${l.id}`}
+              aria-selected={i === 3 ? 'true' : 'false'}
+              tabindex={i === 3 ? 0 : -1}
+            >
+              <span class="lamps__flame" aria-hidden="true"></span>
+              <span class="lamps__label">{l.name}</span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="lamps__panels">
+      {
+        lamps.map((l) => (
+          <div class="lamps__panel" role="tabpanel" id={`lamp-panel-${l.id}`} aria-labelledby={`lamp-tab-${l.id}`} tabindex="0" data-panel>
+            <h3>The Spirit of {l.name === 'The LORD' ? 'the LORD' : l.name === 'Fear of the LORD' ? 'the Fear of the LORD' : l.name}</h3>
+            <div class="lamps__cols">
+              <div>
+                <p class="lamps__src">Isaiah 11:2</p>
+                <p class="lamps__quote">“{l.isaiah}”</p>
+              </div>
+              <div>
+                <p class="lamps__src">Lady Wisdom · <a class="scripture-ref" href={refUrl(l.ref)} rel="noopener" target="_blank">{l.ref}</a></p>
+                <p class="lamps__quote">“{l.wisdom}”</p>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <p class="lamps__foot">The comparison with Lady Wisdom is Yona Tree's interpretation; the seven attributes themselves are named in Isaiah 11:2.</p>
+  </div>
+</section>
+
+<script>
+  import '../../scripts/tabs';
+  // The menorah opens on the central lamp, the Spirit of the LORD.
+  const center = document.querySelector<HTMLButtonElement>('#lamp-tab-lord');
+  center?.click();
+</script>
+
+<style>
+  .lamps { padding-block: var(--s-8); text-align: center; background: radial-gradient(36rem 22rem at 50% 30%, rgb(241 199 91 / 0.18), transparent 70%), var(--c-midnight); }
+  .lamps__eyebrow { justify-content: center; }
+  .lamps__title { margin-top: var(--s-3); font-size: var(--fs-2xl); }
+  .lamps__note { max-width: 36rem; margin: var(--s-3) auto 0; font-size: var(--fs-sm); color: var(--c-on-dark-3); }
+  .lamps__stand { position: relative; width: min(100%, 640px); margin: clamp(7.5rem, 6rem + 4vw, 9.5rem) auto 0; aspect-ratio: 540 / 250; }
+  .lamps__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .lamps__buttons { position: absolute; inset: 0; }
+  .lamps__lamp {
+    position: absolute;
+    top: 0;
+    width: 13%;
+    height: 34%;
+    transform: translateX(-50%);
+    display: grid;
+    justify-items: center;
+    align-content: end;
+    gap: 2px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-md);
+    background: none;
+    color: var(--c-on-dark-3);
+  }
+  .lamps__flame {
+    width: 18px;
+    height: 28px;
+    border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+    background: radial-gradient(ellipse at 50% 70%, #fff3cf 0 20%, #f1c75b 45%, #f9993e 80%);
+    opacity: 0.45;
+    box-shadow: 0 0 0 rgb(241 199 91 / 0);
+    transition: opacity var(--dur-3) var(--ease-out), box-shadow var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out);
+  }
+  .lamps__lamp:hover .lamps__flame { opacity: 0.8; }
+  .lamps__lamp[aria-selected='true'] .lamps__flame { opacity: 1; transform: scale(1.25); box-shadow: 0 0 26px 8px rgb(241 199 91 / 0.55); }
+  .lamps__lamp[aria-selected='true'] { color: var(--c-gold-300); }
+  /* Labels rise above each flame like the inscriptions on the book's menorah artwork. */
+  .lamps__label {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-size: clamp(0.66rem, 0.5rem + 0.45vw, 0.86rem);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .lamps__lamp--center .lamps__label { font-size: clamp(0.78rem, 0.6rem + 0.5vw, 1rem); }
+  .lamps__panels { margin-top: clamp(4rem, 3rem + 4vw, 6rem); }
+  .lamps__panel {
+    max-width: 52rem;
+    margin-inline: auto;
+    padding: var(--s-6);
+    border-radius: var(--r-lg);
+    border: 1px solid rgb(241 199 91 / 0.25);
+    background: rgb(255 253 247 / 0.03);
+  }
+  :global(.js) .lamps__panel:not(.is-active) { display: none; }
+  .lamps__panel + .lamps__panel { margin-top: var(--s-4); }
+  :global(.js) .lamps__panel + .lamps__panel { margin-top: 0; }
+  .lamps__panel h3 { font-size: var(--fs-xl); }
+  .lamps__cols { display: grid; gap: var(--s-5); margin-top: var(--s-5); text-align: left; }
+  @media (min-width: 640px) { .lamps__cols { grid-template-columns: 1fr 1fr; } }
+  .lamps__src { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--c-gold); }
+  .lamps__src a { color: inherit; }
+  .lamps__quote { margin-top: var(--s-2); font-family: var(--font-serif); font-style: italic; font-size: var(--fs-md); line-height: 1.55; color: var(--c-parchment); }
+  .lamps__foot { margin-top: var(--s-5); font-size: var(--fs-xs); color: var(--c-on-dark-3); }
+</style>

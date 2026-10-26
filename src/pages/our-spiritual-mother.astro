@@ -1,0 +1,85 @@
+---
+// Preserved from the original Yonatree.com (indexed URL /our-spiritual-mother/).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import PerspectiveBox from '../components/PerspectiveBox.astro';
+import ScriptureList from '../components/ScriptureList.astro';
+import Markdown from '../components/Markdown.astro';
+import Icon from '../components/Icon.astro';
+import { breadcrumbs } from '../lib/schema';
+import heroArt from '../assets/art/baptism-of-jesus.jpg';
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Studies', href: '/studies/' },
+  { name: 'Our Spiritual Mother', href: '/our-spiritual-mother/' },
+];
+const body = `
+## The graceful dove
+
+> And the Holy Ghost descended in a bodily shape like a dove upon him, and a voice came from heaven, which said, Thou art my beloved Son; in thee I am well pleased.
+>
+> — Luke 3:22
+
+This familiar image comes from the baptism of Jesus, when the Spirit descended upon Him in this delicate form. All four Gospels record it (Matthew 3:16; Mark 1:10; Luke 3:22; John 1:32).
+
+:::scripture
+The Hebrew word for dove in the Old Testament is *yônâ*; the Greek word in the New Testament is *peristera*. Both are feminine nouns. The first dove in Scripture is spoken of as "she": "But the dove found no rest for the sole of her foot, and she returned unto him into the ark" (Genesis 8:9).
+:::
+
+The dove appears throughout the Bible:
+
+- **Genesis 8:8–12** — Noah's dove returns with an olive leaf, a sign of hope, peace and God's promise of renewal.
+- **Psalm 55:6** and **Psalm 68:13** — the dove as a picture of longing for rest and of beauty amid distress.
+- **Song of Solomon 2:14**, **5:2** and **6:9** — the beloved is called "my dove," a picture of love, purity and grace.
+- **Isaiah 38:14** and **Jeremiah 48:28** — mourning and the search for refuge.
+- **Hosea 7:11** and **Hosea 11:11** — Ephraim's naivety, and the hope of their trembling return.
+- **Matthew 3:16**, **Mark 1:10**, **Luke 3:22** and **John 1:32** — the Spirit descending like a dove at Jesus' baptism.
+
+## The conceiving mother
+
+> Jesus answered, Verily, verily, I say unto thee, Except a man be born of water and of the Spirit, he cannot enter into the kingdom of God. That which is born of the flesh is flesh; and that which is born of the Spirit is spirit.
+>
+> — John 3:5–6
+
+The Spirit is the One by whom believers are born again. The Spirit was also present at the conception of Christ: "that which is conceived in her is of the Holy Ghost" (Matthew 1:20).
+
+:::yonatree
+Bearing and birthing children is a mother's work. Because Scripture describes the Holy Spirit as the One through whom we are born again — and as the One by whom Christ was conceived — Yona Tree believes the Spirit is revealed as our Spiritual Mother.
+:::
+`;
+---
+
+<BaseLayout
+  title="The Holy Spirit as Our Spiritual Mother"
+  description="The dove in Hebrew and Greek, the Spirit at the baptism of Jesus, and the Spirit who gives new birth — Yona Tree's study of the Holy Spirit as our Spiritual Mother."
+  image={heroArt}
+  type="article"
+  searchType="Study"
+  jsonLd={[breadcrumbs(crumbs)]}
+>
+  <PageHero eyebrow="The Holy Spirit as" title="Our Spiritual Mother" lede="Two images from Scripture — the graceful dove and the mother who gives birth — and what they may reveal about the Holy Spirit." image={heroArt} imagePosition="center 30%" crumbs={crumbs} />
+
+  <section class="section surface-parchment">
+    <div class="container osm">
+      <Markdown content={body} class="prose" />
+      <aside class="osm__aside">
+        <PerspectiveBox content="The identification of the Holy Spirit as a Spiritual Mother is a distinctive theological position of Yona Tree and is not shared by every Christian tradition. The Scriptures are set out here so you can study them for yourself." />
+        <ScriptureList refs={['Genesis 8:8–12', 'Song of Solomon 6:9', 'Matthew 1:20', 'Matthew 3:16', 'Luke 3:22', 'John 1:32', 'John 3:5–6']} title="Scripture cited" />
+        <div class="osm__next">
+          <p class="eyebrow">Go deeper</p>
+          <a class="text-link" href="/studies/holy-spirit/">The Holy Spirit study <Icon name="arrow-right" size={16} /></a>
+          <a class="text-link" href="/articles/who-is-the-holy-spirit-eleven-questions/">Eleven questions from Scripture <Icon name="arrow-right" size={16} /></a>
+          <a class="text-link" href="/articles/the-dove-the-hen-and-the-eagle/">The dove, the hen and the eagle <Icon name="arrow-right" size={16} /></a>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .osm { display: grid; gap: var(--s-7); }
+  @media (min-width: 1100px) { .osm { grid-template-columns: minmax(0, 44rem) 20rem; justify-content: space-between; } .osm__aside { position: sticky; top: calc(var(--header-h) + var(--s-5)); align-self: start; } }
+  .osm__aside { display: grid; gap: var(--s-5); align-content: start; }
+  .osm__next { display: grid; gap: var(--s-3); justify-items: start; }
+</style>

@@ -1,0 +1,41 @@
+---
+import Image from './Img.astro';
+import Icon from './Icon.astro';
+import type { Study } from '../lib/content';
+
+interface Props {
+  study: Study;
+  headingLevel?: 'h2' | 'h3' | 'h4';
+  variant?: 'default' | 'arch';
+}
+const { study, headingLevel = 'h3', variant = 'default' } = Astro.props;
+const { data } = study;
+const Heading = headingLevel;
+---
+
+<article class:list={['card', 'study-card', `study-card--${variant}`]}>
+  <div class:list={['card__media', 'study-card__media', { 'frame--arch': variant === 'arch' }]}>
+    <Image
+      src={data.image}
+      alt=""
+      widths={[360, 600, 900]}
+      sizes="(min-width: 1100px) 360px, (min-width: 700px) 45vw, 100vw"
+      loading="lazy"
+      style={`object-position: ${data.imagePosition}`}
+    />
+  </div>
+  <div class="card__body">
+    <p class="eyebrow">{data.eyebrow}</p>
+    <Heading class="card__title"><a class="card__link" href={`/studies/${study.id}/`}>{data.title}</a></Heading>
+    {data.subtitle && <p class="card__text">{data.subtitle}</p>}
+    <span class="text-link study-card__more" aria-hidden="true">Read the study <Icon name="arrow-right" size={16} /></span>
+  </div>
+</article>
+
+<style>
+  .study-card__media { aspect-ratio: 4 / 3; }
+  .study-card--arch { background: transparent; border: 0; box-shadow: none !important; }
+  .study-card--arch .study-card__media { aspect-ratio: 3 / 4; border-radius: var(--r-arch); }
+  .study-card--arch .card__body { padding-inline: var(--s-2); }
+  .study-card__more { margin-top: var(--s-2); justify-self: start; }
+</style>

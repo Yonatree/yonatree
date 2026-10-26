@@ -1,0 +1,117 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import SevenLamps from './SevenLamps.astro';
+import logo from '../assets/brand/yona-tree-logo.png';
+import { FOOTER_EXPLORE, FOOTER_SITE, SERIES, STUDIES_MENU, settings, YOUTUBE_SUBSCRIBE } from '../lib/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer surface-dark">
+  <div class="container container--wide">
+    <SevenLamps class="site-footer__lamps" />
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a href="/" class="site-footer__logo" aria-label="Yona Tree — home">
+          <Image src={logo} alt="" width={88} height={88} densities={[1, 2]} />
+        </a>
+        <p class="site-footer__mission">{settings.mission}</p>
+        <a class="btn btn--outline btn--sm" href={YOUTUBE_SUBSCRIBE} rel="noopener" target="_blank">
+          <Icon name="youtube" size={18} /> Subscribe on YouTube
+        </a>
+      </div>
+
+      <nav aria-labelledby="footer-explore">
+        <h2 id="footer-explore" class="site-footer__heading">Explore</h2>
+        <ul role="list">{FOOTER_EXPLORE.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+      </nav>
+
+      <nav aria-labelledby="footer-series">
+        <h2 id="footer-series" class="site-footer__heading">Series</h2>
+        <ul role="list">
+          <li><a href={SERIES.hub}>Seven Lamps Before the Throne</a></li>
+          <li><a href="/books/seven-lamps-before-the-throne/">The Book</a></li>
+          <li><a href={SERIES.playlistUrl} rel="noopener" target="_blank">Full playlist on YouTube</a></li>
+        </ul>
+        <h2 class="site-footer__heading site-footer__heading--spaced">Studies</h2>
+        <ul role="list">{STUDIES_MENU.slice(0, 5).map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+      </nav>
+
+      <div>
+        <h2 class="site-footer__heading">Connect</h2>
+        <ul role="list" class="site-footer__social">
+          {
+            settings.social.map((s) => (
+              <li>
+                <a href={s.url} rel="noopener" target="_blank">
+                  <Icon name={s.icon} size={18} /> {s.name}
+                  <span class="visually-hidden">(opens in a new tab)</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <h2 class="site-footer__heading site-footer__heading--spaced">Yona Tree</h2>
+        <ul role="list">{FOOTER_SITE.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+      </div>
+    </div>
+
+    <div class="site-footer__base">
+      <p>© {year} Yona Tree · Pensacola, Florida · <a href="https://yonatree.com">Yonatree.com</a></p>
+      <p>Scripture quotations are from the King James Version unless otherwise noted.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    padding-block: var(--s-8) var(--s-6);
+    background:
+      radial-gradient(60rem 24rem at 50% -6rem, rgb(18 58 109 / 0.55), transparent 70%),
+      var(--c-midnight);
+    border-top: 1px solid rgb(231 173 79 / 0.18);
+    font-size: var(--fs-sm);
+  }
+  .site-footer :global(.site-footer__lamps) { margin: 0 auto var(--s-7); width: min(22rem, 70%); }
+  .site-footer__grid { display: grid; gap: var(--s-7) var(--s-6); }
+  @media (min-width: 720px) { .site-footer__grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1080px) { .site-footer__grid { grid-template-columns: 1.5fr 1fr 1fr 1fr; } }
+  .site-footer__brand { display: grid; gap: var(--s-4); justify-items: start; max-width: 24rem; }
+  .site-footer__logo :global(img) { width: 88px; height: 88px; border-radius: 50%; box-shadow: 0 0 0 1px rgb(231 173 79 / 0.35), 0 12px 32px -12px rgb(241 199 91 / 0.5); }
+  .site-footer__mission { font-family: var(--font-serif); color: var(--c-on-dark-2); line-height: 1.65; }
+  .site-footer__heading {
+    margin-bottom: var(--s-3);
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--c-gold);
+  }
+  .site-footer__heading--spaced { margin-top: var(--s-6); }
+  .site-footer ul { display: grid; gap: 2px; margin: 0; }
+  .site-footer li a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 36px;
+    color: var(--c-on-dark-2);
+    text-decoration: none;
+    transition: color var(--dur-2) var(--ease-out);
+  }
+  .site-footer li a:hover { color: var(--c-gold-300); text-decoration: underline; }
+  .site-footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-3);
+    margin-top: var(--s-8);
+    padding-top: var(--s-5);
+    border-top: 1px solid rgb(231 173 79 / 0.14);
+    color: var(--c-on-dark-3);
+    font-size: var(--fs-xs);
+  }
+  .site-footer__base a { color: inherit; }
+</style>

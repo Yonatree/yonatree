@@ -1,0 +1,15 @@
+---
+import VideoPage from '../../components/VideoPage.astro';
+import { getVideos } from '../../lib/content';
+import { SERIES } from '../../lib/site';
+
+// Series episodes have permanent pages under /seven-lamps/; everything else lives here.
+export async function getStaticPaths() {
+  const videos = (await getVideos()).filter((v) => v.data.series !== SERIES.slug);
+  return videos.map((video) => ({ params: { slug: video.id }, props: { video } }));
+}
+
+const { video } = Astro.props;
+---
+
+<VideoPage video={video} />

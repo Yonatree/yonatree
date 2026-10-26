@@ -1,0 +1,193 @@
+---
+import { render, getEntries, getEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
+import Image from '../../components/Img.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PerspectiveBox from '../../components/PerspectiveBox.astro';
+import ScriptureList from '../../components/ScriptureList.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
+import RelatedContent from '../../components/RelatedContent.astro';
+import Icon from '../../components/Icon.astro';
+import { getArticles, getRelated } from '../../lib/content';
+import { formatDate, readingTime, absoluteUrl } from '../../lib/site';
+import { article as articleLd, breadcrumbs } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article } }));
+}
+
+const { article } = Astro.props;
+const { data } = article;
+const { Content, headings } = await render(article);
+const topics = await getEntries(data.categories);
+const toc = headings.filter((h) => h.depth === 2 && h.slug !== 'footnote-label');
+const minutes = readingTime(article.body);
+const related = await getRelated('articles', article.id, { articles: 3, videos: 2, studies: 2 });
+const book = data.book ? await getEntry(data.book) : undefined;
+const url = `/articles/${article.id}/`;
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Articles', href: '/articles/' },
+  { name: data.title, href: url },
+];
+const heroImg = await getImage({ src: data.image, width: 1600, format: 'jpg' });
+const ld = [
+  breadcrumbs(crumbs),
+  articleLd({
+    url: absoluteUrl(url),
+    title: data.title,
+    description: data.excerpt,
+    image: absoluteUrl(heroImg.src),
+    published: data.publishDate,
+    modified: data.updatedDate,
+    author: data.author,
+    section: topics[0]?.data.title,
+    keywords: [...topics.map((t) => t.data.title), ...data.tags],
+  }),
+];
+---
+
+<BaseLayout
+  title={data.seoTitle ?? data.title}
+  description={data.seoDescription ?? data.excerpt}
+  image={data.image}
+  imageAlt={data.imageAlt}
+  type="article"
+  searchType="Article"
+  jsonLd={ld}
+  publishedTime={data.publishDate}
+>
+  <article class="article">
+    <header class="article-hero surface-dark">
+      <div class="container article-hero__inner">
+        <Breadcrumbs items={crumbs} />
+        <ul class="tag-list" role="list" aria-label="Topics">
+          {topics.map((t) => <li><a class="tag tag--green" href={`/topics/${t.id}/`}>{t.data.title}</a></li>)}
+        </ul>
+        <h1 class="article-hero__title">{data.title}</h1>
+        {data.subtitle && <p class="article-hero__subtitle">{data.subtitle}</p>}
+        <dl class="article-meta">
+          <div><dt>Author</dt><dd>{data.author}</dd></div>
+          <div><dt>Published</dt><dd><time datetime={data.publishDate.toISOString()}>{formatDate(data.publishDate)}</time></dd></div>
+          {data.updatedDate && <div><dt>Updated</dt><dd><time datetime={data.updatedDate.toISOString()}>{formatDate(data.updatedDate)}</time></dd></div>}
+          <div><dt>Reading time</dt><dd>{minutes} min</dd></div>
+        </dl>
+      </div>
+    </header>
+
+    <figure class="article-figure container container--wide">
+      <div class="frame frame--gilded article-figure__frame">
+        <Image
+          src={data.image}
+          alt={data.imageAlt}
+          widths={[640, 960, 1280, 1600]}
+          sizes="(min-width: 1360px) 1300px, 100vw"
+          loading="eager"
+          fetchpriority="high"
+          style={`object-position: ${data.imagePosition}`}
+        />
+      </div>
+    </figure>
+
+    <div class="article-layout container">
+      <aside class="article-aside">
+        {
+          toc.length >= 3 && (
+            <nav class="toc" aria-labelledby="toc-title">
+              <details class="toc__details" open>
+                <summary id="toc-title" class="toc__title"><Icon name="scroll" size={16} /> In this article</summary>
+                <ol role="list">
+                  {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+                </ol>
+              </details>
+            </nav>
+          )
+        }
+        {data.perspective && <PerspectiveBox content={data.perspective} />}
+      </aside>
+
+      <div class="article-main">
+        <div class="prose" data-pagefind-weight="2"><Content /></div>
+
+        <footer class="article-foot">
+          {data.scripture.length > 0 && <ScriptureList refs={data.scripture} version={data.bibleVersion} sort title="Scripture cited" />}
+          {
+            data.adaptedFrom && book && (
+              <p class="article-source">
+                <Icon name="book" size={18} />
+                <span>
+                  Adapted from <a href={`/books/${book.id}/`}><em>{book.data.title}</em></a> by {book.data.authors.join(' & ')}
+                  {data.adaptedFrom.includes(',') && <>— {data.adaptedFrom.split(',').slice(1).join(',').trim()}</>}.
+                </span>
+              </p>
+            )
+          }
+          {
+            data.tags.length > 0 && (
+              <ul class="tag-list" role="list" aria-label="Tags">
+                {data.tags.map((t) => <li><a class="tag" href={`/search/?q=${encodeURIComponent(t)}`}>#{t}</a></li>)}
+              </ul>
+            )
+          }
+          <ShareButtons title={data.title} label="Share this article" />
+        </footer>
+      </div>
+    </div>
+  </article>
+
+  <RelatedContent videos={related.videos} studies={related.studies} articles={related.articles} book={book} />
+</BaseLayout>
+
+<style>
+  .article-hero {
+    padding-block: var(--s-6) clamp(7rem, 5rem + 8vw, 11rem);
+    background: radial-gradient(50rem 26rem at 80% 0%, rgb(18 58 109 / 0.75), transparent 70%), var(--c-midnight);
+  }
+  .article-hero__inner { display: grid; gap: var(--s-4); max-width: 52rem; }
+  .article-hero__title { font-size: clamp(2rem, 1.4rem + 2.8vw, 3.6rem); line-height: 1.1; }
+  .article-hero__subtitle { font-family: var(--font-serif); font-style: italic; font-size: var(--fs-lg); line-height: 1.45; color: var(--c-gold-300); max-width: 40rem; }
+  .article-meta { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-6); margin: var(--s-2) 0 0; font-size: var(--fs-sm); }
+  .article-meta dt { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--c-on-dark-3); }
+  .article-meta dd { margin: 0; color: var(--c-parchment); }
+
+  .article-figure { margin-top: calc(-1 * clamp(5rem, 3.5rem + 6vw, 8.5rem)); position: relative; z-index: 1; }
+  .article-figure__frame { aspect-ratio: 21 / 9; box-shadow: var(--shadow-lift); }
+  @media (max-width: 700px) { .article-figure__frame { aspect-ratio: 4 / 3; } }
+
+  .article-layout { display: grid; gap: var(--s-6); padding-block: var(--s-7) var(--section-y); }
+  @media (min-width: 1100px) {
+    .article-layout { grid-template-columns: minmax(0, 44rem) 18rem; justify-content: space-between; gap: var(--s-8); }
+    .article-aside { order: 2; position: sticky; top: calc(var(--header-h) + var(--s-5)); align-self: start; max-height: calc(100vh - var(--header-h) - 2rem); overflow-y: auto; }
+  }
+  .article-aside { display: grid; gap: var(--s-5); align-content: start; }
+  .toc { padding: var(--s-4) var(--s-5); border-left: 2px solid rgb(146 102 37 / 0.4); }
+  .toc__title { display: flex; align-items: center; gap: var(--s-2); min-height: 32px; cursor: pointer; font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+  .toc ol { display: grid; gap: var(--s-2); margin: var(--s-3) 0 0; }
+  .toc a { display: block; padding-block: 2px; font-family: var(--font-serif); font-size: var(--fs-sm); line-height: 1.4; color: var(--fg-2); text-decoration: none; }
+  .toc a:hover, .toc a.is-current { color: var(--fg); text-decoration: underline; }
+  .article-foot { display: grid; gap: var(--s-6); margin-top: var(--s-8); max-width: var(--measure); }
+  .article-source { display: flex; gap: var(--s-3); padding: var(--s-4) var(--s-5); border-radius: var(--r-md); background: rgb(233 211 182 / 0.35); font-family: var(--font-serif); font-size: var(--fs-sm); }
+  .article-source :global(svg) { flex: none; color: var(--accent); margin-top: 3px; }
+</style>
+
+<script>
+  // Highlight the current section in the table of contents.
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.toc a')];
+  if (links.length && 'IntersectionObserver' in window) {
+    const map = new Map(links.map((a) => [decodeURIComponent(a.hash.slice(1)), a]));
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            links.forEach((l) => l.classList.remove('is-current'));
+            map.get(e.target.id)?.classList.add('is-current');
+          }
+        }
+      },
+      { rootMargin: '-20% 0px -70% 0px' },
+    );
+    map.forEach((_, id) => { const h = document.getElementById(id); if (h) io.observe(h); });
+  }
+</script>

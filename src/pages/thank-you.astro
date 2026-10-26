@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SevenLamps from '../components/SevenLamps.astro';
+import Icon from '../components/Icon.astro';
+import { SERIES, YOUTUBE_SUBSCRIBE } from '../lib/site';
+---
+
+<BaseLayout title="Thank you" description="Thank you for contacting Yona Tree." noindex>
+  <section class="ty section surface-dark">
+    <div class="container ty__inner">
+      <SevenLamps class="ty__lamps" />
+      <h1 data-ty-title>Thank you</h1>
+      <p class="lede" data-ty-text>Your message has been received. We read every one.</p>
+      <div class="btn-row ty__links">
+        <a class="btn btn--gold" href={SERIES.hub}><Icon name="play" size={16} /> Watch the Series</a>
+        <a class="btn btn--outline" href="/articles/">Read the Articles</a>
+        <a class="btn btn--outline" href={YOUTUBE_SUBSCRIBE} rel="noopener" target="_blank"><Icon name="youtube" size={16} /> Subscribe</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ty { min-height: 60vh; display: grid; align-items: center; text-align: center; }
+  .ty__inner { display: grid; justify-items: center; gap: var(--s-4); max-width: 40rem; }
+  .ty :global(.ty__lamps) { width: min(16rem, 70%); }
+  .ty .lede { color: var(--c-on-dark-2); }
+  .ty__links { justify-content: center; }
+</style>
+
+<script>
+  if (new URLSearchParams(location.search).get('form') === 'newsletter') {
+    document.querySelector('[data-ty-title]')!.textContent = 'Welcome to Yona Tree';
+    document.querySelector('[data-ty-text]')!.textContent =
+      'You are on the list for new studies, articles, videos and book announcements — including news of Book Two.';
+  }
+</script>

@@ -1,0 +1,13 @@
+---
+import VideoPage from '../../components/VideoPage.astro';
+import { getEpisodes } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const episodes = await getEpisodes();
+  return episodes.map((video) => ({ params: { slug: video.id }, props: { video } }));
+}
+
+const { video } = Astro.props;
+---
+
+<VideoPage video={video} />

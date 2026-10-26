@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import VideoCard from '../../components/VideoCard.astro';
+import StudyCard from '../../components/StudyCard.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import Icon from '../../components/Icon.astro';
+import { getTopics, getByTopic } from '../../lib/content';
+import { breadcrumbs } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const topics = await getTopics();
+  return topics.map((topic) => ({ params: { slug: topic.id }, props: { topic } }));
+}
+
+const { topic } = Astro.props;
+const { articles, videos, studies } = await getByTopic(topic.id);
+const allTopics = await getTopics();
+const total = articles.length + videos.length + studies.length;
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Topics', href: '/topics/' },
+  { name: topic.data.title, href: `/topics/${topic.id}/` },
+];
+---
+
+<BaseLayout title={`${topic.data.title} — Articles, Videos & Studies`} description={topic.data.description} jsonLd={[breadcrumbs(crumbs)]}>
+  <PageHero eyebrow="Topic" title={topic.data.title} lede={topic.data.description} crumbs={crumbs}>
+    <p class="topic-count">{total} {total === 1 ? 'resource' : 'resources'} · {studies.length} {studies.length === 1 ? 'study' : 'studies'} · {articles.length} {articles.length === 1 ? 'article' : 'articles'} · {videos.length} {videos.length === 1 ? 'video' : 'videos'}</p>
+  </PageHero>
+
+  {
+    studies.length > 0 && (
+      <section class="section section--tight surface-parchment" aria-labelledby="t-studies">
+        <div class="container">
+          <SectionHeading title="Studies" id="t-studies" />
+          <div class="grid grid--4">{studies.map((s) => <StudyCard study={s} />)}</div>
+        </div>
+      </section>
+    )
+  }
+  {
+    articles.length > 0 && (
+      <section class="section section--tight surface-white" aria-labelledby="t-articles">
+        <div class="container">
+          <SectionHeading title="Articles" id="t-articles" />
+          <div class="grid grid--3">{articles.map((a) => <ArticleCard article={a} />)}</div>
+        </div>
+      </section>
+    )
+  }
+  {
+    videos.length > 0 && (
+      <section class="section section--tight surface-dark" aria-labelledby="t-videos">
+        <div class="container">
+          <SectionHeading title="Videos" id="t-videos" />
+          <div class="grid grid--3">{videos.map((v) => <VideoCard video={v} showScripture={2} />)}</div>
+        </div>
+      </section>
+    )
+  }
+  {
+    total === 0 && (
+      <section class="section surface-parchment">
+        <div class="container center">
+          <p class="lede">New studies on {topic.data.title} are being prepared.</p>
+          <p><a class="text-link" href="/articles/">Browse all articles <Icon name="arrow-right" size={16} /></a></p>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section section--tight surface-parchment" aria-labelledby="t-more">
+    <div class="container">
+      <h2 id="t-more" class="more-title">More topics</h2>
+      <ul class="tag-list" role="list">
+        {allTopics.filter((t) => t.id !== topic.id).map((t) => <li><a class="tag" href={`/topics/${t.id}/`}>{t.data.title}</a></li>)}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .topic-count { font-size: var(--fs-sm); color: var(--c-on-dark-3); }
+  .more-title { margin-bottom: var(--s-4); font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+</style>

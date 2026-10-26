@@ -1,0 +1,150 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Icon from '../components/Icon.astro';
+import { TIERS } from '../lib/remark-tiers.mjs';
+import { settings, SERIES } from '../lib/site';
+import { breadcrumbs } from '../lib/schema';
+import logo from '../assets/brand/yona-tree-logo.png';
+import heroArt from '../assets/art/dove-over-the-cross.jpg';
+
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'About', href: '/about/' }];
+const principles = [
+  { icon: 'book', title: 'Search the Scriptures', text: 'Scripture is the foundation. We cite every passage so you can read it in context — "whether those things were so" (Acts 17:11).' },
+  { icon: 'scroll', title: 'Examine the evidence', text: 'We set out historical sources and the original languages, and say plainly what they do and do not prove.' },
+  { icon: 'lamp', title: 'Consider the symbolism', text: 'The dove, the menorah, the Tree of Life and the Bride are threads woven from Genesis to Revelation.' },
+  { icon: 'heart', title: 'Seek God in prayer', text: 'Study is not an end in itself. We hope every page leads you closer to the Father, the Son and the Holy Spirit.' },
+];
+const tierOrder = ['scripture', 'history', 'interpreters', 'yonatree'] as const;
+const tierText: Record<string, string> = {
+  scripture: 'What the biblical text itself states, quoted or summarized with its reference.',
+  history: 'What creeds, Church Fathers, ancient translations and historical texts say — with notes on their weight.',
+  interpreters: 'Views held by other Christians and scholars, presented fairly, especially where they differ from ours.',
+  yonatree: "Yona Tree's own theological conclusions, clearly labelled as the ministry's interpretation.",
+};
+---
+
+<BaseLayout title="About Yona Tree — Seeking the Mysteries Hidden in Scripture" description={settings.mission} image={heroArt} searchType="Page" jsonLd={[breadcrumbs(crumbs)]}>
+  <PageHero eyebrow="About Yona Tree" title="Seeking the Mysteries Hidden in Scripture" lede={settings.mission} image={heroArt} imagePosition="center 40%" crumbs={crumbs} />
+
+  <section class="section surface-parchment" aria-labelledby="who-title">
+    <div class="container split" style="--split: 1.2fr 0.8fr">
+      <div class="stack" style="--stack: var(--s-4)">
+        <p class="eyebrow">Who we are</p>
+        <h2 id="who-title">A biblical study and publishing ministry</h2>
+        <div class="prose">
+          <p>
+            Yona Tree exists to encourage close examination of Scripture, biblical symbolism, historical religious literature and theological
+            traditions — and of the mysteries that connect the Bible from Genesis through Revelation. We publish books, articles, studies,
+            audiobooks and video, beginning with <a href="/books/seven-lamps-before-the-throne/"><em>Seven Lamps Before the Throne</em></a> by
+            Jason Turner and Michael Ogden.
+          </p>
+          <p>
+            We are based in {settings.location} and are non-denominational. We gladly call anyone of any denomination who trusts in the Lord
+            Jesus Christ our brother or sister.
+          </p>
+          <p>
+            Our name comes from the Hebrew word <em>yonah</em>, "dove" — the form the Holy Spirit took at the baptism of Jesus — and from the
+            Tree of Life, which stands at the beginning and the end of Scripture. The dove and the tree are joined in our emblem.
+          </p>
+        </div>
+      </div>
+      <div class="about-seal">
+        <Image src={logo} alt="The Yona Tree emblem: a golden tree with green leaves whose branches form a circle, with a radiant dove at its heart." width={360} height={360} densities={[1, 2]} />
+      </div>
+    </div>
+  </section>
+
+  <section class="section surface-dark" aria-labelledby="principles-title">
+    <div class="container">
+      <SectionHeading eyebrow="How we study" title="Four principles" id="principles-title" align="center" />
+      <ol class="principles" role="list">
+        {
+          principles.map((p, i) => (
+            <li data-reveal style={`--reveal-i:${i}`}>
+              <span class="principles__icon"><Icon name={p.icon} size={26} /></span>
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section surface-white" id="how-we-study" aria-labelledby="tiers-title">
+    <div class="container container--text">
+      <SectionHeading
+        eyebrow="Our presentation standard"
+        title="Scripture, history, interpretation — kept distinct"
+        id="tiers-title"
+        lede="Yona Tree holds some interpretations that differ from those of other Christian traditions. To keep our study honest, every article and study marks which kind of claim is being made."
+      />
+      <ul class="tier-legend" role="list">
+        {
+          tierOrder.map((k) => (
+            <li class={`tier tier--${k}`}>
+              <p class="tier__label">{TIERS[k].label}</p>
+              <p>{tierText[k]}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="muted serif tier-note">
+        Where a page advances a distinctive position, a <strong>Yona Tree Study Perspective</strong> box says so plainly. We never present an
+        interpretation as if it were universally accepted Christian doctrine, and we make no claim of exclusive divine authority. We invite
+        you to weigh everything by Scripture.
+      </p>
+    </div>
+  </section>
+
+  <section class="section surface-parchment" aria-labelledby="believe-title">
+    <div class="container container--text stack" style="--stack: var(--s-5)">
+      <p class="eyebrow">Statement of purpose</p>
+      <h2 id="believe-title">What we believe</h2>
+      <div class="prose">
+        <p>
+          Yona Tree exists to highlight the triune nature of the One True God as revealed through the Persons of the Father, the Son and the
+          Holy Spirit, and to create educational and inspirational works that guide people deeper into the mysteries of God — with a
+          particular emphasis on the identity of the Holy Spirit.
+        </p>
+        <p>
+          It is our conviction that God's children are begotten of their Heavenly Father and born of the Holy Spirit, and we present the
+          motherly nature of the Spirit as our theological position. Beyond that, it is our mission to proclaim the good news of the atoning
+          death, burial and resurrection of our Lord and Savior, Jesus Christ.
+        </p>
+        <p>
+          Yona Tree is first and foremost a ministry dedicated to the Holy Trinity. We love the Holy Father, we love the Holy Son, we love the
+          Holy Spirit — we love the Three in One.
+        </p>
+        <p>
+          We affirm the Nicene Creed and are open about the few places where our wording differs. You can read about them in
+          <a href="/articles/begotten-and-born-the-nicene-creed/">Begotten and Born: Reading the Nicene Creed Closely</a>.
+        </p>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn--bronze" href="/studies/holy-trinity/">The Holy Trinity study <Icon name="arrow-right" size={18} /></a>
+        <a class="btn btn--outline" href={SERIES.hub}><Icon name="play" size={16} /> Watch the Series</a>
+        <a class="btn btn--outline" href="/contact/"><Icon name="mail" size={16} /> Contact us</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-seal { display: grid; place-items: center; }
+  .about-seal :global(img) { width: min(100%, 340px); border-radius: 50%; box-shadow: 0 0 0 10px rgb(233 211 182 / 0.6), 0 0 0 11px rgb(146 102 37 / 0.35), 0 40px 80px -30px rgb(77 45 11 / 0.55); }
+  .principles { display: grid; gap: var(--s-5); margin: 0; }
+  @media (min-width: 700px) { .principles { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1100px) { .principles { grid-template-columns: repeat(4, 1fr); } }
+  .principles li { display: grid; gap: var(--s-3); align-content: start; padding: var(--s-6) var(--s-5); border-radius: var(--r-md); border: 1px solid rgb(231 173 79 / 0.22); background: rgb(255 253 247 / 0.03); }
+  .principles__icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; color: var(--c-gold-300); border: 1px solid rgb(241 199 91 / 0.4); }
+  .principles h3 { font-size: 1.2rem; }
+  .principles p { font-family: var(--font-serif); font-size: var(--fs-sm); color: var(--c-on-dark-2); }
+  .tier-legend { display: grid; gap: var(--s-3); margin: 0; }
+  .tier-legend .tier { margin: 0; }
+  .tier-legend p:not(.tier__label) { font-family: var(--font-serif); }
+  .tier-note { margin-top: var(--s-6); }
+</style>
