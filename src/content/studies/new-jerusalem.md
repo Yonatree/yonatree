@@ -3,9 +3,9 @@ title: New Jerusalem
 subtitle: The holy city, the Bride, and the river and Tree of Life — Revelation 21–22
 eyebrow: Long-form Study
 introduction: John's vision of the holy city is one of the most beautiful passages in Scripture — and one of the most debated. This study lays out what the text says explicitly, what it may mean, and where speculation begins.
-image: ../../assets/thumbnails/part-13-new-jerusalem.jpg
-imageAlt: Series artwork for The New Jerusalem — a radiant golden city with waterfalls above the clouds, seven lamps, and a bride in white.
-imagePosition: center
+image: ../../assets/art/celestial-city-radiant-throne.jpg
+imageAlt: "A bride in a white veil looks toward a radiant throne beneath a rainbow, where a crowned figure sits beside a lamb; a crystal river flows from the throne between rows of golden fruit trees and a multitude in white."
+imagePosition: 50% 40%
 feature: new-jerusalem
 perspective: Every section of this study is labelled. "Explicit Scripture" summarizes what Revelation states. "Possible interpretation" and "Speculation" are clearly marked as such, and diagrams are illustrations of the text — not claims about architecture.
 categories: [new-jerusalem, book-of-revelation, heaven-resurrection, bride-of-christ]
