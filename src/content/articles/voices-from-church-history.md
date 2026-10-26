@@ -2,9 +2,9 @@
 title: "Voices from Church History on the Holy Spirit as Mother"
 subtitle: Origen, Jerome, the Syriac tradition, the Macarian homilies, Zinzendorf — and how to weigh them
 excerpt: The idea of the Holy Spirit's motherly nature did not begin with Yona Tree. A guide to the early and later Christian writers cited in Seven Lamps Before the Throne, with notes on who they were and how much weight their words can bear.
-image: ../../assets/thumbnails/part-8-free-woman.jpg
-imageAlt: Series artwork for The Free Woman — a golden sanctuary with a dove descending above a row of lit lamps, titled Seven Lamps Before the Throne, Part 8.
-imagePosition: center
+image: ../../assets/art/divine-inspiration-scriptorium.jpg
+imageAlt: "Two bearded scholars write on scrolls and books by candlelight as a radiant veiled woman with a glowing dove stands behind them, with Jerusalem at sunset beyond the arches."
+imagePosition: center 8%
 adaptedFrom: "Seven Lamps Before the Throne, Evidence from History sections"
 publishDate: 2026-10-25
 categories: [early-christianity, apocrypha-historical-texts, holy-spirit]

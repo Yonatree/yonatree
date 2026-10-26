@@ -2,9 +2,9 @@
 title: "The Bride of Christ: Like Mother, Like Daughter"
 subtitle: Seven lamps, seven candlesticks, a dove — and the Church made ready for the marriage of the Lamb
 excerpt: The seven lamps of the Spirit burn before the Father's throne; the seven candlesticks of the Church surround the Son. Yona Tree reads the Bride of Christ as a daughter growing to resemble the Spirit who gave her birth.
-image: ../../assets/thumbnails/part-12-bride-of-christ.jpg
-imageAlt: Series artwork for The Bride of Christ — a bride in white gazing toward a golden city above a row of seven lit lamps, titled Seven Lamps Before the Throne, Part 12.
-imagePosition: center
+image: ../../assets/art/bridal-vision-heavenly-city.jpg
+imageAlt: "A bride in a white lace gown and veil holds a bouquet on a flowered terrace, gazing up at a golden city in the clouds where Christ stands with open arms among angels, above a river and waterfalls."
+imagePosition: center 4%
 adaptedFrom: "Seven Lamps Before the Throne, Chapter 6"
 publishDate: 2026-10-25
 categories: [bride-of-christ, book-of-revelation, holy-spirit]
