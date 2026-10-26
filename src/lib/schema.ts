@@ -13,6 +13,7 @@ export function organization(logoUrl: string) {
     url: SITE_URL,
     logo: { '@type': 'ImageObject', url: logoUrl },
     description: settings.mission,
+    email: settings.contactEmail || undefined,
     address: { '@type': 'PostalAddress', addressLocality: 'Pensacola', addressRegion: 'FL', addressCountry: 'US' },
     sameAs: settings.social.map((s) => s.url),
   };

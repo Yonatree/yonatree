@@ -134,7 +134,7 @@ Best Practices 100, SEO 100** across the home, article, study, book and series p
   explains that the wording of 1 John 5:7 is found in the KJV but not in most modern translations; and the
   "filioque" history of the Nicene Creed is explained.
 - **Reader reflections** (Brenda O. and Todd) are carried over from the current site, with two typos corrected.
-- **Contact email** is blank, so only the contact form shows. Add one in *Site settings* if you want it published.
+- **Contact email** is theyonatree@gmail.com (Contact page and footer). Change it in *Site settings*.
 - **Privacy Policy and Terms** are marked as drafts for review.
 - **Book Two** has no title or details, as requested. The teaser collects notification sign-ups.
 - **Artwork:** `trinity-family-portrait.jpg` and `trinity-throne-assembly.jpg` are low-resolution in the originals.
