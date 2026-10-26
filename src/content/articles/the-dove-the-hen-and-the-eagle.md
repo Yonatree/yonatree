@@ -2,9 +2,9 @@
 title: "The Dove, the Hen and the Eagle"
 subtitle: Mothering images of God's care, and the Spirit who never abandons us
 excerpt: The anointing dove, the sheltering hen, the instructing eagle. Scripture reaches for mothering birds again and again when it describes God's care — and Yona Tree sees in them a portrait of the Holy Spirit.
-image: ../../assets/art/hen-sheltering-brood.jpg
-imageAlt: A white hen spreads her wings over her chicks in a rain-soaked field beneath dark storm clouds.
-imagePosition: center 60%
+image: ../../assets/art/radiant-mothering-spirit-montage.jpg
+imageAlt: "A radiant veiled woman embraces a young woman, with a dove, a hen sheltering her chicks, and an eagle in flight around them, scrolls and an oil lamp in front and a city on the hills beyond."
+imagePosition: center 30%
 adaptedFrom: "Seven Lamps Before the Throne, Chapter 4"
 publishDate: 2026-10-25
 categories: [biblical-symbolism, holy-spirit]

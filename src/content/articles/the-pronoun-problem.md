@@ -2,9 +2,9 @@
 title: "The Pronoun Problem: Paracletos, Pneuma and Ruach"
 subtitle: Why English Bibles say "He" for the Holy Spirit — and why grammar alone cannot settle the question
 excerpt: The masculine Greek pronouns usually cited for the Holy Spirit follow one noun, in three chapters of John. A look at paracletos, pneuma and ruach, and the difference between grammatical gender and identity.
-image: ../../assets/art/mother-comforting-child.jpg
-imageAlt: A mother wrapped in a shawl holds a sleeping child close on a garden path in soft morning light.
-imagePosition: center 55%
+image: ../../assets/art/paracletos-embrace-of-light.jpg
+imageAlt: "A radiant veiled woman embraces a young woman on a rocky hillside above Jerusalem as a dove flies beside them; the words Paracletos, Pneuma and Ruach glow in ribbons of light."
+imagePosition: center 8%
 adaptedFrom: "Seven Lamps Before the Throne, Chapter 3"
 publishDate: 2026-10-25
 categories: [biblical-language-studies, holy-spirit]

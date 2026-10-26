@@ -2,9 +2,9 @@
 title: "Made in Our Image: The First Family and the Family of God"
 subtitle: What Adam, Eve and their son may teach us about the Father, the Spirit and the Son
 excerpt: '"Let us make man in our image." The first three people made in God''s image were a father, a mother and a son. Yona Tree asks what that pattern reveals about the relationships within the Holy Trinity.'
-image: ../../assets/art/first-family-image-of-god.jpg
-imageAlt: A man, a woman and a small child stand in a glowing garden at dusk beneath three luminous golden orbs.
-imagePosition: center 45%
+image: ../../assets/art/golden-family-heavenly-halos.jpg
+imageAlt: "A man, a woman and a small child stand beside a lake at sunrise beneath three glowing circles showing a veiled woman, an elder with a white beard, and a younger bearded man."
+imagePosition: center 18%
 adaptedFrom: "Seven Lamps Before the Throne, Chapter 2"
 publishDate: 2026-10-25
 categories: [genesis, holy-trinity, holy-spirit]

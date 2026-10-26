@@ -2,8 +2,8 @@
 title: "Lady Wisdom in Proverbs 8: The Architect at the Father's Side"
 subtitle: Possessed, poured out, brought forth — the Hebrew words behind Wisdom's testimony
 excerpt: A Woman who calls herself Wisdom claims to have been with God before the mountains were settled, rejoicing before Him as an architect at His side. Who is she? Scripture, history and Yona Tree's conclusion, kept distinct.
-image: ../../assets/art/heavenly-garden-of-divine-wisdom.jpg
-imageAlt: A crowned woman in a white and blue gown sits beside a golden menorah, a dove alighting toward her open hand, before a great golden tree, waterfalls and a shining city.
+image: ../../assets/art/lady-wisdom-golden-valley.jpg
+imageAlt: "A woman in a white and gold gown and veil sits before a great golden menorah with almond blossoms, an architect's scroll of temple plans and a compass at her side, overlooking a golden valley and city."
 imagePosition: center 30%
 adaptedFrom: "Seven Lamps Before the Throne, Chapter 5"
 publishDate: 2026-10-25
