@@ -3,9 +3,9 @@ title: Three Stages in the Dwelling of the Righteous
 subtitle: Abraham's bosom, the present heavenly paradise, and the New Jerusalem of the new creation
 eyebrow: Visual Study
 introduction: Where do the righteous go when they die — and where will they live forever? This study traces a progression in Scripture from the waiting place of the righteous before Christ, to the presence of Christ in heaven now, to resurrected life with God in the new heaven and new earth.
-image: ../../assets/art/trinity-throne-assembly.jpg
-imageAlt: A great multitude gazes up through clouds of golden light toward a radiant throne, with two shining figures standing on either side.
-imagePosition: center 35%
+image: ../../assets/art/three-stages-dwelling-righteous.jpg
+imageAlt: "Three scenes flow across the clouds: an elder teaches the righteous in a sheltered cave beside a waterfall, Christ sits enthroned among a multitude in white, and a radiant golden city rises beyond a crystal river, a golden road and a tree of life."
+imagePosition: 47% 30%
 feature: dwelling-stages
 perspective: The outline below draws together passages that Christians interpret in different ways. Each stage is marked to show what Scripture states, what many interpreters believe, and what Yona Tree proposes. The terminology "three stages in the dwelling of the righteous" is used in place of "three heavens" to avoid confusion with 2 Corinthians 12:2.
 categories: [heaven-resurrection, new-jerusalem, salvation]

@@ -137,6 +137,5 @@ Best Practices 100, SEO 100** across the home, article, study, book and series p
 - **Contact email** is theyonatree@gmail.com (Contact page and footer). Change it in *Site settings*.
 - **Privacy Policy and Terms** are marked as drafts for review.
 - **Book Two** has no title or details, as requested. The teaser collects notification sign-ups.
-- **Artwork:** `trinity-family-portrait.jpg` and `trinity-throne-assembly.jpg` are low-resolution in the originals.
-  The second is used only as a dimmed study image; higher-resolution versions would improve it.
+- **Artwork:** `trinity-family-portrait.jpg` is low-resolution in the original; a higher-resolution version would improve it.
 - **Old site placeholders** ("(555) 111-1111" and "Book An Appointment") were not carried over.
