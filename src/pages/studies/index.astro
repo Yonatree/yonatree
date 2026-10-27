@@ -7,7 +7,7 @@ import Icon from '../../components/Icon.astro';
 import { getStudies, getTopics } from '../../lib/content';
 import { STUDIES_MENU } from '../../lib/site';
 import { breadcrumbs } from '../../lib/schema';
-import heroArt from '../../assets/art/lady-wisdom-tree-of-life.jpg';
+import heroArt from '../../assets/art/radiant-blossom-menorah.jpg';
 
 const [studies, topics] = await Promise.all([getStudies(), getTopics()]);
 const topicHubs = STUDIES_MENU.filter((m) => m.href.startsWith('/topics/'));
@@ -25,7 +25,7 @@ const crumbs = [{ name: 'Home', href: '/' }, { name: 'Studies', href: '/studies/
     title="Studies"
     lede="Each study gathers the Scriptures, history and symbolism behind one theme, clearly distinguishing the biblical text from interpretation — and links to the articles, episodes and book chapters that explore it further."
     image={heroArt}
-    imagePosition="center 30%"
+    imagePosition="center 40%"
     crumbs={crumbs}
   />
 
