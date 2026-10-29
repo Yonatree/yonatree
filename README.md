@@ -122,8 +122,8 @@ Security headers and caching live in `public/_headers`; old WordPress redirects 
    messages are sent from `onboarding@resend.dev`, which can only deliver to the Resend account's own address — so use
    theyonatree@gmail.com for that account. Messages are always saved in D1 even if email fails.
 3. **CMS sign-in.** GitHub › *Settings › Developer settings › OAuth Apps › New*: homepage `https://yonatree.com`,
-   callback `https://yonatree.com/api/callback` (use the workers.dev address while testing). Add the client ID and
-   secret as the secrets `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
+   callback `https://yonatree.com/api/callback` (use the workers.dev address while testing). Put the client ID in
+   `GITHUB_CLIENT_ID` in `wrangler.jsonc`, and add the client secret as a **Secret** (not Text) named `GITHUB_CLIENT_SECRET`.
 4. **Spam check (optional).** Create a Turnstile widget in Cloudflare, put its site key in *Site settings › Forms*
    (`turnstileSiteKey`) and its secret key in the Worker secret `TURNSTILE_SECRET`.
 5. **Domain.** *Worker › Settings › Domains & Routes › Add › Custom domain*: `yonatree.com` and `www.yonatree.com`.
