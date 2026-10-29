@@ -5,7 +5,7 @@
 
 backend:
   name: github
-  repo: southernaircare/yonatree
+  repo: Yonatree/yonatree
   branch: main
   # On Netlify, GitHub sign-in works through Netlify's OAuth provider (Site settings › Access control › OAuth).
   # Other hosts: set base_url to your own OAuth proxy.
