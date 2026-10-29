@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "decap-server": "^3.5.2",
-    "pagefind": "^1.4.0"
+    "pagefind": "^1.4.0",
+    "wrangler": "^4.155.0"
   }
 }

@@ -7,8 +7,9 @@ backend:
   name: github
   repo: Yonatree/yonatree
   branch: main
-  # On Netlify, GitHub sign-in works through Netlify's OAuth provider (Site settings › Access control › OAuth).
-  # Other hosts: set base_url to your own OAuth proxy.
+  # GitHub sign-in runs through the site's own Worker (/api/auth). base_url is set
+  # to the current address in admin/index.html, so it works on workers.dev and yonatree.com.
+  auth_endpoint: api/auth
 
 # Lets you edit locally: run `npm run dev` and `npm run cms` together, then open http://localhost:4321/admin/
 local_backend: true
@@ -304,7 +305,8 @@ collections:
             name: forms
             widget: object
             fields:
-              - { label: Provider, name: provider, widget: select, options: [netlify, custom] }
-              - { label: Newsletter form action, name: newsletterAction, widget: string, hint: 'For Netlify Forms keep /thank-you/?form=newsletter. For Mailchimp, ConvertKit or Buttondown paste the form action URL and set Provider to custom.' }
-              - { label: Contact form action, name: contactAction, widget: string }
+              - { label: Provider, name: provider, widget: select, options: [cloudflare, netlify, custom] }
+              - { label: Newsletter form action, name: newsletterAction, widget: string, hint: 'On Cloudflare keep /api/newsletter (sign-ups are saved in the site database). For Mailchimp, Kit or Buttondown paste the form action URL and set Provider to custom.' }
+              - { label: Contact form action, name: contactAction, widget: string, hint: 'On Cloudflare keep /api/contact.' }
+              - { label: Turnstile site key, name: turnstileSiteKey, widget: string, required: false, hint: 'Optional spam check from Cloudflare Turnstile. Leave empty to turn it off.' }
           - { label: Accepts financial support, name: acceptsSupport, widget: boolean, default: false, hint: 'Only turn on once real payment infrastructure exists.' }

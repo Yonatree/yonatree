@@ -1,0 +1,7 @@
+# Old WordPress addresses → new homes
+/wp-sitemap.xml              /sitemap-index.xml               301
+/wp-sitemap-posts-page-1.xml /sitemap-index.xml               301
+/feed/*                      /rss.xml                         301
+/home                        /                                301
+/seven-lamps                 /seven-lamps-before-the-throne/  301
+/wp-admin/*                  /admin/                          302

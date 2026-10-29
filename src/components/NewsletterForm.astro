@@ -1,7 +1,7 @@
 ---
-// Netlify Forms by default (no third-party script). To switch to Mailchimp,
-// ConvertKit, Buttondown etc., change `forms.newsletterAction` in
-// src/data/settings.json (or in the CMS under Settings) to the provider's URL.
+// Posts to the site's Worker (/api/newsletter), which saves the sign-up in the
+// site database. To use Mailchimp, Kit, Buttondown etc. instead, change
+// `forms.newsletterAction` in src/data/settings.json (or the CMS) to the provider's URL.
 import { settings } from '../lib/site';
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
 }
 const { id = 'newsletter', compact = false, buttonLabel = 'Join Yona Tree', source = 'site' } = Astro.props;
 const netlify = settings.forms.provider === 'netlify';
+const turnstile = settings.forms.provider === 'cloudflare' && settings.forms.turnstileSiteKey;
 ---
 
 <form
@@ -46,7 +47,9 @@ const netlify = settings.forms.provider === 'netlify';
     <p class="hint" id={`${id}-hint`}>New studies, articles, videos and book announcements. No spam — unsubscribe anytime.</p>
     <p class="field-error" id={`${id}-error`} role="alert" hidden data-error>Please enter a valid email address, like name@example.com.</p>
   </div>
+  {turnstile && <div class="cf-turnstile" data-sitekey={turnstile} data-size="flexible" data-theme="auto"></div>}
 </form>
+{turnstile && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
 
 <style>
   .newsletter { width: 100%; max-width: 34rem; }

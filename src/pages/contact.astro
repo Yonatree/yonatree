@@ -7,6 +7,7 @@ import { breadcrumbs } from '../lib/schema';
 
 const crumbs = [{ name: 'Home', href: '/' }, { name: 'Contact', href: '/contact/' }];
 const netlify = settings.forms.provider === 'netlify';
+const turnstile = settings.forms.provider === 'cloudflare' && settings.forms.turnstileSiteKey;
 const subjects = ['A question about a study or article', 'The book or audiobook', 'The video series', 'Partnering with Yona Tree', 'Media or speaking', 'Something else'];
 ---
 
@@ -56,8 +57,10 @@ const subjects = ['A question about a study or article', 'The book or audiobook'
           <p class="field-error" id="c-message-err" hidden>Please write a message.</p>
         </div>
         <p class="hint">Fields marked * are required. We use your details only to reply to you — see our <a href="/privacy/">privacy policy</a>.</p>
+        {turnstile && <div class="cf-turnstile" data-sitekey={turnstile} data-theme="light"></div>}
         <button class="btn btn--bronze" type="submit"><Icon name="mail" size={18} /> Send message</button>
       </form>
+      {turnstile && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
 
       <aside class="contact__aside">
         <h2 class="contact__h">Follow Yona Tree</h2>
