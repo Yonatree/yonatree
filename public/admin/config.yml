@@ -6,7 +6,8 @@
 backend:
   name: github
   repo: Yonatree/yonatree
-  branch: main
+  # Until launch the Cloudflare preview builds the cloudflare branch; switch to main when it is merged.
+  branch: cloudflare
   # GitHub sign-in runs through the site's own Worker (/api/auth). base_url is set
   # to the current address in admin/index.html, so it works on workers.dev and yonatree.com.
   auth_endpoint: api/auth

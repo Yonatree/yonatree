@@ -12,8 +12,8 @@
     "not_found_handling": "404-page",
     "run_worker_first": ["/api/*"]
   },
-  // Contact messages and newsletter sign-ups. Created automatically on first deploy.
-  "d1_databases": [{ "binding": "DB", "database_name": "yonatree" }],
+  // Contact messages and newsletter sign-ups.
+  "d1_databases": [{ "binding": "DB", "database_name": "yonatree", "database_id": "58dce886-900b-4cc7-b176-5cfab980a114" }],
   "vars": {
     "CONTACT_TO": "theyonatree@gmail.com",
     "CONTACT_FROM": "Yona Tree website <onboarding@resend.dev>"
