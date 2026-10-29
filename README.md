@@ -115,7 +115,7 @@ Security headers and caching live in `public/_headers`; old WordPress redirects 
 ### One-time setup
 
 1. **Create the Worker from GitHub.** Cloudflare dashboard › *Workers & Pages › Create › Import a repository* ›
-   `southernaircare/yonatree`. Build command `npm run build`, deploy command `npx wrangler deploy`. The D1 database
+   `Yonatree/yonatree`. Build command `npm run build`, deploy command `npx wrangler deploy`. The D1 database
    `yonatree` is created automatically on the first deploy.
 2. **Contact emails.** Create a free account at resend.com with theyonatree@gmail.com, create an API key, and add it in
    *Worker › Settings › Variables and Secrets* as the secret `RESEND_API_KEY`. Until yonatree.com is verified in Resend,
