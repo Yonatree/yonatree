@@ -20,9 +20,10 @@
     { "name": "TikTok", "icon": "tiktok", "url": "https://www.tiktok.com/@yonatree7" }
   ],
   "forms": {
-    "provider": "netlify",
-    "newsletterAction": "/thank-you/?form=newsletter",
-    "contactAction": "/thank-you/?form=contact"
+    "provider": "cloudflare",
+    "newsletterAction": "/api/newsletter",
+    "contactAction": "/api/contact",
+    "turnstileSiteKey": ""
   },
   "acceptsSupport": false
 }

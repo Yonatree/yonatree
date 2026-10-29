@@ -11,8 +11,11 @@
   <body>
     <!-- Decap CMS: edits the Markdown/JSON files in src/content and src/data, then commits them.
          The site rebuilds automatically on each commit. See README.md › "Editing content". -->
+    <script>window.CMS_MANUAL_INIT = true;</script>
     <script src="https://unpkg.com/decap-cms@3.16.3/dist/decap-cms.js"></script>
     <script>
+      // GitHub sign-in goes through this site's own Worker, wherever it is hosted.
+      CMS.init({ config: { backend: { base_url: location.origin } } });
       // Preview pane uses the site's own fonts and reading styles.
       window.CMS && CMS.registerPreviewStyle('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap');
       window.CMS && CMS.registerPreviewStyle('/admin/preview.css');

@@ -1,0 +1,27 @@
+// Cloudflare Workers configuration for Yonatree.com.
+// The static site in dist/ is served directly; only /api/* runs the Worker
+// (forms and the CMS sign-in). See README.md › "Hosting (Cloudflare)".
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yonatree",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  // Contact messages and newsletter sign-ups. Created automatically on first deploy.
+  "d1_databases": [{ "binding": "DB", "database_name": "yonatree" }],
+  "vars": {
+    "CONTACT_TO": "theyonatree@gmail.com",
+    "CONTACT_FROM": "Yona Tree website <onboarding@resend.dev>"
+  },
+  "observability": { "enabled": true }
+  // Secrets (set in the Cloudflare dashboard › Worker › Settings › Variables and Secrets):
+  //   RESEND_API_KEY        emails contact messages to CONTACT_TO
+  //   TURNSTILE_SECRET      optional spam check (pair with forms.turnstileSiteKey in settings.json)
+  //   GITHUB_CLIENT_ID      CMS sign-in (GitHub OAuth app)
+  //   GITHUB_CLIENT_SECRET
+}

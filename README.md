@@ -99,18 +99,44 @@ the sitemap and search.
 2. In the CMS, *Videos › New Video*: title, YouTube ID, thumbnail, duration, upload date, summary, categories.
 3. For a new Seven Lamps-style series, add the series to `SERIES`/`VIDEO_CATEGORIES` in `src/lib/site.ts`.
 
-## Hosting (Netlify)
+## Hosting (Cloudflare Workers)
 
-`netlify.toml` is included: build command, publish folder, long-lived caching for fingerprinted assets,
-security headers and 301 redirects from old WordPress addresses.
+The site is one Cloudflare Workers project (`wrangler.jsonc`). Pages are served straight from `dist/`;
+only `/api/*` runs code, in `worker/index.js`:
 
-1. Push this folder to a GitHub repository and create a Netlify site from it.
-2. In `public/admin/config.yml`, set `backend.repo` to that repository.
-3. In Netlify, enable GitHub OAuth (*Site configuration › Access & security › OAuth*) so editors can sign in to `/admin/`.
-4. Point the `yonatree.com` domain at Netlify. Netlify Forms will pick up the newsletter and contact forms automatically.
+| Route | What it does |
+| --- | --- |
+| `POST /api/contact` | Saves the message in the site database (D1, table `contacts`) and emails it to theyonatree@gmail.com |
+| `POST /api/newsletter` | Saves the sign-up in D1 (table `subscribers`), ignoring duplicates |
+| `GET /api/auth`, `/api/callback` | GitHub sign-in for the CMS at `/admin/` |
 
-To use Mailchimp, ConvertKit or Buttondown for the newsletter instead, change *Site settings › Forms* in the
-CMS (or `src/data/settings.json`).
+Security headers and caching live in `public/_headers`; old WordPress redirects in `public/_redirects`.
+
+### One-time setup
+
+1. **Create the Worker from GitHub.** Cloudflare dashboard › *Workers & Pages › Create › Import a repository* ›
+   `southernaircare/yonatree`. Build command `npm run build`, deploy command `npx wrangler deploy`. The D1 database
+   `yonatree` is created automatically on the first deploy.
+2. **Contact emails.** Create a free account at resend.com with theyonatree@gmail.com, create an API key, and add it in
+   *Worker › Settings › Variables and Secrets* as the secret `RESEND_API_KEY`. Until yonatree.com is verified in Resend,
+   messages are sent from `onboarding@resend.dev`, which can only deliver to the Resend account's own address — so use
+   theyonatree@gmail.com for that account. Messages are always saved in D1 even if email fails.
+3. **CMS sign-in.** GitHub › *Settings › Developer settings › OAuth Apps › New*: homepage `https://yonatree.com`,
+   callback `https://yonatree.com/api/callback` (use the workers.dev address while testing). Add the client ID and
+   secret as the secrets `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
+4. **Spam check (optional).** Create a Turnstile widget in Cloudflare, put its site key in *Site settings › Forms*
+   (`turnstileSiteKey`) and its secret key in the Worker secret `TURNSTILE_SECRET`.
+5. **Domain.** *Worker › Settings › Domains & Routes › Add › Custom domain*: `yonatree.com` and `www.yonatree.com`.
+
+### Reading messages and sign-ups
+
+Cloudflare dashboard › *Storage & Databases › D1 › yonatree › Console*, for example
+`SELECT * FROM contacts ORDER BY id DESC` or `SELECT email, created_at FROM subscribers`.
+
+### Local testing
+
+`npm run build && npx wrangler dev` serves the production build with the Worker and a local database at
+http://localhost:8787. Put test secrets in `.dev.vars` (not committed).
 
 ## Quality checks
 
@@ -134,7 +160,7 @@ Best Practices 100, SEO 100** across the home, article, study, book and series p
   explains that the wording of 1 John 5:7 is found in the KJV but not in most modern translations; and the
   "filioque" history of the Nicene Creed is explained.
 - **Reader reflections** (Brenda O. and Todd) are carried over from the current site, with two typos corrected.
-- **Contact email** is theyonatree@gmail.com (Contact page and footer). Change it in *Site settings*.
+- **Contact email** is theyonatree@gmail.com (Contact page). Change it in *Site settings* and `CONTACT_TO` in `wrangler.jsonc`.
 - **Privacy Policy and Terms** are marked as drafts for review.
 - **Book Two** has no title or details, as requested. The teaser collects notification sign-ups.
 - **Artwork:** `trinity-family-portrait.jpg` is low-resolution in the original; a higher-resolution version would improve it.

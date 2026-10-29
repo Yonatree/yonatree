@@ -19,3 +19,5 @@ Media/
 
 # Local editor/preview settings
 .claude/
+.wrangler/
+.dev.vars
