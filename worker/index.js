@@ -191,8 +191,11 @@ async function callback(request, env, url) {
       redirect_uri: `${url.origin}/api/callback`,
     }),
   });
-  const data = await res.json();
-  if (!data.access_token) return oauthResult(url, 'error', { message: data.error_description || 'GitHub sign-in failed.' });
+  const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+  if (!data.access_token) {
+    console.error('GitHub token exchange failed', res.status, data.error, data.error_description);
+    return oauthResult(url, 'error', { message: data.error_description || data.error || 'GitHub sign-in failed.' });
+  }
   return oauthResult(url, 'success', { token: data.access_token, provider: 'github' });
 }
 

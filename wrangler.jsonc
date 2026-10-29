@@ -16,14 +16,12 @@
   "d1_databases": [{ "binding": "DB", "database_name": "yonatree" }],
   "vars": {
     "CONTACT_TO": "theyonatree@gmail.com",
-    "CONTACT_FROM": "Yona Tree website <onboarding@resend.dev>",
-    // Public ID of the "Yona Tree CMS" GitHub OAuth app (it appears in the sign-in URL).
-    "GITHUB_CLIENT_ID": "Ov23li5yZO3yrP2T9B79"
+    "CONTACT_FROM": "Yona Tree website <onboarding@resend.dev>"
   },
   "observability": { "enabled": true }
   // Secrets (set in the Cloudflare dashboard › Worker › Settings › Variables and Secrets):
   //   RESEND_API_KEY        emails contact messages to CONTACT_TO
   //   TURNSTILE_SECRET      optional spam check (pair with forms.turnstileSiteKey in settings.json)
-  //   GITHUB_CLIENT_SECRET  CMS sign-in (GitHub OAuth app) — must be type "Secret", not "Text":
-  //                         plain-text variables are removed on every deploy
+  //   GITHUB_CLIENT_ID      CMS sign-in (GitHub OAuth app "Yona Tree CMS")
+  //   GITHUB_CLIENT_SECRET  Add these as type "Secret", not "Text": Text variables are removed on every deploy
 }
