@@ -29,6 +29,14 @@ export const VIDEO_CATEGORIES = [
   { slug: 'future-series', title: 'Future Series' },
 ] as const;
 
+/** What a review is about; shown as tags on review cards. */
+export const REVIEW_SUBJECTS = [
+  { slug: 'book', label: 'The book' },
+  { slug: 'video-series', label: 'Video series' },
+  { slug: 'music', label: 'Worship music' },
+  { slug: 'studies', label: 'Studies & articles' },
+] as const;
+
 export const NAV = [
   { label: 'Home', href: '/' },
   { label: 'Seven Lamps', href: '/seven-lamps-before-the-throne/', match: ['/seven-lamps'] },
@@ -58,6 +66,7 @@ export const FOOTER_EXPLORE = [
   { label: 'Articles', href: '/articles/' },
   { label: 'Videos', href: '/videos/' },
   { label: 'Studies', href: '/studies/' },
+  { label: 'Reviews', href: '/reviews/' },
   { label: 'Scripture Index', href: '/articles/scripture-index/' },
   { label: 'Search', href: '/search/' },
 ];

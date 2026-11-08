@@ -1,7 +1,7 @@
 import { defineCollection, reference } from 'astro:content';
 import { glob, file } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { VIDEO_CATEGORIES } from './lib/site';
+import { VIDEO_CATEGORIES, REVIEW_SUBJECTS } from './lib/site';
 
 // Every collection here is editable in the CMS at /admin (see public/admin/config.yml).
 // Relationships are stored as slugs so editors can link content without touching layouts.
@@ -108,7 +108,6 @@ const books = defineCollection({
       dedication: z.string().optional(),
       sampleTitle: z.string().optional(),
       sample: z.string().optional(),
-      testimonials: z.array(z.object({ quote: z.string(), name: z.string(), note: z.string().optional() })).default([]),
       relatedVideos: z.array(reference('videos')).default([]),
       relatedArticles: z.array(reference('articles')).default([]),
       relatedStudies: z.array(reference('studies')).default([]),
@@ -148,4 +147,21 @@ const studies = defineCollection({
     }),
 });
 
-export const collections = { topics, articles, videos, books, studies };
+// Reader and listener reviews. Publish only with the person's permission.
+const reviews = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/reviews' }),
+  schema: z.object({
+    name: z.string(),
+    location: z.string().optional(),
+    note: z.string().optional(),
+    quote: z.string(),
+    // Shorter excerpt for the homepage; the full quote appears on /reviews/.
+    highlight: z.string().optional(),
+    about: z.array(z.enum(REVIEW_SUBJECTS.map((s) => s.slug) as [string, ...string[]])).default([]),
+    featured: z.boolean().default(false),
+    order: z.number().default(100),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { topics, articles, videos, books, studies, reviews };

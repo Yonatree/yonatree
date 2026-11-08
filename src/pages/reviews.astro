@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import Icon from '../components/Icon.astro';
+import { getReviews } from '../lib/content';
+import { breadcrumbs } from '../lib/schema';
+
+const reviews = await getReviews();
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Reviews', href: '/reviews/' }];
+---
+
+<BaseLayout
+  title="Reviews — What Readers and Listeners Say About Yona Tree"
+  description="Reviews of Seven Lamps Before the Throne, the video series and Yona Tree's worship music from readers and listeners around the world."
+  searchType="Page"
+  jsonLd={[breadcrumbs(crumbs)]}
+>
+  <PageHero
+    eyebrow="Reviews"
+    title="What Readers and Listeners Say"
+    lede="From Pensacola to South Africa, readers of the book, viewers of the series and listeners to the songs share what they have found."
+    crumbs={crumbs}
+  />
+
+  <section class="section surface-parchment" aria-labelledby="reviews-title">
+    <div class="container">
+      <h2 id="reviews-title" class="visually-hidden">All reviews</h2>
+      <ul class="reviews" role="list">
+        {reviews.map((r) => <li><ReviewCard review={r} /></li>)}
+      </ul>
+
+      <aside class="reviews-share" aria-labelledby="share-title">
+        <Icon name="heart" size={28} />
+        <div>
+          <h2 id="share-title">Share your experience</h2>
+          <p>Has the book, the series or the music helped you? We would love to hear from you, and with your permission we may share your words here.</p>
+        </div>
+        <a class="btn btn--bronze" href="/contact/?subject=review">Write a review <Icon name="arrow-right" size={18} /></a>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .reviews { columns: 1; column-gap: var(--s-5); margin: 0; padding: 0; }
+  @media (min-width: 760px) { .reviews { columns: 2; } }
+  @media (min-width: 1180px) { .reviews { columns: 3; } }
+  .reviews li { break-inside: avoid; margin-bottom: var(--s-5); }
+  .reviews :global(.review) { background: var(--c-white); box-shadow: var(--shadow-sm); }
+
+  .reviews-share {
+    display: grid;
+    gap: var(--s-4);
+    align-items: center;
+    margin-top: var(--s-7);
+    padding: var(--s-6);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+    background: var(--c-white);
+    color: var(--accent);
+  }
+  @media (min-width: 760px) { .reviews-share { grid-template-columns: auto 1fr auto; gap: var(--s-5); } }
+  .reviews-share h2 { margin: 0 0 var(--s-2); font-size: var(--fs-lg); color: var(--fg); }
+  .reviews-share p { margin: 0; color: var(--fg-2); }
+  .reviews-share .btn { justify-self: start; }
+</style>

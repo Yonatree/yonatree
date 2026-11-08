@@ -13,7 +13,8 @@ import BookTwoTeaser from '../../components/BookTwoTeaser.astro';
 import ShareButtons from '../../components/ShareButtons.astro';
 import Icon from '../../components/Icon.astro';
 import SevenLamps from '../../components/SevenLamps.astro';
-import { getBooks, getEpisodes } from '../../lib/content';
+import ReviewCard from '../../components/ReviewCard.astro';
+import { getBooks, getEpisodes, getReviews } from '../../lib/content';
 import { SERIES, episodeUrl, absoluteUrl } from '../../lib/site';
 import { book as bookLd, breadcrumbs } from '../../lib/schema';
 
@@ -25,7 +26,7 @@ export async function getStaticPaths() {
 const { book } = Astro.props;
 const { data } = book;
 const { Content } = await render(book);
-const [episodes, articles] = await Promise.all([getEpisodes(), getEntries(data.relatedArticles)]);
+const [episodes, articles, reviews] = await Promise.all([getEpisodes(), getEntries(data.relatedArticles), getReviews('book')]);
 const url = `/books/${book.id}/`;
 const crumbs = [
   { name: 'Home', href: '/' },
@@ -160,20 +161,14 @@ const ld = [
   </section>
 
   {
-    data.testimonials.length > 0 && (
+    reviews.length > 0 && (
       <section class="section surface-white" aria-labelledby="reflections-title">
         <div class="container">
           <SectionHeading eyebrow="Readers" title="Reader reflections" id="reflections-title" align="center" />
           <ul class="bk-quotes" role="list">
-            {data.testimonials.map((t) => (
-              <li>
-                <figure>
-                  <blockquote><p>“{t.quote}”</p></blockquote>
-                  <figcaption>{t.name}{t.note && <span> · {t.note}</span>}</figcaption>
-                </figure>
-              </li>
-            ))}
+            {reviews.map((r) => <li><ReviewCard review={r} /></li>)}
           </ul>
+          <p class="bk-quotes__more"><a href="/reviews/">Read all reviews</a></p>
         </div>
       </section>
     )
@@ -288,10 +283,7 @@ const ld = [
   .bk-episodes { margin: 0; }
   .bk-quotes { display: grid; gap: var(--s-5); margin: 0; }
   @media (min-width: 820px) { .bk-quotes { grid-template-columns: 1fr 1fr; } }
-  .bk-quotes figure { height: 100%; margin: 0; padding: var(--s-6); border-radius: var(--r-lg); background: var(--c-parchment); border: 1px solid var(--line); }
-  .bk-quotes blockquote { font-family: var(--font-serif); font-size: var(--fs-md); font-style: italic; line-height: 1.6; }
-  .bk-quotes figcaption { margin-top: var(--s-4); font-family: var(--font-display); font-weight: 600; color: var(--c-bronze); }
-  .bk-quotes figcaption span { font-family: var(--font-sans); font-weight: 400; font-size: var(--fs-sm); color: var(--fg-2); }
+  .bk-quotes__more { margin-top: var(--s-6); text-align: center; }
 
   .bk-buy { display: grid; gap: var(--s-8); }
   @media (min-width: 960px) { .bk-buy { grid-template-columns: 1fr 1fr; } }

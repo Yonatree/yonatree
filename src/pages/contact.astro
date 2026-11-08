@@ -8,7 +8,7 @@ import { breadcrumbs } from '../lib/schema';
 const crumbs = [{ name: 'Home', href: '/' }, { name: 'Contact', href: '/contact/' }];
 const netlify = settings.forms.provider === 'netlify';
 const turnstile = settings.forms.provider === 'cloudflare' && settings.forms.turnstileSiteKey;
-const subjects = ['A question about a study or article', 'The book or audiobook', 'The video series', 'Partnering with Yona Tree', 'Media or speaking', 'Something else'];
+const subjects = ['A question about a study or article', 'The book or audiobook', 'The video series', 'Sharing a review (may be quoted on the website)', 'Partnering with Yona Tree', 'Media or speaking', 'Something else'];
 ---
 
 <BaseLayout title="Contact Yona Tree" description="Send Yona Tree a question about a study, the book Seven Lamps Before the Throne, the video series, or partnering with the ministry." searchType="Page" jsonLd={[breadcrumbs(crumbs)]}>
@@ -95,6 +95,12 @@ const subjects = ['A question about a study or article', 'The book or audiobook'
 <script>
   const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
   if (form) {
+    // /contact/?subject=review (from the Reviews page) preselects the review subject.
+    if (new URLSearchParams(location.search).get('subject') === 'review') {
+      const select = form.querySelector<HTMLSelectElement>('#c-subject');
+      const option = select && [...select.options].find((o) => o.value.startsWith('Sharing a review'));
+      if (select && option) select.value = option.value;
+    }
     const summary = form.querySelector<HTMLElement>('[data-summary]')!;
     const fields = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]')];
     const check = (el: HTMLInputElement | HTMLTextAreaElement) => {

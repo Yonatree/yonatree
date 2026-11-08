@@ -180,15 +180,6 @@ collections:
       - { label: Dedication, name: dedication, widget: text, required: false }
       - { label: Sample chapter title, name: sampleTitle, widget: string, required: false }
       - { label: Sample chapter, name: sample, widget: markdown, required: false }
-      - label: Reader reflections
-        name: testimonials
-        widget: list
-        required: false
-        hint: Only real, permitted quotations.
-        fields:
-          - { label: Quote, name: quote, widget: text }
-          - { label: Name, name: name, widget: string }
-          - { label: Note, name: note, widget: string, required: false }
       - { label: Related videos, name: relatedVideos, widget: relation, collection: videos, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
       - { label: Related articles, name: relatedArticles, widget: relation, collection: articles, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
       - { label: Related studies, name: relatedStudies, widget: relation, collection: studies, search_fields: [title], display_fields: [title], value_field: '{{slug}}', multiple: true, required: false }
@@ -249,6 +240,39 @@ collections:
       - { label: Body, name: body, widget: markdown }
 
   # ───────────────────────────── Taxonomy & settings ─────────────────────────────
+  - name: reviews
+    label: Reviews
+    label_singular: Review
+    description: Reader and listener reviews, shown on /reviews/, the homepage and the book page. Publish a review only with the person's permission.
+    folder: src/content/reviews
+    create: true
+    slug: '{{fields.name}}'
+    extension: md
+    format: frontmatter
+    identifier_field: name
+    summary: '{{name}} — {{location}}'
+    sortable_fields: [order, name]
+    fields:
+      - { label: Name, name: name, widget: string, hint: 'As the person agreed to be named, e.g. "Brenda O."' }
+      - { label: Location, name: location, widget: string, required: false }
+      - { label: Note, name: note, widget: string, required: false, hint: 'Optional, e.g. "Grandmother" or "Pastor"' }
+      - { label: Review, name: quote, widget: text, hint: 'Their words, with spelling corrected. Leave a blank line between paragraphs. Use [brackets] for any word you add.' }
+      - { label: Short version, name: highlight, widget: text, required: false, hint: 'Optional shorter excerpt for the homepage. Leave empty to show the full review.' }
+      - label: About
+        name: about
+        widget: select
+        multiple: true
+        required: false
+        options:
+          - { label: The book, value: book }
+          - { label: Video series, value: video-series }
+          - { label: Worship music, value: music }
+          - { label: Studies & articles, value: studies }
+        hint: Reviews about the book also appear on the book page.
+      - { label: Show on homepage, name: featured, widget: boolean, default: false, hint: 'The first three (by Order) appear on the homepage.' }
+      - { label: Order, name: order, widget: number, value_type: int, default: 100 }
+      - { label: Draft, name: draft, widget: boolean, default: false, required: false }
+
   - name: taxonomy
     label: Topics
     files:

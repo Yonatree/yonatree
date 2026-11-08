@@ -6,6 +6,7 @@ export type Video = CollectionEntry<'videos'>;
 export type Study = CollectionEntry<'studies'>;
 export type Book = CollectionEntry<'books'>;
 export type Topic = CollectionEntry<'topics'>;
+export type Review = CollectionEntry<'reviews'>;
 
 const published = <T extends { data: { draft?: boolean } }>(e: T) => import.meta.env.DEV || !e.data.draft;
 
@@ -32,6 +33,11 @@ export async function getEpisodes() {
 export async function getStudies() {
   const all = await getCollection('studies', published);
   return all.sort((a, b) => a.data.order - b.data.order);
+}
+
+export async function getReviews(about?: string) {
+  const all = await getCollection('reviews', (r) => published(r) && (!about || r.data.about.includes(about)));
+  return all.sort((a, b) => a.data.order - b.data.order || a.data.name.localeCompare(b.data.name));
 }
 
 export async function getTopics() {

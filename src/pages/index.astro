@@ -12,7 +12,8 @@ import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import BookTwoTeaser from '../components/BookTwoTeaser.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import ThreePaths from '../components/ThreePaths.astro';
-import { getArticles, getEpisodes, getVideos, getTopics, getFlagshipBook, getByTopic } from '../lib/content';
+import ReviewCard from '../components/ReviewCard.astro';
+import { getArticles, getEpisodes, getVideos, getTopics, getFlagshipBook, getByTopic, getReviews } from '../lib/content';
 import { settings, SERIES, YOUTUBE_SUBSCRIBE, episodeUrl, videoUrl } from '../lib/site';
 
 import heroArt from '../assets/art/heavenly-tree-of-life-sanctuary.jpg';
@@ -22,18 +23,20 @@ import lostSheep from '../assets/art/good-shepherd-golden-journey.jpg';
 import lostCoin from '../assets/art/searching-for-the-lost-coin.jpg';
 import prodigal from '../assets/art/golden-hour-homecoming-embrace.jpg';
 
-const [articles, episodes, videos, topics, book] = await Promise.all([
+const [articles, episodes, videos, topics, book, reviews] = await Promise.all([
   getArticles(),
   getEpisodes(),
   getVideos(),
   getTopics(),
   getFlagshipBook(),
+  getReviews(),
 ]);
 
 const featuredArticle = articles.find((a) => a.data.featured) ?? articles[0];
 const latestArticles = articles.filter((a) => a.id !== featuredArticle.id).slice(0, 3);
 const spotlightEpisodes = [1, 10, 14, 15].map((n) => episodes.find((e) => e.data.episode === n)!).filter(Boolean);
 const latestVideo = videos[0];
+const featuredReviews = reviews.filter((r) => r.data.featured).slice(0, 3);
 const moreVideos = videos.filter((v) => v.id !== latestVideo.id).slice(0, 6);
 const featuredTopics = await Promise.all(
   topics
@@ -328,6 +331,24 @@ const parables = [
 
   <ThreePaths />
 
+  <!-- REVIEWS ---------------------------------------------------------------->
+  {
+    featuredReviews.length > 0 && (
+      <section class="reviews-home section surface-white" aria-labelledby="reviews-title">
+        <div class="container">
+          <SectionHeading eyebrow="Reviews" title="What Readers and Listeners Say" id="reviews-title" align="center" />
+          <ul class="reviews-home__grid" role="list">
+            {featuredReviews.map((r, i) => <li data-reveal style={`--reveal-i:${i}`}><ReviewCard review={r} short /></li>)}
+          </ul>
+          <div class="btn-row reviews-home__ctas">
+            <a class="btn btn--bronze" href="/reviews/">Read all reviews <Icon name="arrow-right" size={18} /></a>
+            <a class="btn btn--outline" href="/contact/?subject=review">Share your experience</a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   <BookTwoTeaser notifyHref="#continue-title" />
 
   <!-- CONTINUE THE JOURNEY -------------------------------------------------->
@@ -585,4 +606,9 @@ const parables = [
   .continue__ctas { justify-content: center; }
   .continue__label { margin-top: var(--s-5); color: var(--c-parchment); }
   .continue :global(.newsletter) { text-align: left; }
+
+  /* Reviews */
+  .reviews-home__grid { display: grid; gap: var(--s-5); margin: 0; padding: 0; }
+  @media (min-width: 900px) { .reviews-home__grid { grid-template-columns: repeat(3, 1fr); } }
+  .reviews-home__ctas { justify-content: center; margin-top: var(--s-7); }
 </style>

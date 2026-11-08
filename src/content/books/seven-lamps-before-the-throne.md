@@ -61,12 +61,6 @@ sample: |
   > — Song of Solomon 6:9
 
   Why would God have chosen this elegant and seemingly feminine form as a visual manifestation of the Holy Spirit while descending upon Christ at His baptism? Let's explore that thought beginning with a simple eleven-point questionnaire meant to lead you to both a biblical and rational conclusion concerning the identity of this divine Personage. We ask that you do your best to have an open mind and a prayerful heart as together we embark on this journey to answer one simple question — *who is the Holy Spirit?*
-testimonials:
-  - quote: This book was very fascinating to me, gave me a deeper understanding of creation and our Creator with insight into the mystery of the Holy Spirit. Easily understood by the average reader.
-    name: Brenda O.
-    note: Grandmother
-  - quote: As someone who has a history and manuscript background, I have found a refreshing outlook on the Trinity, with each biblical detail explained and walked through to understand who is the Holy Spirit.
-    name: Todd
 relatedVideos: [part-1-three-person-god, part-4-god-the-mother, part-10-lady-wisdom, part-14-tree-of-life, part-16-holy-trinity]
 relatedArticles: [who-is-the-holy-spirit-eleven-questions, lady-wisdom-in-proverbs, the-tree-of-life-and-the-holy-spirit]
 relatedStudies: [holy-spirit, holy-trinity, seven-lamps]
