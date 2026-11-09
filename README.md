@@ -159,7 +159,7 @@ Best Practices 100, SEO 100** across the home, article, study, book and series p
 - **Corrections made while adapting the manuscript:** "John 4:28–29" in Chapter 7 is cited as John 5:28–29; a note
   explains that the wording of 1 John 5:7 is found in the KJV but not in most modern translations; and the
   "filioque" history of the Nicene Creed is explained.
-- **Reader reflections** (Brenda O. and Todd) are carried over from the current site, with two typos corrected.
+- **Reviews** live in `src/content/reviews/` (CMS › Reviews). Brenda O. and Todd confirmed they can be quoted (November 2026). Publish new reviews only with the person's permission.
 - **Contact email** is theyonatree@gmail.com (Contact page). Change it in *Site settings* and `CONTACT_TO` in `wrangler.jsonc`.
 - **Privacy Policy and Terms** are marked as drafts for review.
 - **Book Two** has no title or details, as requested. The teaser collects notification sign-ups.
